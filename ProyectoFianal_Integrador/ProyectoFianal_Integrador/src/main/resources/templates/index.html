@@ -31,9 +31,6 @@
                     <div th:if="${session.usuario == null}">
                         <a th:href="@{/login}" class="btn btn-outline-danger me-2">Ingresar</a>
                         <a th:href="@{/registro}" class="btn btn-danger">Registro</a>
-                        <div class="user-actions">
-            <button class="btn-carrito" onclick="abrirCarrito()">🛒 <span id="carrito-cantidad" class="carrito-badge">0</span></button>
-        </div>
                     </div>
                     <div th:if="${session.usuario != null}">
                         <a th:href="@{/logout}" class="btn btn-outline-secondary btn-sm">Cerrar sesión</a>
@@ -113,8 +110,6 @@
         </div>
     </section>
 -->
-
-        
 
     <section id="inicio" class="intro-menu">
         <h1>Nuestro <strong>Menú</strong></h1>
