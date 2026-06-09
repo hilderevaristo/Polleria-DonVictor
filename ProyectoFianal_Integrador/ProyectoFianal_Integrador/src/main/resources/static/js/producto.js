@@ -47,7 +47,6 @@ const productos = [
     { nombre: "Gaseosa 1 L", precio: 9.0, img: "secciones/Bebidas/gaseosa_1L.png", categoria: "Bebidas", desc: "Gaseosa 1 Litro." },
     { nombre: "Gaseosa 1.5 L", precio: 12.0, img: "secciones/Bebidas/Gaseosa1.5L.png", categoria: "Bebidas", desc: "Gaseosa 1.5 Litros." },
     { nombre: "Chicha Morada 1.5 L", precio: 14.0, img: "secciones/Bebidas/chicha_morada_1.5L.png", categoria: "Bebidas", desc: "Chicha artesanal." },
-    { nombre: "Agua Mineral", precio: 4.0, img: "secciones/Bebidas/agua_san_mateo.png", categoria: "Bebidas", desc: "Agua sin gas." }
 ];
 
 let carrito = [];
