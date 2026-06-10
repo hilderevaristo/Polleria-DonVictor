@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.common.base.CharMatcher;
+
 import java.time.LocalDateTime;
 
 @Controller
@@ -20,9 +22,9 @@ public class DonVictorController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-    
+
     @Autowired
-    private ContactoRepository contactoRepository;  // ← NUEVO: repositorio de contactos
+    private ContactoRepository contactoRepository; // ← NUEVO: repositorio de contactos
 
     @GetMapping("/")
     public String index(HttpSession session, Model model) {
@@ -45,36 +47,38 @@ public class DonVictorController {
 
     @PostMapping("/procesarRegistro")
     public String procesarRegistro(@RequestParam String nombre,
-                                   @RequestParam String email,
-                                   @RequestParam String telefono,
-                                   @RequestParam String password,
-                                   Model model) {
-        
+            @RequestParam String email,
+            @RequestParam String telefono,
+            @RequestParam String password,
+            Model model) {
+
         if (usuarioRepository.existsByEmail(email)) {
             model.addAttribute("error", "El correo ya está registrado");
             return "registro";
         }
-        
+
+        String telefonoLimpio = CharMatcher.inRange('0', '9').retainFrom(telefono);
+
         Usuario nuevoUsuario = new Usuario();
         nuevoUsuario.setNombre(nombre);
         nuevoUsuario.setEmail(email);
-        nuevoUsuario.setTelefono(telefono);
+        nuevoUsuario.setTelefono(telefonoLimpio);
         nuevoUsuario.setPassword(password);
         nuevoUsuario.setFechaRegistro(LocalDateTime.now());
-        
+
         usuarioRepository.save(nuevoUsuario);
-        
+
         return "redirect:/login?registroExitoso=true";
     }
-    
+
     @PostMapping("/procesarLogin")
     public String procesarLogin(@RequestParam String email,
-                                @RequestParam String password,
-                                HttpSession session,
-                                Model model) {
-        
+            @RequestParam String password,
+            HttpSession session,
+            Model model) {
+
         Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
-        
+
         if (usuario != null && usuario.getPassword().equals(password)) {
             session.setAttribute("usuario", usuario);
             return "redirect:/";
@@ -83,44 +87,59 @@ public class DonVictorController {
             return "login";
         }
     }
-    
+
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/";
     }
-    
+
     // ========== NUEVO: PROCESAR CONTACTO ==========
     @PostMapping("/procesarContacto")
     public String procesarContacto(@RequestParam String nombre,
-                                   @RequestParam String email,
-                                   @RequestParam(required = false) String telefono,
-                                   @RequestParam String mensaje,
-                                   RedirectAttributes redirectAttributes) {
-        
+            @RequestParam String email,
+            @RequestParam(required = false) String telefono,
+            @RequestParam String mensaje,
+            RedirectAttributes redirectAttributes) {
+
         Contacto contacto = new Contacto();
         contacto.setNombre(nombre);
         contacto.setEmail(email);
-        contacto.setTelefono(telefono);
+
         contacto.setMensaje(mensaje);
+
+        if (telefono != null && !telefono.trim().isEmpty()) {
+            String telefonoLimpio = CharMatcher.inRange('0', '9').retainFrom(telefono);
+            contacto.setTelefono(telefonoLimpio);
+        } else {
+            contacto.setTelefono(null);
+        }
         // fechaEnvio se asigna automáticamente en el constructor de Contacto
-        
+
         contactoRepository.save(contacto);
-        
+
         redirectAttributes.addAttribute("exito", true);
-        return "redirect:/#contactos";  // Vuelve a la sección contactos
+        return "redirect:/#contactos"; // Vuelve a la sección contactos
     }
-    
+
     // ========== MÉTODOS PARA PÁGINAS (si aún los usas) ==========
     @GetMapping("/productos")
-    public String productos() { return "productos"; }
-    
+    public String productos() {
+        return "productos";
+    }
+
     @GetMapping("/promociones")
-    public String promociones() { return "promociones"; }
-    
+    public String promociones() {
+        return "promociones";
+    }
+
     @GetMapping("/nosotros")
-    public String nosotros() { return "nosotros"; }
-    
+    public String nosotros() {
+        return "nosotros";
+    }
+
     @GetMapping("/contactos")
-    public String contactos() { return "contactos"; }
+    public String contactos() {
+        return "contactos";
+    }
 }
