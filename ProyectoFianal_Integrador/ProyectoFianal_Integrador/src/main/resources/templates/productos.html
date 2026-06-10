@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Menú - Don Víctor</title>
+    <link rel="stylesheet" th:href="@{/css/estilos-menu.css}">
+</head>
+<body>
+
+<div class="menu-container">
+    
+    <div class="filtros-categoria">
+        <button class="btn-filtro active" data-filter="Todos">Todos</button>
+        <button class="btn-filtro" data-filter="Promociones">Promociones</button>
+        <button class="btn-filtro" data-filter="Pollos">Pollos</button>
+        <button class="btn-filtro" data-filter="Piqueos">Piqueos</button>
+        <button class="btn-filtro" data-filter="Hamburguesas">Hamburguesas</button>
+        <button class="btn-filtro" data-filter="Wraps">Wraps</button>
+        <button class="btn-filtro" data-filter="Acompañamientos">Acompañamientos</button>
+        <button class="btn-filtro" data-filter="Postres">Postres</button>
+        <button class="btn-filtro" data-filter="Bebidas">Bebidas</button>
+    </div>
+
+    <div class="menu-grid">
+        
+        <div class="menu-card" th:each="p : ${productos}" th:data-categoria="${p.categoria}">
+            <div class="card-img-wrapper">
+                <img th:src="@{'/' + ${p.imagenUrl}}" alt="Imagen del producto" class="card-img">
+            </div>
+            
+            <div class="card-info">
+                <span class="card-category" th:text="${#strings.toUpperCase(p.categoria)}">CATEGORÍA</span>
+                
+                <div class="card-header">
+                    <h3 class="card-title" th:text="${p.nombre}">Nombre del Producto</h3>
+                    <span class="card-price" th:text="'S/ ' + ${#numbers.formatDecimal(p.precio, 1, 2)}">S/ 0.00</span>
+                </div>
+                
+                <p class="card-desc" th:text="${p.descripcion}">Descripción del producto...</p>
+                
+                <button class="btn-agregar">
+                    🛒 Agregar al carrito
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="/js/menu-filtros.js"></script>
+
+</body>
+</html>
