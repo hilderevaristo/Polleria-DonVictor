@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.common.base.CharMatcher;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 
@@ -57,10 +58,12 @@ public class DonVictorController {
             return "registro";
         }
 
+        String nombreLimpio = StringUtils.capitalize(StringUtils.normalizeSpace(nombre));
+
         String telefonoLimpio = CharMatcher.inRange('0', '9').retainFrom(telefono);
 
         Usuario nuevoUsuario = new Usuario();
-        nuevoUsuario.setNombre(nombre);
+        nuevoUsuario.setNombre(nombreLimpio);
         nuevoUsuario.setEmail(email);
         nuevoUsuario.setTelefono(telefonoLimpio);
         nuevoUsuario.setPassword(password);
@@ -103,7 +106,10 @@ public class DonVictorController {
             RedirectAttributes redirectAttributes) {
 
         Contacto contacto = new Contacto();
-        contacto.setNombre(nombre);
+
+        String nombreLimpio = StringUtils.capitalize(StringUtils.normalizeSpace(nombre));
+        contacto.setNombre(nombreLimpio);
+
         contacto.setEmail(email);
 
         contacto.setMensaje(mensaje);
