@@ -1,8 +1,12 @@
 package com.example.ProyectoFianal_Integrador.controller;
-
+import com.example.ProyectoFianal_Integrador.entity.Producto;
+import com.example.ProyectoFianal_Integrador.repository.ProductoRepository;
+import java.util.List;
 import com.example.ProyectoFianal_Integrador.entity.Contacto;
 import com.example.ProyectoFianal_Integrador.entity.Usuario;
 import com.example.ProyectoFianal_Integrador.repository.ContactoRepository;
+import com.google.common.base.CharMatcher;
+import org.apache.commons.lang3.StringUtils;
 import com.example.ProyectoFianal_Integrador.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import com.google.common.base.CharMatcher;
-import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 
@@ -26,6 +27,9 @@ public class DonVictorController {
 
     @Autowired
     private ContactoRepository contactoRepository; // ← NUEVO: repositorio de contactos
+    
+    @Autowired
+    private ProductoRepository productoRepository;
 
     @GetMapping("/")
     public String index(HttpSession session, Model model) {
@@ -33,6 +37,9 @@ public class DonVictorController {
         if (usuario != null) {
             model.addAttribute("usuarioNombre", usuario.getNombre());
         }
+
+        List<Producto> listaProductos = productoRepository.findAll();
+        model.addAttribute("productos", listaProductos);
         return "index";
     }
 
@@ -58,14 +65,19 @@ public class DonVictorController {
             return "registro";
         }
 
+        // --- USO DE APACHE COMMONS AQUÍ ---
+        // 1. normalizeSpace: Quita espacios dobles ("juan perez" -> "juan perez")
+        // 2. capitalize: Pone la primera letra en mayúscula ("juan perez" -> "Juan
+        // perez")
         String nombreLimpio = StringUtils.capitalize(StringUtils.normalizeSpace(nombre));
 
+        // guava
         String telefonoLimpio = CharMatcher.inRange('0', '9').retainFrom(telefono);
 
         Usuario nuevoUsuario = new Usuario();
         nuevoUsuario.setNombre(nombreLimpio);
         nuevoUsuario.setEmail(email);
-        nuevoUsuario.setTelefono(telefonoLimpio);
+        nuevoUsuario.setTelefono(telefonoLimpio); // Guardamos la versión limpia
         nuevoUsuario.setPassword(password);
         nuevoUsuario.setFechaRegistro(LocalDateTime.now());
 
@@ -107,21 +119,21 @@ public class DonVictorController {
 
         Contacto contacto = new Contacto();
 
+        // --- APACHE COMMONS: Limpiamos el nombre ("maria gomez" -> "Maria gomez")
         String nombreLimpio = StringUtils.capitalize(StringUtils.normalizeSpace(nombre));
         contacto.setNombre(nombreLimpio);
 
         contacto.setEmail(email);
 
         contacto.setMensaje(mensaje);
-
+        
+        // fechaEnvio se asigna automáticamente en el constructor de Contacto
         if (telefono != null && !telefono.trim().isEmpty()) {
             String telefonoLimpio = CharMatcher.inRange('0', '9').retainFrom(telefono);
             contacto.setTelefono(telefonoLimpio);
         } else {
             contacto.setTelefono(null);
         }
-        // fechaEnvio se asigna automáticamente en el constructor de Contacto
-
         contactoRepository.save(contacto);
 
         redirectAttributes.addAttribute("exito", true);
@@ -130,7 +142,10 @@ public class DonVictorController {
 
     // ========== MÉTODOS PARA PÁGINAS (si aún los usas) ==========
     @GetMapping("/productos")
-    public String productos() {
+    public String productos(Model model) {
+        List<Producto> listaProductos = productoRepository.findAll();
+        model.addAttribute("productos", listaProductos);
+
         return "productos";
     }
 
