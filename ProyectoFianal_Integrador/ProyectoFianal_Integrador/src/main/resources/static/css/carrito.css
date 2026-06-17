@@ -75,3 +75,37 @@
     border-top: 1px solid #eee;
     background-color: #f9f9f9;
 }
+
+/* =========================================
+   Estilos del Checkout
+   ========================================= */
+.custom-input {
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: none !important;
+}
+
+.custom-input:focus {
+    border-color: #c0392b;
+}
+
+.btn-metodo-pago {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    color: #555;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-metodo-pago.active {
+    border-color: #c0392b;
+    color: #c0392b;
+    background-color: #fdf2f1;
+}
+
+.btn-metodo-pago:hover {
+    border-color: #c0392b;
+}
