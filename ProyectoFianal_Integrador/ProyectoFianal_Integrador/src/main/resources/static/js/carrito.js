@@ -1,17 +1,14 @@
-// Arreglo temporal que vivirá en el navegador
 let carrito = [];
 
-function agregarAlCarrito(nombre, precio, img) {
-    // Buscamos si el producto ya está en el carrito
-    const existe = carrito.find(item => item.nombre === nombre);
-    
+function agregarAlCarrito(id, nombre, precio, img) {
+    const existe = carrito.find(item => item.id === id);
+
     if (existe) {
-        existe.cantidad++; // Si existe, sumamos 1
+        existe.cantidad++;
     } else {
-        // Si no existe, lo agregamos al arreglo
-        carrito.push({ nombre: nombre, precio: parseFloat(precio), img: img, cantidad: 1 });
+        carrito.push({ id: id, nombre: nombre, precio: parseFloat(precio), img: img, cantidad: 1 });
     }
-    
+
     actualizarCarrito();
     animarCarritoBoton();
     abrirCarrito();
@@ -21,11 +18,11 @@ function actualizarCarrito() {
     const lista = document.getElementById('lista-carrito');
     const badge = document.getElementById('carrito-cantidad');
     const footer = document.querySelector('.carrito-footer');
-    
-    lista.innerHTML = ''; // Limpiamos visualmente la lista
+
+    lista.innerHTML = ''; 
     let subtotal = 0;
     let totalItems = 0;
-    
+
     if (carrito.length === 0) {
         lista.innerHTML = `<div class="text-center text-muted mt-5">Tu carrito está vacío</div>`;
         badge.innerText = '0';
@@ -33,12 +30,11 @@ function actualizarCarrito() {
         cerrarCarrito();
     } else {
         footer.style.display = 'block';
-        
+
         carrito.forEach((p, index) => {
             subtotal += p.precio * p.cantidad;
             totalItems += p.cantidad;
-            
-            // Dibujamos cada item en el HTML
+
             lista.innerHTML += `
                 <div class="d-flex align-items-center mb-3 p-2 border rounded">
                     <img src="${p.img}" alt="${p.nombre}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
@@ -58,11 +54,10 @@ function actualizarCarrito() {
                     </div>
                 </div>`;
         });
-        
+
         badge.innerText = totalItems;
     }
-    
-    // Actualizamos los textos de dinero
+
     document.getElementById('subtotal').innerText = 'S/ ' + subtotal.toFixed(2);
     document.getElementById('total').innerText = 'S/ ' + (subtotal + 5.00).toFixed(2); // +5 de Delivery
 }
@@ -85,7 +80,6 @@ function vaciarCarrito() {
     actualizarCarrito();
 }
 
-// --- Controles de la Interfaz Visual ---
 function abrirCarrito() {
     document.getElementById('carrito-sidebar').classList.add('active');
 }
@@ -96,13 +90,111 @@ function cerrarCarrito() {
 
 function animarCarritoBoton() {
     const btn = document.querySelector('.btn-carrito-flotante');
-    if(btn) {
+    if (btn) {
         btn.style.transform = 'scale(1.2)';
         setTimeout(() => { btn.style.transform = 'scale(1)'; }, 200);
     }
 }
 
-// Ejecutar al cargar la página por si hay algo guardado
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     actualizarCarrito();
 });
+
+
+
+function abrirCheckout() {
+    if (carrito.length === 0) return; // No dejar pasar si está vacío
+
+    // 1. Ocultar carrito, mostrar checkout
+    document.getElementById('vista-carrito').style.display = 'none';
+    document.getElementById('vista-checkout').style.display = 'flex';
+
+    // 2. Cambiar el título
+    document.getElementById('sidebar-title').innerHTML = '<i class="fas fa-receipt"></i> Finalizar Pedido';
+
+    // 3. Copiar los totales al resumen de pago
+    let subtotal = 0;
+    carrito.forEach(p => subtotal += p.precio * p.cantidad);
+
+    document.getElementById('checkout-subtotal').innerText = 'S/ ' + subtotal.toFixed(2);
+    document.getElementById('checkout-total').innerText = 'S/ ' + (subtotal + 5.00).toFixed(2);
+}
+
+function volverAlCarrito() {
+    document.getElementById('vista-checkout').style.display = 'none';
+    document.getElementById('vista-carrito').style.display = 'flex';
+
+    document.getElementById('sidebar-title').innerHTML = '<i class="fas fa-shopping-cart"></i> Tu Carrito';
+}
+
+function seleccionarMetodo(botonClickeado) {
+    const botones = document.querySelectorAll('.btn-metodo-pago');
+    botones.forEach(btn => btn.classList.remove('active'));
+
+    botonClickeado.classList.add('active');
+}
+
+
+function confirmarPedido() {
+    const nombre = document.getElementById('cli-nombre').value;
+    const telefono = document.getElementById('cli-telefono').value;
+    const direccion = document.getElementById('cli-direccion').value;
+    const metodoPago = document.querySelector('.btn-metodo-pago.active').getAttribute('data-metodo');
+
+    if (!nombre || !telefono || !direccion) {
+        alert("Por favor, completa todos tus datos de envío.");
+        return;
+    }
+
+    const pedidoData = {
+        nombreCliente: nombre,
+        telefonoCliente: telefono,
+        direccionCliente: direccion,
+        metodoPago: metodoPago,
+        items: carrito.map(item => ({
+            productoId: parseInt(item.id),
+            cantidad: item.cantidad,
+            precioUnitario: item.precio
+        }))
+    };
+
+    fetch('/api/pedidos/guardar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(pedidoData)
+    })
+    .then(response => {
+        if (response.ok) {
+            carrito = [];
+            
+            const badge = document.getElementById('carrito-cantidad');
+            if (badge) badge.innerText = '0';
+            
+            document.getElementById('vista-checkout').style.display = 'none';
+            document.getElementById('vista-exito').style.display = 'flex';
+            
+            document.getElementById('sidebar-title').innerHTML = '<i class="fas fa-receipt"></i> Finalizar Pedido';
+            
+            const footerCheckout = document.querySelector('#vista-checkout .carrito-footer');
+            if (footerCheckout) footerCheckout.style.display = 'none';
+
+        } else {
+            console.error("El servidor respondió con error:", response.status);
+        }
+    })
+    .catch(error => {
+        console.error("Error capturado en JavaScript:", error);
+    });
+}
+
+
+
+function cerrarVistaExito() {
+    cerrarCarrito(); // Oculta el panel lateral
+
+    document.getElementById('vista-exito').style.display = 'none';
+    document.getElementById('vista-carrito').style.display = 'flex';
+    document.getElementById('sidebar-title').innerHTML = '<i class="fas fa-shopping-cart"></i> Tu Carrito';
+}

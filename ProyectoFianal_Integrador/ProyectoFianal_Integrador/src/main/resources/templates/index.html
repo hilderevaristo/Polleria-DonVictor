@@ -34,11 +34,15 @@
                         <a th:href="@{/registro}" class="btn btn-danger">Registro</a>
                     </div>
                     <div th:if="${session.usuario != null}">
-                        <a th:href="@{/logout}" class="btn btn-outline-secondary btn-sm">Cerrar sesión</a>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#modalCerrarSesion">
+                            Cerrar sesión
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+
     </nav>
 
     <!-- Hero Section -->
@@ -63,53 +67,13 @@
                     </p>
 
                     <div class="mt-4">
-                        <a th:href="@{/ordenar}" class="btn btn-ordenar btn-lg me-3">Ordenar Ahora</a>
+                        <a href="#productos" class="btn btn-ordenar btn-lg me-3">Ordenar Ahora</a>
                         <a th:href="@{/registro}" class="btn btn-crear btn-lg">Crear Cuenta</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Contenido de tarjetas -->
-    <!--<section class="container my-5 py-5">
-        <div class="row text-center">
-            <div class="col-12">
-                <h2>Desplázate hacia abajo</h2>
-                <p>Observa cómo el navbar cambia de transparente a blanco</p>
-            </div>
-        </div>
-        <div class="row mt-5">
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body text-center">
-                        <i class="fas fa-drumstick-bite fa-3x text-danger mb-3"></i>
-                        <h5>Pollo a la Brasa</h5>
-                        <p>El auténtico sabor peruano</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body text-center">
-                        <i class="fas fa-fire fa-3x text-danger mb-3"></i>
-                        <h5>Parrillas</h5>
-                        <p>Las mejores parrillas</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body text-center">
-                        <i class="fas fa-beer fa-3x text-danger mb-3"></i>
-                        <h5>Bebidas</h5>
-                        <p>Variedad de bebidas</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>-->
-
 
     <section id="productos" class="container my-5 py-5 menu-container">
         <div class="text-center mb-5">
@@ -147,9 +111,18 @@
 
                     <p class="card-desc" th:text="${p.descripcion}">Descripción del producto...</p>
 
-                    <button class="btn-agregar" th:data-nombre="${p.nombre}" th:data-precio="${p.precio}"
+                    <!--antes de cambio 2-->
+                    <!-- <button class="btn-agregar" th:data-nombre="${p.nombre}" th:data-precio="${p.precio}"
+                
                         th:data-img="${'/' + p.imagenUrl}"
                         onclick="agregarAlCarrito(this.getAttribute('data-nombre'), this.getAttribute('data-precio'), this.getAttribute('data-img'))">
+                        🛒 Agregar al carrito
+                    </button> -->
+
+                    <!--cambio 2-->
+                    <button class="btn-agregar" th:data-id="${p.id}" th:data-nombre="${p.nombre}"
+                        th:data-precio="${p.precio}" th:data-img="${'/' + p.imagenUrl}"
+                        onclick="agregarAlCarrito(this.getAttribute('data-id'), this.getAttribute('data-nombre'), this.getAttribute('data-precio'), this.getAttribute('data-img'))">
                         🛒 Agregar al carrito
                     </button>
                 </div>
@@ -449,40 +422,156 @@
     <script th:src="@{/js/scroll.js}"></script>
     <script th:src="@{/js/inicio.js}"></script>
     <script th:src="@{/js/carrito.js}"></script>
+
+    <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content"
+                style="background-color: #ffffff !important; border-radius: 12px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+
+                <div class="modal-header" style="border-bottom: none; padding-top: 20px; padding-bottom: 0;">
+                    <h5 class="modal-title fw-bold" id="modalCerrarSesionLabel" style="color: #dc3545;">
+                        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body text-center" style="padding: 25px 30px;">
+                    <p style="font-size: 1.15rem; color: #444444; margin-bottom: 0;">
+                        ¿Estás seguro de que deseas salir de tu cuenta?
+                    </p>
+                </div>
+
+                <div class="modal-footer"
+                    style="border-top: none; display: flex; justify-content: center; padding-bottom: 30px;">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"
+                        style="padding: 10px 30px; margin-right: 15px; font-weight: 500;">
+                        Cancelar
+                    </button>
+                    <a th:href="@{/logout}" class="btn btn-danger" style="padding: 10px 30px; font-weight: bold;">
+                        Sí, salir
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <button class="btn-carrito-flotante" onclick="abrirCarrito()">
+        🛒 <span id="carrito-cantidad" class="badge bg-danger rounded-pill">0</span>
+    </button>
+
 </body>
 
-<button class="btn-carrito-flotante" onclick="abrirCarrito()">
-    🛒 <span id="carrito-cantidad" class="badge bg-danger rounded-pill">0</span>
-</button>
+
 
 <div id="carrito-sidebar" class="carrito-sidebar">
+
     <div class="carrito-header">
-        <h3 class="m-0 text-danger fw-bold"><i class="fas fa-shopping-cart"></i> Tu Carrito</h3>
+        <h3 id="sidebar-title" class="m-0 text-danger fw-bold">
+            <i class="fas fa-shopping-cart"></i> Tu Carrito
+        </h3>
         <button class="btn-close" onclick="cerrarCarrito()"></button>
     </div>
 
-    <div id="lista-carrito" class="carrito-body">
-        <div class="text-center text-muted mt-5">Tu carrito está vacío</div>
+    <div id="vista-carrito" style="display: flex; flex-direction: column; height: 100%;">
+        <div id="lista-carrito" class="carrito-body">
+            <div class="text-center text-muted mt-5">Tu carrito está vacío</div>
+        </div>
+
+        <div class="carrito-footer">
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Subtotal</span>
+                <span id="subtotal" class="fw-bold">S/ 0.00</span>
+            </div>
+            <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                <span class="text-muted">Delivery</span>
+                <span>S/ 5.00</span>
+            </div>
+            <div class="d-flex justify-content-between mb-3">
+                <span class="fs-5 fw-bold text-danger">Total</span>
+                <span id="total" class="fs-5 fw-bold text-danger">S/ 0.00</span>
+            </div>
+            <button class="btn btn-danger w-100 fw-bold py-2" onclick="abrirCheckout()">
+                Continuar compra
+            </button>
+            <button class="btn btn-link w-100 text-muted mt-2 text-decoration-none" onclick="vaciarCarrito()">Vaciar
+                carrito</button>
+        </div>
     </div>
 
-    <div class="carrito-footer">
-        <div class="d-flex justify-content-between mb-2">
-            <span class="text-muted">Subtotal</span>
-            <span id="subtotal" class="fw-bold">S/ 0.00</span>
+    <div id="vista-checkout" style="display: none; flex-direction: column; height: 100%;">
+        <div class="carrito-body">
+            <button class="btn btn-link text-muted text-decoration-none p-0 mb-4 text-start"
+                onclick="volverAlCarrito()">
+                <i class="fas fa-arrow-left me-2"></i> Volver al carrito
+            </button>
+
+            <form id="form-pedido">
+                <input type="text" id="cli-nombre" class="form-control mb-3 custom-input" placeholder="Nombre completo"
+                    required>
+                <input type="tel" id="cli-telefono" class="form-control mb-3 custom-input" placeholder="Teléfono"
+                    required>
+                <input type="text" id="cli-direccion" class="form-control mb-4 custom-input"
+                    placeholder="Dirección de entrega" required>
+
+                <h6 class="fw-bold mb-3">Método de pago</h6>
+                <div class="d-flex gap-2 mb-4">
+                    <button type="button" class="btn btn-metodo-pago active w-50" data-metodo="Contraentrega"
+                        onclick="seleccionarMetodo(this)">
+                        <i class="fas fa-truck"></i> Contraentrega
+                    </button>
+                    <button type="button" class="btn btn-metodo-pago w-50" data-metodo="Yape"
+                        onclick="seleccionarMetodo(this)">
+                        <i class="fas fa-mobile-alt"></i> Yape
+                    </button>
+                </div>
+            </form>
         </div>
-        <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
-            <span class="text-muted">Delivery</span>
-            <span>S/ 5.00</span>
+
+        <div class="carrito-footer">
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Subtotal</span>
+                <span id="checkout-subtotal" class="fw-bold">S/ 0.00</span>
+            </div>
+            <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                <span class="text-muted">Delivery</span>
+                <span>S/ 5.00</span>
+            </div>
+            <div class="d-flex justify-content-between mb-3">
+                <span class="fs-5 fw-bold text-danger">Total</span>
+                <span id="checkout-total" class="fs-5 fw-bold text-danger">S/ 0.00</span>
+            </div>
+
+            <button class="btn btn-danger w-100 fw-bold py-2" onclick="confirmarPedido()">
+                <i class="fas fa-check me-2"></i> Confirmar pedido
+            </button>
+
+
         </div>
-        <div class="d-flex justify-content-between mb-3">
-            <span class="fs-5 fw-bold text-danger">Total</span>
-            <span id="total" class="fs-5 fw-bold text-danger">S/ 0.00</span>
-        </div>
-        <button class="btn btn-danger w-100 fw-bold py-2" onclick="abrirModalCheckout()">
-            <i class="fas fa-check-circle"></i> Continuar compra
-        </button>
-        <button class="btn btn-link w-100 text-muted mt-2" onclick="vaciarCarrito()">Vaciar carrito</button>
     </div>
-</div>
+    <div id="vista-exito"
+        style="display: none; flex-direction: column; height: 100%; justify-content: center; align-items: center; padding: 40px 20px; text-align: center; background-color: #fcfbf7;">
+
+        <div
+            style="width: 85px; height: 85px; background-color: #fbeadd; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 25px;">
+            <i class="fas fa-check-double" style="font-size: 2.2rem; color: #d9534f;"></i>
+        </div>
+
+        <h2 class="fw-bold mb-3"
+            style="color: #222; font-family: 'Georgia', 'Times New Roman', serif; font-size: 1.8rem;">
+            ¡Pedido confirmado!
+        </h2>
+
+        <p style="color: #6c757d; font-size: 0.95rem; line-height: 1.6; max-width: 280px;">
+            Gracias por elegir DonVictor. Te contactaremos pronto para confirmar tu pedido.
+        </p>
+
+        <button class="btn btn-outline-secondary w-100 fw-bold py-2" style="margin-top: auto;"
+            onclick="cerrarVistaExito()">
+            Volver al inicio
+        </button>
+    </div>
+
+</div> 
 
 </html>
