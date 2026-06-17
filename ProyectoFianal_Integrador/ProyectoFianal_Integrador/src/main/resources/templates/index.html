@@ -111,15 +111,7 @@
 
                     <p class="card-desc" th:text="${p.descripcion}">Descripción del producto...</p>
 
-                    <!--antes de cambio 2-->
-                    <!-- <button class="btn-agregar" th:data-nombre="${p.nombre}" th:data-precio="${p.precio}"
-                
-                        th:data-img="${'/' + p.imagenUrl}"
-                        onclick="agregarAlCarrito(this.getAttribute('data-nombre'), this.getAttribute('data-precio'), this.getAttribute('data-img'))">
-                        🛒 Agregar al carrito
-                    </button> -->
 
-                    <!--cambio 2-->
                     <button class="btn-agregar" th:data-id="${p.id}" th:data-nombre="${p.nombre}"
                         th:data-precio="${p.precio}" th:data-img="${'/' + p.imagenUrl}"
                         onclick="agregarAlCarrito(this.getAttribute('data-id'), this.getAttribute('data-nombre'), this.getAttribute('data-precio'), this.getAttribute('data-img'))">
