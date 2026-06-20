@@ -15,6 +15,8 @@ Aplicación web desarrollada con Spring Boot y Thymeleaf que provee registro y a
 - MySQL (como ejemplo de base de datos relacional)
 - HTML, CSS y JavaScript para frontend estático
 
+## login correo y contraseña de usuarios
+- correo: juan@gmail.com  pass: 123456
 ## Funcionalidades principales
 
 - Registro y login de usuarios.

@@ -1,6 +1,5 @@
 package com.example.ProyectoFianal_Integrador.entity;
 
-
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -21,7 +20,7 @@ public class Usuario {
     @Column(nullable = false)
     private String telefono;
     
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)  // ← CAMBIA A 255 para contraseña encriptada
     private String password;
     
     @Column(name = "fecha_registro")

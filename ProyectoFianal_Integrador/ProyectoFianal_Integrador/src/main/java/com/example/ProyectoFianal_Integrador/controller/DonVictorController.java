@@ -1,10 +1,12 @@
 package com.example.ProyectoFianal_Integrador.controller;
 
+
 import com.example.ProyectoFianal_Integrador.entity.Contacto;
 import com.example.ProyectoFianal_Integrador.entity.Usuario;
 import com.example.ProyectoFianal_Integrador.repository.ContactoRepository;
 import com.example.ProyectoFianal_Integrador.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.security.crypto.password.PasswordEncoder;  // ← IMPORTAR
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,13 +19,17 @@ import java.time.LocalDateTime;
 @Controller
 public class DonVictorController {
 
-   private final UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
     private final ContactoRepository contactoRepository;
+    private final PasswordEncoder passwordEncoder;  // ← NUEVO
 
+    // Constructor actualizado
     public DonVictorController(UsuarioRepository usuarioRepository,
-                               ContactoRepository contactoRepository) {
+                               ContactoRepository contactoRepository,
+                               PasswordEncoder passwordEncoder) {  // ← NUEVO
         this.usuarioRepository = usuarioRepository;
         this.contactoRepository = contactoRepository;
+        this.passwordEncoder = passwordEncoder;  // ← NUEVO
     }
 
     @GetMapping("/")
@@ -61,7 +67,8 @@ public class DonVictorController {
         nuevoUsuario.setNombre(nombre);
         nuevoUsuario.setEmail(email);
         nuevoUsuario.setTelefono(telefono);
-        nuevoUsuario.setPassword(password);
+        // 🔐 ENCRIPTAR CONTRASEÑA
+        nuevoUsuario.setPassword(passwordEncoder.encode(password));
         nuevoUsuario.setFechaRegistro(LocalDateTime.now());
         
         usuarioRepository.save(nuevoUsuario);
@@ -77,7 +84,8 @@ public class DonVictorController {
         
         Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
         
-        if (usuario != null && usuario.getPassword().equals(password)) {
+        // 🔐 VERIFICAR CONTRASEÑA ENCRIPTADA
+        if (usuario != null && passwordEncoder.matches(password, usuario.getPassword())) {
             session.setAttribute("usuario", usuario);
             return "redirect:/";
         } else {
@@ -92,7 +100,6 @@ public class DonVictorController {
         return "redirect:/";
     }
     
-    // ========== NUEVO: PROCESAR CONTACTO ==========
     @PostMapping("/procesarContacto")
     public String procesarContacto(@RequestParam String nombre,
                                    @RequestParam String email,
@@ -105,15 +112,13 @@ public class DonVictorController {
         contacto.setEmail(email);
         contacto.setTelefono(telefono);
         contacto.setMensaje(mensaje);
-        // fechaEnvio se asigna automáticamente en el constructor de Contacto
         
         contactoRepository.save(contacto);
         
         redirectAttributes.addAttribute("exito", true);
-        return "redirect:/#contactos";  // Vuelve a la sección contactos
+        return "redirect:/#contactos";
     }
     
-    // ========== MÉTODOS PARA PÁGINAS (si aún los usas) ==========
     @GetMapping("/productos")
     public String productos() { return "productos"; }
     
