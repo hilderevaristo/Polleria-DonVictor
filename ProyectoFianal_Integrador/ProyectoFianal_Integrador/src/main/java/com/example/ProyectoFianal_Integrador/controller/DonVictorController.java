@@ -5,7 +5,6 @@ import com.example.ProyectoFianal_Integrador.entity.Usuario;
 import com.example.ProyectoFianal_Integrador.repository.ContactoRepository;
 import com.example.ProyectoFianal_Integrador.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,11 +17,14 @@ import java.time.LocalDateTime;
 @Controller
 public class DonVictorController {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-    
-    @Autowired
-    private ContactoRepository contactoRepository;  // ← NUEVO: repositorio de contactos
+   private final UsuarioRepository usuarioRepository;
+    private final ContactoRepository contactoRepository;
+
+    public DonVictorController(UsuarioRepository usuarioRepository,
+                               ContactoRepository contactoRepository) {
+        this.usuarioRepository = usuarioRepository;
+        this.contactoRepository = contactoRepository;
+    }
 
     @GetMapping("/")
     public String index(HttpSession session, Model model) {
