@@ -1,4 +1,5 @@
 package com.example.ProyectoFianal_Integrador.controller;
+
 import com.example.ProyectoFianal_Integrador.entity.Producto;
 import com.example.ProyectoFianal_Integrador.repository.ProductoRepository;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.example.ProyectoFianal_Integrador.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,10 +28,14 @@ public class DonVictorController {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private ContactoRepository contactoRepository; // ← NUEVO: repositorio de contactos
+    private ContactoRepository contactoRepository;
     
     @Autowired
     private ProductoRepository productoRepository;
+
+    // --- DE TU COMPAÑERO: Herramienta de seguridad ---
+    @Autowired
+    private PasswordEncoder passwordEncoder; 
 
     @GetMapping("/")
     public String index(HttpSession session, Model model) {
@@ -65,20 +71,17 @@ public class DonVictorController {
             return "registro";
         }
 
-        // --- USO DE APACHE COMMONS AQUÍ ---
-        // 1. normalizeSpace: Quita espacios dobles ("juan perez" -> "juan perez")
-        // 2. capitalize: Pone la primera letra en mayúscula ("juan perez" -> "Juan
-        // perez")
+        // --- TUYO: Limpieza de datos ---
         String nombreLimpio = StringUtils.capitalize(StringUtils.normalizeSpace(nombre));
-
-        // guava
         String telefonoLimpio = CharMatcher.inRange('0', '9').retainFrom(telefono);
 
         Usuario nuevoUsuario = new Usuario();
         nuevoUsuario.setNombre(nombreLimpio);
         nuevoUsuario.setEmail(email);
-        nuevoUsuario.setTelefono(telefonoLimpio); // Guardamos la versión limpia
-        nuevoUsuario.setPassword(password);
+        nuevoUsuario.setTelefono(telefonoLimpio); 
+        
+        // --- DE TU COMPAÑERO: Encriptar contraseña ---
+        nuevoUsuario.setPassword(passwordEncoder.encode(password));
         nuevoUsuario.setFechaRegistro(LocalDateTime.now());
 
         usuarioRepository.save(nuevoUsuario);
@@ -94,7 +97,8 @@ public class DonVictorController {
 
         Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
 
-        if (usuario != null && usuario.getPassword().equals(password)) {
+        // --- DE TU COMPAÑERO: Verificar contraseña encriptada ---
+        if (usuario != null && passwordEncoder.matches(password, usuario.getPassword())) {
             session.setAttribute("usuario", usuario);
             return "redirect:/";
         } else {
@@ -109,7 +113,6 @@ public class DonVictorController {
         return "redirect:/";
     }
 
-    // ========== NUEVO: PROCESAR CONTACTO ==========
     @PostMapping("/procesarContacto")
     public String procesarContacto(@RequestParam String nombre,
             @RequestParam String email,
@@ -119,15 +122,13 @@ public class DonVictorController {
 
         Contacto contacto = new Contacto();
 
-        // --- APACHE COMMONS: Limpiamos el nombre ("maria gomez" -> "Maria gomez")
+        // --- TUYO: Limpieza de nombre ---
         String nombreLimpio = StringUtils.capitalize(StringUtils.normalizeSpace(nombre));
         contacto.setNombre(nombreLimpio);
-
         contacto.setEmail(email);
-
         contacto.setMensaje(mensaje);
         
-        // fechaEnvio se asigna automáticamente en el constructor de Contacto
+        // --- TUYO: Limpieza de teléfono ---
         if (telefono != null && !telefono.trim().isEmpty()) {
             String telefonoLimpio = CharMatcher.inRange('0', '9').retainFrom(telefono);
             contacto.setTelefono(telefonoLimpio);
@@ -137,15 +138,13 @@ public class DonVictorController {
         contactoRepository.save(contacto);
 
         redirectAttributes.addAttribute("exito", true);
-        return "redirect:/#contactos"; // Vuelve a la sección contactos
+        return "redirect:/#contactos"; 
     }
 
-    // ========== MÉTODOS PARA PÁGINAS (si aún los usas) ==========
     @GetMapping("/productos")
     public String productos(Model model) {
         List<Producto> listaProductos = productoRepository.findAll();
         model.addAttribute("productos", listaProductos);
-
         return "productos";
     }
 
