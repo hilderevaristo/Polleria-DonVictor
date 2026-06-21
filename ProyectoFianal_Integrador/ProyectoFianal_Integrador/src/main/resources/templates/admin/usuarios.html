@@ -128,8 +128,9 @@
                                 </td>
                                 <td th:text="${user.email}">maria@email.com</td>
                                 <td th:text="${user.telefono}">987654321</td>
-                                <td th:text="${user.fechaRegistro != null ? user.fechaRegistro : 'Sin fecha'}">
-                                    15/04/2026</td>
+                                <td
+                                    th:text="${user.fechaRegistro != null ? #temporals.format(user.fechaRegistro, 'dd/MM/yyyy') : 'Sin fecha'}">
+                                    20/06/2026</td>
                                 <td class="text-center">
                                     <form th:action="@{/admin/eliminarUsuario}" method="post"
                                         onsubmit="return confirm('¿Estás seguro de eliminar a este usuario?')">
