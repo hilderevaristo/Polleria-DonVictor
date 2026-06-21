@@ -17,6 +17,8 @@ Aplicación web desarrollada con Spring Boot y Thymeleaf que provee registro y a
 
 ## login correo y contraseña de usuarios
 - correo: juan@gmail.com  pass: 123456
+## credenciales de administrador
+-correo: admin@donvictor.com  pass: admin123
 ## Funcionalidades principales
 
 - Registro y login de usuarios.

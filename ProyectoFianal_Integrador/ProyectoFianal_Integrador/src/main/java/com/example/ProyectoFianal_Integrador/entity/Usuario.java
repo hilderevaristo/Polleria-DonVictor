@@ -1,5 +1,6 @@
 package com.example.ProyectoFianal_Integrador.entity;
 
+
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -20,8 +21,11 @@ public class Usuario {
     @Column(nullable = false)
     private String telefono;
     
-    @Column(nullable = false, length = 255)  // ← CAMBIA A 255 para contraseña encriptada
+    @Column(nullable = false, length = 255)
     private String password;
+    
+    @Column(name = "rol")
+    private String rol = "USER";  // ← NUEVO: USER o ADMIN
     
     @Column(name = "fecha_registro")
     private LocalDateTime fechaRegistro;
@@ -34,6 +38,7 @@ public class Usuario {
         this.email = email;
         this.telefono = telefono;
         this.password = password;
+        this.rol = "USER";
         this.fechaRegistro = LocalDateTime.now();
     }
     
@@ -52,6 +57,9 @@ public class Usuario {
     
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+    
+    public String getRol() { return rol; }
+    public void setRol(String rol) { this.rol = rol; }
     
     public LocalDateTime getFechaRegistro() { return fechaRegistro; }
     public void setFechaRegistro(LocalDateTime fechaRegistro) { this.fechaRegistro = fechaRegistro; }

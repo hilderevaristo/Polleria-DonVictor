@@ -1,16 +1,185 @@
 package com.example.ProyectoFianal_Integrador.controller;
 
-import com.example.ProyectoFianal_Integrador.entity.Producto;
-import com.example.ProyectoFianal_Integrador.repository.ProductoRepository;
-import java.util.List;
 import com.example.ProyectoFianal_Integrador.entity.Contacto;
 import com.example.ProyectoFianal_Integrador.entity.Usuario;
 import com.example.ProyectoFianal_Integrador.repository.ContactoRepository;
-import com.google.common.base.CharMatcher;
-import org.apache.commons.lang3.StringUtils;
+import com.example.ProyectoFianal_Integrador.repository.ProductoRepository;
 import com.example.ProyectoFianal_Integrador.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDateTime;
+
+@Controller
+public class DonVictorController {
+
+    private final UsuarioRepository usuarioRepository;
+    private final ContactoRepository contactoRepository;
+    private final ProductoRepository productoRepository;
+
+    public DonVictorController(UsuarioRepository usuarioRepository,
+                               ContactoRepository contactoRepository,
+                               ProductoRepository productoRepository) {
+        this.usuarioRepository = usuarioRepository;
+        this.contactoRepository = contactoRepository;
+        this.productoRepository = productoRepository;
+    }
+
+      @GetMapping("/")
+public String index(HttpSession session, Model model) {
+
+    model.addAttribute("productos", productoRepository.findAll());
+
+    Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+    if (usuario != null) {
+        model.addAttribute("usuarioNombre", usuario.getNombre());
+        model.addAttribute("usuarioRol", usuario.getRol());
+    }
+
+    return "index";
+}
+
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
+    @GetMapping("/registro")
+    public String registro() {
+        return "registro";
+    }
+
+    @PostMapping("/procesarRegistro")
+    public String procesarRegistro(@RequestParam String nombre,
+                                   @RequestParam String email,
+                                   @RequestParam String telefono,
+                                   @RequestParam String password,
+                                   Model model) {
+        
+        if (usuarioRepository.existsByEmail(email)) {
+            model.addAttribute("error", "El correo ya está registrado");
+            return "registro";
+        }
+        
+        Usuario nuevoUsuario = new Usuario();
+        nuevoUsuario.setNombre(nombre);
+        nuevoUsuario.setEmail(email);
+        nuevoUsuario.setTelefono(telefono);
+        nuevoUsuario.setPassword(password);  // ✅ SIN ENCRIPTAR
+        nuevoUsuario.setRol("USER");
+        nuevoUsuario.setFechaRegistro(LocalDateTime.now());
+        
+        usuarioRepository.save(nuevoUsuario);
+        
+        return "redirect:/login?registroExitoso=true";
+    }
+    
+    @PostMapping("/procesarLogin")
+    public String procesarLogin(@RequestParam String email,
+                                @RequestParam String password,
+                                HttpSession session,
+                                Model model) {
+        
+        System.out.println("=== LOGIN ===");
+        System.out.println("Email: " + email);
+        System.out.println("Password: " + password);
+        
+        Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
+        
+        if (usuario == null) {
+            System.out.println("❌ Usuario NO existe");
+            model.addAttribute("error", "Correo o contraseña incorrectos");
+            return "login";
+        }
+        
+        System.out.println("✅ Usuario: " + usuario.getNombre());
+        System.out.println("Rol: " + usuario.getRol());
+        System.out.println("Password en BD: " + usuario.getPassword());
+        
+        // ✅ COMPARACIÓN DIRECTA (sin encriptación)
+        if (usuario.getPassword().equals(password)) {
+            System.out.println("✅ Contraseña correcta");
+            session.setAttribute("usuario", usuario);
+            
+            if ("ADMIN".equals(usuario.getRol())) {
+                System.out.println("🔐 Admin → dashboard");
+                return "redirect:/admin/dashboard";
+            }
+            System.out.println("🏠 Usuario → index");
+            return "redirect:/";
+        } else {
+            System.out.println("❌ Contraseña incorrecta");
+            model.addAttribute("error", "Correo o contraseña incorrectos");
+            return "login";
+        }
+    }
+    
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/";
+    }
+    
+    @PostMapping("/procesarContacto")
+    public String procesarContacto(@RequestParam String nombre,
+                                   @RequestParam String email,
+                                   @RequestParam(required = false) String telefono,
+                                   @RequestParam String mensaje,
+                                   RedirectAttributes redirectAttributes) {
+        
+        Contacto contacto = new Contacto();
+        contacto.setNombre(nombre);
+        contacto.setEmail(email);
+        contacto.setTelefono(telefono);
+        contacto.setMensaje(mensaje);
+        
+        contactoRepository.save(contacto);
+        
+        redirectAttributes.addAttribute("exito", true);
+        return "redirect:/#contactos";
+    }
+    
+    @GetMapping("/admin/dashboard")
+    public String adminDashboard(HttpSession session, Model model) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        
+        System.out.println("=== DASHBOARD ===");
+        System.out.println("Usuario en sesión: " + usuario);
+        
+        if (usuario == null) {
+            System.out.println("❌ No hay usuario en sesión");
+            return "redirect:/login";
+        }
+        
+        if (!"ADMIN".equals(usuario.getRol())) {
+            System.out.println("❌ No es ADMIN");
+            return "redirect:/";
+        }
+        
+        System.out.println("✅ Admin autorizado");
+        
+        model.addAttribute("totalProductos", 12);
+        model.addAttribute("totalUsuarios", 8);
+        model.addAttribute("totalOrdenes", 12);
+        model.addAttribute("totalIngresos", 1294.00);
+        model.addAttribute("adminNombre", usuario.getNombre());
+        
+        return "admin/dashboard";
+    }
+}
+ /* 
+   import com.example.ProyectoFianal_Integrador.entity.Contacto;
+import com.example.ProyectoFianal_Integrador.entity.Usuario;
+import com.example.ProyectoFianal_Integrador.repository.ContactoRepository;
+import com.example.ProyectoFianal_Integrador.repository.ProductoRepository;
+import com.example.ProyectoFianal_Integrador.repository.UsuarioRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,28 +193,30 @@ import java.time.LocalDateTime;
 @Controller
 public class DonVictorController {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final ContactoRepository contactoRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final ProductoRepository productoRepository;
 
-    @Autowired
-    private ContactoRepository contactoRepository;
-    
-    @Autowired
-    private ProductoRepository productoRepository;
-
-    // --- DE TU COMPAÑERO: Herramienta de seguridad ---
-    @Autowired
-    private PasswordEncoder passwordEncoder; 
+    public DonVictorController(UsuarioRepository usuarioRepository,
+                               ContactoRepository contactoRepository,
+                               PasswordEncoder passwordEncoder,
+                               ProductoRepository productoRepository) {
+        this.usuarioRepository = usuarioRepository;
+        this.contactoRepository = contactoRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.productoRepository = productoRepository;
+    }
 
     @GetMapping("/")
     public String index(HttpSession session, Model model) {
+        model.addAttribute("productos", productoRepository.findAll());
+
         Usuario usuario = (Usuario) session.getAttribute("usuario");
         if (usuario != null) {
             model.addAttribute("usuarioNombre", usuario.getNombre());
+            model.addAttribute("usuarioRol", usuario.getRol());
         }
-
-        List<Producto> listaProductos = productoRepository.findAll();
-        model.addAttribute("productos", listaProductos);
         return "index";
     }
 
@@ -61,45 +232,48 @@ public class DonVictorController {
 
     @PostMapping("/procesarRegistro")
     public String procesarRegistro(@RequestParam String nombre,
-            @RequestParam String email,
-            @RequestParam String telefono,
-            @RequestParam String password,
-            Model model) {
-
+                                   @RequestParam String email,
+                                   @RequestParam String telefono,
+                                   @RequestParam String password,
+                                   Model model) {
+        
         if (usuarioRepository.existsByEmail(email)) {
             model.addAttribute("error", "El correo ya está registrado");
             return "registro";
         }
-
-        // --- TUYO: Limpieza de datos ---
-        String nombreLimpio = StringUtils.capitalize(StringUtils.normalizeSpace(nombre));
-        String telefonoLimpio = CharMatcher.inRange('0', '9').retainFrom(telefono);
-
-        Usuario nuevoUsuario = new Usuario();
-        nuevoUsuario.setNombre(nombreLimpio);
-        nuevoUsuario.setEmail(email);
-        nuevoUsuario.setTelefono(telefonoLimpio); 
         
-        // --- DE TU COMPAÑERO: Encriptar contraseña ---
+        Usuario nuevoUsuario = new Usuario();
+        nuevoUsuario.setNombre(nombre);
+        nuevoUsuario.setEmail(email);
+        nuevoUsuario.setTelefono(telefono);
         nuevoUsuario.setPassword(passwordEncoder.encode(password));
+        nuevoUsuario.setRol("USER");
         nuevoUsuario.setFechaRegistro(LocalDateTime.now());
-
+        
         usuarioRepository.save(nuevoUsuario);
-
+        
         return "redirect:/login?registroExitoso=true";
     }
 
     @PostMapping("/procesarLogin")
     public String procesarLogin(@RequestParam String email,
-            @RequestParam String password,
-            HttpSession session,
-            Model model) {
-
+                                @RequestParam String password,
+                                HttpSession session,
+                                Model model) {
+        
         Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
-
-        // --- DE TU COMPAÑERO: Verificar contraseña encriptada ---
-        if (usuario != null && passwordEncoder.matches(password, usuario.getPassword())) {
+        
+        if (usuario == null) {
+            model.addAttribute("error", "Correo o contraseña incorrectos");
+            return "login";
+        }
+        
+        if (passwordEncoder.matches(password, usuario.getPassword())) {
             session.setAttribute("usuario", usuario);
+            
+            if ("ADMIN".equals(usuario.getRol())) {
+                return "redirect:/admin/dashboard";
+            }
             return "redirect:/";
         } else {
             model.addAttribute("error", "Correo o contraseña incorrectos");
@@ -115,51 +289,42 @@ public class DonVictorController {
 
     @PostMapping("/procesarContacto")
     public String procesarContacto(@RequestParam String nombre,
-            @RequestParam String email,
-            @RequestParam(required = false) String telefono,
-            @RequestParam String mensaje,
-            RedirectAttributes redirectAttributes) {
-
+                                   @RequestParam String email,
+                                   @RequestParam(required = false) String telefono,
+                                   @RequestParam String mensaje,
+                                   RedirectAttributes redirectAttributes) {
+        
         Contacto contacto = new Contacto();
-
-        // --- TUYO: Limpieza de nombre ---
-        String nombreLimpio = StringUtils.capitalize(StringUtils.normalizeSpace(nombre));
-        contacto.setNombre(nombreLimpio);
+        contacto.setNombre(nombre);
         contacto.setEmail(email);
+        contacto.setTelefono(telefono);
         contacto.setMensaje(mensaje);
         
-        // --- TUYO: Limpieza de teléfono ---
-        if (telefono != null && !telefono.trim().isEmpty()) {
-            String telefonoLimpio = CharMatcher.inRange('0', '9').retainFrom(telefono);
-            contacto.setTelefono(telefonoLimpio);
-        } else {
-            contacto.setTelefono(null);
-        }
         contactoRepository.save(contacto);
-
+        
         redirectAttributes.addAttribute("exito", true);
-        return "redirect:/#contactos"; 
+        return "redirect:/#contactos";
     }
 
-    @GetMapping("/productos")
-    public String productos(Model model) {
-        List<Producto> listaProductos = productoRepository.findAll();
-        model.addAttribute("productos", listaProductos);
-        return "productos";
-    }
-
-    @GetMapping("/promociones")
-    public String promociones() {
-        return "promociones";
-    }
-
-    @GetMapping("/nosotros")
-    public String nosotros() {
-        return "nosotros";
-    }
-
-    @GetMapping("/contactos")
-    public String contactos() {
-        return "contactos";
+    @GetMapping("/admin/dashboard")
+    public String adminDashboard(HttpSession session, Model model) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        
+        if (usuario == null) {
+            return "redirect:/login";
+        }
+        
+        if (!"ADMIN".equals(usuario.getRol())) {
+            return "redirect:/";
+        }
+        
+        model.addAttribute("totalProductos", 12);
+        model.addAttribute("totalUsuarios", 8);
+        model.addAttribute("totalOrdenes", 12);
+        model.addAttribute("totalIngresos", 1294.00);
+        model.addAttribute("adminNombre", usuario.getNombre());
+        
+        return "admin/dashboard";
     }
 }
+*/
