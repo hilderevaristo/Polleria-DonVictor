@@ -1,16 +1,10 @@
 package com.example.ProyectoFianal_Integrador.controller;
 
-import com.example.ProyectoFianal_Integrador.entity.Producto;
-import com.example.ProyectoFianal_Integrador.repository.ProductoRepository;
-import java.util.List;
 import com.example.ProyectoFianal_Integrador.entity.Contacto;
 import com.example.ProyectoFianal_Integrador.entity.Usuario;
 import com.example.ProyectoFianal_Integrador.repository.ContactoRepository;
-import com.google.common.base.CharMatcher;
-import org.apache.commons.lang3.StringUtils;
 import com.example.ProyectoFianal_Integrador.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,28 +18,25 @@ import java.time.LocalDateTime;
 @Controller
 public class DonVictorController {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final ContactoRepository contactoRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private ContactoRepository contactoRepository;
-    
-    @Autowired
-    private ProductoRepository productoRepository;
-
-    // --- DE TU COMPAÑERO: Herramienta de seguridad ---
-    @Autowired
-    private PasswordEncoder passwordEncoder; 
+    public DonVictorController(UsuarioRepository usuarioRepository,
+            ContactoRepository contactoRepository,
+            PasswordEncoder passwordEncoder) {
+        this.usuarioRepository = usuarioRepository;
+        this.contactoRepository = contactoRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @GetMapping("/")
     public String index(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
         if (usuario != null) {
             model.addAttribute("usuarioNombre", usuario.getNombre());
+            model.addAttribute("usuarioRol", usuario.getRol());
         }
-
-        List<Producto> listaProductos = productoRepository.findAll();
-        model.addAttribute("productos", listaProductos);
         return "index";
     }
 
@@ -71,17 +62,12 @@ public class DonVictorController {
             return "registro";
         }
 
-        // --- TUYO: Limpieza de datos ---
-        String nombreLimpio = StringUtils.capitalize(StringUtils.normalizeSpace(nombre));
-        String telefonoLimpio = CharMatcher.inRange('0', '9').retainFrom(telefono);
-
         Usuario nuevoUsuario = new Usuario();
-        nuevoUsuario.setNombre(nombreLimpio);
+        nuevoUsuario.setNombre(nombre);
         nuevoUsuario.setEmail(email);
-        nuevoUsuario.setTelefono(telefonoLimpio); 
-        
-        // --- DE TU COMPAÑERO: Encriptar contraseña ---
+        nuevoUsuario.setTelefono(telefono);
         nuevoUsuario.setPassword(passwordEncoder.encode(password));
+        nuevoUsuario.setRol("USER");
         nuevoUsuario.setFechaRegistro(LocalDateTime.now());
 
         usuarioRepository.save(nuevoUsuario);
@@ -95,16 +81,30 @@ public class DonVictorController {
             HttpSession session,
             Model model) {
 
+        System.out.println("Email recibido: " + email);
+        System.out.println("Password recibido: " + password);
+
         Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
 
-        // --- DE TU COMPAÑERO: Verificar contraseña encriptada ---
-        if (usuario != null && passwordEncoder.matches(password, usuario.getPassword())) {
-            session.setAttribute("usuario", usuario);
-            return "redirect:/";
-        } else {
+        if (usuario == null) {
+            System.out.println("❌ Usuario no encontrado");
             model.addAttribute("error", "Correo o contraseña incorrectos");
             return "login";
         }
+
+        System.out.println("✅ Usuario encontrado: " + usuario.getNombre());
+
+        // Si usas encriptación:
+        if (passwordEncoder.matches(password, usuario.getPassword())) {
+            session.setAttribute("usuario", usuario);
+            if ("ADMIN".equals(usuario.getRol())) {
+                return "redirect:/admin/dashboard";
+            }
+            return "redirect:/";
+        }
+
+        model.addAttribute("error", "Correo o contraseña incorrectos");
+        return "login";
     }
 
     @GetMapping("/logout")
@@ -121,45 +121,32 @@ public class DonVictorController {
             RedirectAttributes redirectAttributes) {
 
         Contacto contacto = new Contacto();
-
-        // --- TUYO: Limpieza de nombre ---
-        String nombreLimpio = StringUtils.capitalize(StringUtils.normalizeSpace(nombre));
-        contacto.setNombre(nombreLimpio);
+        contacto.setNombre(nombre);
         contacto.setEmail(email);
+        contacto.setTelefono(telefono);
         contacto.setMensaje(mensaje);
-        
-        // --- TUYO: Limpieza de teléfono ---
-        if (telefono != null && !telefono.trim().isEmpty()) {
-            String telefonoLimpio = CharMatcher.inRange('0', '9').retainFrom(telefono);
-            contacto.setTelefono(telefonoLimpio);
-        } else {
-            contacto.setTelefono(null);
-        }
+
         contactoRepository.save(contacto);
 
         redirectAttributes.addAttribute("exito", true);
-        return "redirect:/#contactos"; 
+        return "redirect:/#contactos";
     }
 
-    @GetMapping("/productos")
-    public String productos(Model model) {
-        List<Producto> listaProductos = productoRepository.findAll();
-        model.addAttribute("productos", listaProductos);
-        return "productos";
-    }
+    // ========== ADMIN PANEL ==========
+    @GetMapping("/admin/dashboard")
+    public String adminDashboard(HttpSession session, Model model) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        if (usuario == null || !"ADMIN".equals(usuario.getRol())) {
+            return "redirect:/login";
+        }
 
-    @GetMapping("/promociones")
-    public String promociones() {
-        return "promociones";
-    }
+        // Datos de ejemplo para el dashboard
+        model.addAttribute("totalProductos", 12);
+        model.addAttribute("totalUsuarios", 8);
+        model.addAttribute("totalOrdenes", 12);
+        model.addAttribute("totalIngresos", 1294.00);
+        model.addAttribute("adminNombre", usuario.getNombre());
 
-    @GetMapping("/nosotros")
-    public String nosotros() {
-        return "nosotros";
-    }
-
-    @GetMapping("/contactos")
-    public String contactos() {
-        return "contactos";
+        return "admin/dashboard";
     }
 }
