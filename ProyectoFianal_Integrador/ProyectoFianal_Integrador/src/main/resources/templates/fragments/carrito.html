@@ -1,0 +1,127 @@
+<div th:fragment="carrito">
+    <button class="btn-carrito-flotante" onclick="abrirCarrito()" th:if="${session.usuario != null}">
+        🛒 <span id="carrito-cantidad" class="badge bg-danger rounded-pill">0</span>
+    </button>
+
+    <div id="carrito-sidebar" class="carrito-sidebar" th:if="${session.usuario != null}">
+        <div class="carrito-header">
+            <h3 id="sidebar-title" class="m-0 text-danger fw-bold">
+                <i class="fas fa-shopping-cart"></i> Tu Carrito
+            </h3>
+            <button class="btn-close" onclick="cerrarCarrito()"></button>
+        </div>
+
+        <div id="vista-carrito" style="display: flex; flex-direction: column; height: 100%;">
+            <div id="lista-carrito" class="carrito-body">
+                <div class="text-center text-muted mt-5">Tu carrito está vacío</div>
+            </div>
+
+            <div class="carrito-footer">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Subtotal</span>
+                    <span id="subtotal" class="fw-bold">S/ 0.00</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                    <span class="text-muted">Delivery</span>
+                    <span>S/ 5.00</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="fs-5 fw-bold text-danger">Total</span>
+                    <span id="total" class="fs-5 fw-bold text-danger">S/ 0.00</span>
+                </div>
+                <button class="btn btn-danger w-100 fw-bold py-2" onclick="abrirCheckout()">
+                    Continuar compra
+                </button>
+                <button class="btn btn-link w-100 text-muted mt-2 text-decoration-none" onclick="vaciarCarrito()">
+                    Vaciar carrito
+                </button>
+            </div>
+        </div>
+
+        <div id="vista-checkout" style="display: none; flex-direction: column; height: 100%;">
+            <div class="carrito-body">
+                <button class="btn btn-link text-muted text-decoration-none p-0 mb-4 text-start"
+                    onclick="volverAlCarrito()">
+                    <i class="fas fa-arrow-left me-2"></i> Volver al carrito
+                </button>
+
+                <form id="form-pedido">
+                    <input type="text" id="cli-nombre" class="form-control mb-3 custom-input"
+                        placeholder="Nombre completo" required>
+                    <input type="tel" id="cli-telefono" class="form-control mb-3 custom-input" placeholder="Teléfono"
+                        required>
+
+                    <h6 class="fw-bold mb-3">Tipo de entrega</h6>
+                    <div class="d-flex gap-2 mb-3">
+                        <button type="button" class="btn btn-metodo-pago active w-50" data-tipo="Delivery"
+                            onclick="seleccionarTipoEntrega(this)">
+                            <i class="fas fa-motorcycle me-2"></i> Delivery
+                        </button>
+                        <button type="button" class="btn btn-metodo-pago w-50" data-tipo="Recojo"
+                            onclick="seleccionarTipoEntrega(this)">
+                            <i class="fas fa-store me-2"></i> Recojo local
+                        </button>
+                    </div>
+
+                    <div id="contenedor-direccion">
+                        <input type="text" id="cli-direccion" class="form-control mb-4 custom-input"
+                            placeholder="Dirección de entrega">
+                    </div>
+
+                    <h6 class="fw-bold mb-3">Método de pago</h6>
+                    <div class="d-flex gap-2 mb-4" id="contenedor-metodos-pago">
+                        <button type="button" class="btn btn-pago-final active w-50" data-metodo="Contraentrega"
+                            onclick="seleccionarPagoFinal(this)">
+                            <i class="fas fa-money-bill-wave me-2"></i> Contraentrega
+                        </button>
+                        <button type="button" class="btn btn-pago-final w-50" data-metodo="Yape"
+                            onclick="seleccionarPagoFinal(this)">
+                            <i class="fas fa-mobile-alt me-2"></i> Yape
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="carrito-footer">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Subtotal</span>
+                    <span id="checkout-subtotal" class="fw-bold">S/ 0.00</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                    <span class="text-muted">Delivery</span>
+                    <span id="checkout-delivery">S/ 5.00</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="fs-5 fw-bold text-danger">Total</span>
+                    <span id="checkout-total" class="fs-5 fw-bold text-danger">S/ 0.00</span>
+                </div>
+
+                <button class="btn btn-danger w-100 fw-bold py-2" onclick="confirmarPedido()">
+                    <i class="fas fa-check me-2"></i> Confirmar pedido
+                </button>
+            </div>
+        </div>
+
+        <div id="vista-exito"
+            style="display: none; flex-direction: column; height: 100%; justify-content: center; align-items: center; padding: 40px 20px; text-align: center; background-color: #fcfbf7;">
+            <div
+                style="width: 85px; height: 85px; background-color: #fbeadd; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 25px;">
+                <i class="fas fa-check-double" style="font-size: 2.2rem; color: #d9534f;"></i>
+            </div>
+
+            <h2 class="fw-bold mb-3"
+                style="color: #222; font-family: 'Georgia', 'Times New Roman', serif; font-size: 1.8rem;">
+                ¡Pedido confirmado!
+            </h2>
+
+            <p style="color: #6c757d; font-size: 0.95rem; line-height: 1.6; max-width: 280px;">
+                Gracias por elegir DonVíctor. Te contactaremos pronto para confirmar tu pedido.
+            </p>
+
+            <button class="btn btn-outline-secondary w-100 fw-bold py-2" style="margin-top: auto;"
+                onclick="cerrarVistaExito()">
+                Volver al inicio
+            </button>
+        </div>
+    </div>
+</div>
