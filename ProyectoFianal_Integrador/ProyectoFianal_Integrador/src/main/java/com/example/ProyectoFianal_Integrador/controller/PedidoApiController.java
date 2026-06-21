@@ -47,9 +47,11 @@ public class PedidoApiController {
             }
             
             // Asignación de montos obligatorios 
+            double costoDelivery = request.getDireccionCliente().equals("Recojo en el local") ? 0.0 : 5.0;
+            
             pedido.setSubtotal(acumuladoSubtotal);
-            pedido.setDelivery(5.0); // Costo fijo de envío
-            pedido.setTotal(acumuladoSubtotal + 5.0); // Subtotal + Delivery
+            pedido.setDelivery(costoDelivery);
+            pedido.setTotal(acumuladoSubtotal + costoDelivery);
 
             // Guardamos el pedido maestro en MySQL (Genera el ID automáticamente)
             Pedido pedidoGuardado = pedidoRepository.save(pedido);

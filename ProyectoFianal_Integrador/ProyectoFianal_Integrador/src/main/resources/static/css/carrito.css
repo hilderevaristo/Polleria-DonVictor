@@ -109,3 +109,24 @@
 .btn-metodo-pago:hover {
     border-color: #c0392b;
 }
+
+.btn-metodo-pago.active,
+.btn-pago-final.active {
+    border-color: #c0392b !important;
+    color: #c0392b !important;
+    background-color: #fdf2f1 !important;
+}
+
+.btn-pago-final {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    color: #555;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-pago-final:hover {
+    border-color: #c0392b;
+}

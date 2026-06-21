@@ -1,5 +1,8 @@
 let carrito = [];
 
+let tipoEntregaActual = "Delivery";
+let costoDelivery = 5.00;
+
 function agregarAlCarrito(id, nombre, precio, img) {
     const existe = carrito.find(item => item.id === id);
 
@@ -103,46 +106,84 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 function abrirCheckout() {
-    if (carrito.length === 0) return; // No dejar pasar si está vacío
+    if (carrito.length === 0) return;
 
-    // 1. Ocultar carrito, mostrar checkout
     document.getElementById('vista-carrito').style.display = 'none';
     document.getElementById('vista-checkout').style.display = 'flex';
-
-    // 2. Cambiar el título
     document.getElementById('sidebar-title').innerHTML = '<i class="fas fa-receipt"></i> Finalizar Pedido';
 
-    // 3. Copiar los totales al resumen de pago
+    actualizarTotalesCheckout();
+}
+
+
+// NUEVA FUNCIÓN: Actualiza la matemática del checkout
+function actualizarTotalesCheckout() {
     let subtotal = 0;
     carrito.forEach(p => subtotal += p.precio * p.cantidad);
 
     document.getElementById('checkout-subtotal').innerText = 'S/ ' + subtotal.toFixed(2);
-    document.getElementById('checkout-total').innerText = 'S/ ' + (subtotal + 5.00).toFixed(2);
+    document.getElementById('checkout-delivery').innerText = 'S/ ' + costoDelivery.toFixed(2);
+    document.getElementById('checkout-total').innerText = 'S/ ' + (subtotal + costoDelivery).toFixed(2);
 }
 
-function volverAlCarrito() {
-    document.getElementById('vista-checkout').style.display = 'none';
-    document.getElementById('vista-carrito').style.display = 'flex';
+// NUEVA FUNCIÓN: Cambia entre Delivery y Recojo
+function seleccionarTipoEntrega(botonClickeado) {
+    // Cambiar estilos de los botones de entrega
+    document.querySelectorAll('button[data-tipo]').forEach(btn => btn.classList.remove('active'));
+    botonClickeado.classList.add('active');
 
-    document.getElementById('sidebar-title').innerHTML = '<i class="fas fa-shopping-cart"></i> Tu Carrito';
+    tipoEntregaActual = botonClickeado.getAttribute('data-tipo');
+    const contenedorDireccion = document.getElementById('contenedor-direccion');
+    const contenedorPagos = document.getElementById('contenedor-metodos-pago');
+
+    if (tipoEntregaActual === "Delivery") {
+        costoDelivery = 5.00;
+        contenedorDireccion.style.display = "block";
+        contenedorPagos.innerHTML = `
+            <button type="button" class="btn btn-pago-final active w-50" data-metodo="Contraentrega" onclick="seleccionarPagoFinal(this)">
+                💵 Contraentrega
+            </button>
+            <button type="button" class="btn btn-pago-final w-50" data-metodo="Yape" onclick="seleccionarPagoFinal(this)">
+                📱 Yape
+            </button>
+        `;
+    } else {
+        costoDelivery = 0.00;
+        contenedorDireccion.style.display = "none";
+        contenedorPagos.innerHTML = `
+            <button type="button" class="btn btn-pago-final active w-100" data-metodo="Pago en caja" onclick="seleccionarPagoFinal(this)">
+                🏪 Pago en caja (Local)
+            </button>
+        `;
+    }
+    actualizarTotalesCheckout();
 }
 
-function seleccionarMetodo(botonClickeado) {
-    const botones = document.querySelectorAll('.btn-metodo-pago');
-    botones.forEach(btn => btn.classList.remove('active'));
-
+function seleccionarPagoFinal(botonClickeado) {
+    document.querySelectorAll('.btn-pago-final').forEach(btn => btn.classList.remove('active'));
     botonClickeado.classList.add('active');
 }
-
 
 function confirmarPedido() {
     const nombre = document.getElementById('cli-nombre').value;
     const telefono = document.getElementById('cli-telefono').value;
-    const direccion = document.getElementById('cli-direccion').value;
-    const metodoPago = document.querySelector('.btn-metodo-pago.active').getAttribute('data-metodo');
+    
+    // Si es delivery pedimos dirección, si es recojo enviamos un texto por defecto
+    let direccion = "";
+    if (tipoEntregaActual === "Delivery") {
+        direccion = document.getElementById('cli-direccion').value;
+        if (!direccion) {
+            alert("Por favor, ingresa tu dirección de entrega.");
+            return;
+        }
+    } else {
+        direccion = "Recojo en el local";
+    }
 
-    if (!nombre || !telefono || !direccion) {
-        alert("Por favor, completa todos tus datos de envío.");
+    const metodoPago = document.querySelector('.btn-pago-final.active').getAttribute('data-metodo');
+
+    if (!nombre || !telefono) {
+        alert("Por favor, completa tus datos de contacto.");
         return;
     }
 
@@ -160,41 +201,27 @@ function confirmarPedido() {
 
     fetch('/api/pedidos/guardar', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(pedidoData)
     })
     .then(response => {
         if (response.ok) {
             carrito = [];
-            
-            const badge = document.getElementById('carrito-cantidad');
-            if (badge) badge.innerText = '0';
-            
+            document.getElementById('carrito-cantidad').innerText = '0';
             document.getElementById('vista-checkout').style.display = 'none';
             document.getElementById('vista-exito').style.display = 'flex';
-            
-            document.getElementById('sidebar-title').innerHTML = '<i class="fas fa-receipt"></i> Finalizar Pedido';
-            
-            const footerCheckout = document.querySelector('#vista-checkout .carrito-footer');
-            if (footerCheckout) footerCheckout.style.display = 'none';
-
-        } else {
-            console.error("El servidor respondió con error:", response.status);
         }
-    })
-    .catch(error => {
-        console.error("Error capturado en JavaScript:", error);
     });
 }
 
-
-
-function cerrarVistaExito() {
-    cerrarCarrito(); // Oculta el panel lateral
-
-    document.getElementById('vista-exito').style.display = 'none';
+function volverAlCarrito() {
+    document.getElementById('vista-checkout').style.display = 'none';
     document.getElementById('vista-carrito').style.display = 'flex';
     document.getElementById('sidebar-title').innerHTML = '<i class="fas fa-shopping-cart"></i> Tu Carrito';
+}
+
+function cerrarVistaExito() {
+    cerrarCarrito(); 
+    document.getElementById('vista-exito').style.display = 'none';
+    document.getElementById('vista-carrito').style.display = 'flex';
 }
