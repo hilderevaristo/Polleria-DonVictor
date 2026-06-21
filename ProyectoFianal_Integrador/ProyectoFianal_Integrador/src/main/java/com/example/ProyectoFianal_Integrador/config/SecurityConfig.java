@@ -1,4 +1,4 @@
-package com.example.ProyectoFianal_Integrador.config;
+/*package com.example.ProyectoFianal_Integrador.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,3 +17,4 @@ public class SecurityConfig {
 
     
 }
+    */
