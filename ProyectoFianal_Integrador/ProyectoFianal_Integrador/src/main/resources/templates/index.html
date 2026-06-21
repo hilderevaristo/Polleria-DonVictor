@@ -112,11 +112,21 @@
                     <p class="card-desc" th:text="${p.descripcion}">Descripción del producto...</p>
 
 
-                    <button class="btn-agregar" th:data-id="${p.id}" th:data-nombre="${p.nombre}"
-                        th:data-precio="${p.precio}" th:data-img="${'/' + p.imagenUrl}"
-                        onclick="agregarAlCarrito(this.getAttribute('data-id'), this.getAttribute('data-nombre'), this.getAttribute('data-precio'), this.getAttribute('data-img'))">
-                        🛒 Agregar al carrito
-                    </button>
+                    <button class="btn-agregar" 
+        th:if="${session.usuario != null}"
+        th:data-id="${p.id}" 
+        th:data-nombre="${p.nombre}"
+        th:data-precio="${p.precio}" 
+        th:data-img="${'/' + p.imagenUrl}"
+        onclick="agregarAlCarrito(this.getAttribute('data-id'), this.getAttribute('data-nombre'), this.getAttribute('data-precio'), this.getAttribute('data-img'))">
+    🛒 Agregar al carrito
+</button>
+
+<a th:href="@{/login}" 
+   class="btn-agregar text-decoration-none d-inline-block text-center" 
+   th:if="${session.usuario == null}">
+    Inicia sesión para pedir
+</a>
                 </div>
             </div>
         </div>
@@ -448,7 +458,7 @@
             </div>
         </div>
     </div>
-    <button class="btn-carrito-flotante" onclick="abrirCarrito()">
+    <button class="btn-carrito-flotante" onclick="abrirCarrito()" th:if="${session.usuario != null}">
         🛒 <span id="carrito-cantidad" class="badge bg-danger rounded-pill">0</span>
     </button>
 
@@ -456,8 +466,7 @@
 
 
 
-<div id="carrito-sidebar" class="carrito-sidebar">
-
+<div id="carrito-sidebar" class="carrito-sidebar" th:if="${session.usuario != null}">
     <div class="carrito-header">
         <h3 id="sidebar-title" class="m-0 text-danger fw-bold">
             <i class="fas fa-shopping-cart"></i> Tu Carrito
