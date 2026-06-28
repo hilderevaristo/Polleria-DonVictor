@@ -36,7 +36,7 @@ public class DonVictorController {
         this.productoRepository = productoRepository;
     }
 
-    @GetMapping("/")
+  /* @GetMapping("/")
     public String index(HttpSession session, Model model) {
 
         model.addAttribute("productos", productoRepository.findAll());
@@ -50,6 +50,21 @@ public class DonVictorController {
 
         return "index";
     }
+*/
+@GetMapping("/")
+public String index(HttpSession session, Model model) {
+
+    try {
+        model.addAttribute("productos", productoRepository.findAll());
+        System.out.println("Productos: " + productoRepository.findAll().size());
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return "index";
+}
+
+
 
     @GetMapping("/login")
     public String login() {
