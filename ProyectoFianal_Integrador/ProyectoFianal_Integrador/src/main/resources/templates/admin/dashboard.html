@@ -31,9 +31,9 @@
             <li th:class="${pagina == 'usuarios' ? 'active' : ''}">
                 <a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a>
             </li>
-            <li>
-                <a href="#"><i class="fas fa-shopping-cart"></i> Órdenes</a>
-            </li>
+          <li th:class="${pagina == 'pedidos' ? 'active' : ''}">
+            <a th:href="@{/admin/pedidos}"><i class="fas fa-shopping-cart"></i> Órdenes</a>
+           </li>        
             <li>
                 <a href="#"><i class="fas fa-cog"></i> Configuración</a>
             </li>
