@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "detalles_pedido")
 public class DetallePedido {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,46 +24,25 @@ public class DetallePedido {
     @Column(name = "precio_unitario", nullable = false)
     private Double precioUnitario;
 
-    public Long getId() {
-        return id;
-    }
+    @Column(name = "subtotal", nullable = false)  // ← NUEVO CAMPO
+    private Double subtotal;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    // Getters y Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Pedido getPedido() {
-        return pedido;
-    }
+    public Pedido getPedido() { return pedido; }
+    public void setPedido(Pedido pedido) { this.pedido = pedido; }
 
-    public void setPedido(Pedido pedido) {
-        this.pedido = pedido;
-    }
+    public Producto getProducto() { return producto; }
+    public void setProducto(Producto producto) { this.producto = producto; }
 
-    public Producto getProducto() {
-        return producto;
-    }
+    public Integer getCantidad() { return cantidad; }
+    public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
 
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-    }
+    public Double getPrecioUnitario() { return precioUnitario; }
+    public void setPrecioUnitario(Double precioUnitario) { this.precioUnitario = precioUnitario; }
 
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public Double getPrecioUnitario() {
-        return precioUnitario;
-    }
-
-    public void setPrecioUnitario(Double precioUnitario) {
-        this.precioUnitario = precioUnitario;
-    }
-
-    
-    
+    public Double getSubtotal() { return subtotal; }
+    public void setSubtotal(Double subtotal) { this.subtotal = subtotal; }
 }

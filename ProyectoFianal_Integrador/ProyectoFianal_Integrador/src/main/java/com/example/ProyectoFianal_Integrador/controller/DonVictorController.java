@@ -1,9 +1,13 @@
 package com.example.ProyectoFianal_Integrador.controller;
 
 import com.example.ProyectoFianal_Integrador.entity.Contacto;
+import com.example.ProyectoFianal_Integrador.entity.DetallePedido;
+import com.example.ProyectoFianal_Integrador.entity.ItemCarrito;
 import com.example.ProyectoFianal_Integrador.entity.Pedido;
+import com.example.ProyectoFianal_Integrador.entity.Producto;
 import com.example.ProyectoFianal_Integrador.entity.Usuario;
 import com.example.ProyectoFianal_Integrador.repository.ContactoRepository;
+import com.example.ProyectoFianal_Integrador.repository.DetallePedidoRepository;
 import com.example.ProyectoFianal_Integrador.repository.ProductoRepository;
 import com.example.ProyectoFianal_Integrador.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpSession;
@@ -11,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -20,13 +25,16 @@ import com.example.ProyectoFianal_Integrador.repository.PedidoRepository;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List; // ← Agregar al inicio
+import java.util.Map;
 
 
 
 @Controller
 public class DonVictorController {
 
+    private final DetallePedidoRepository detallePedidoRepository;
     private final UsuarioRepository usuarioRepository;
     private final ContactoRepository contactoRepository;
     private final ProductoRepository productoRepository;
@@ -35,11 +43,12 @@ public class DonVictorController {
     public DonVictorController(UsuarioRepository usuarioRepository,
             ContactoRepository contactoRepository,
             ProductoRepository productoRepository,
-            PedidoRepository pedidoRepository) {
+            PedidoRepository pedidoRepository, DetallePedidoRepository detallePedidoRepository) {
         this.usuarioRepository = usuarioRepository;
         this.contactoRepository = contactoRepository;
         this.productoRepository = productoRepository;
         this.pedidoRepository = pedidoRepository;
+        this.detallePedidoRepository = detallePedidoRepository;
     }
 
     /*
@@ -360,4 +369,79 @@ public String adminPedidos(HttpSession session, Model model) {
     return "admin/pedidos";
 }
 
+@PostMapping(value = "/procesarPedido", consumes = "application/json")
+@ResponseBody
+public Map<String, Object> procesarPedido(@RequestBody Map<String, Object> pedidoData,
+                                          HttpSession session) {
+    
+    Map<String, Object> response = new HashMap<>();
+    
+    try {
+        String nombreCliente = (String) pedidoData.get("nombreCliente");
+        String telefonoCliente = (String) pedidoData.get("telefonoCliente");
+        String direccionCliente = (String) pedidoData.get("direccionCliente");
+        String metodoPago = (String) pedidoData.get("metodoPago");
+        String tipoEntrega = (String) pedidoData.get("tipoEntrega");
+        
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        
+        // Crear pedido
+        Pedido pedido = new Pedido();
+        pedido.setUsuario(usuario);
+        pedido.setNombreCliente(nombreCliente);
+        pedido.setTelefonoCliente(telefonoCliente);
+        pedido.setDireccionEntrega(direccionCliente);
+        pedido.setMetodoPago(metodoPago);
+        pedido.setEstado("PENDIENTE");
+        pedido.setFechaPedido(LocalDateTime.now());
+        
+        // Calcular totales
+        List<Map<String, Object>> items = (List<Map<String, Object>>) pedidoData.get("items");
+        double subtotal = 0;
+        for (Map<String, Object> item : items) {
+            double precio = ((Number) item.get("precioUnitario")).doubleValue();
+            int cantidad = (int) item.get("cantidad");
+            subtotal += precio * cantidad;
+        }
+        
+        double delivery = "Delivery".equals(tipoEntrega) ? 5.00 : 0.00;
+        double total = subtotal + delivery;
+        
+        pedido.setSubtotal(subtotal);
+        pedido.setDelivery(delivery);
+        pedido.setTotal(total);
+        
+        Pedido pedidoGuardado = pedidoRepository.save(pedido);
+        
+        // Guardar detalles
+        for (Map<String, Object> item : items) {
+            Long productoId = ((Number) item.get("productoId")).longValue();
+            int cantidad = (int) item.get("cantidad");
+            double precio = ((Number) item.get("precioUnitario")).doubleValue();
+            
+            Producto producto = productoRepository.findById(productoId).orElse(null);
+            if (producto != null) {
+                DetallePedido detalle = new DetallePedido();
+                detalle.setPedido(pedidoGuardado);
+                detalle.setProducto(producto);
+                detalle.setCantidad(cantidad);
+                detalle.setPrecioUnitario(precio);
+                detalle.setSubtotal(precio * cantidad);
+                detallePedidoRepository.save(detalle);
+            }
+        }
+        
+        session.removeAttribute("carrito");
+        
+        response.put("success", true);
+        response.put("message", "Pedido confirmado con éxito");
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.put("success", false);
+        response.put("message", e.getMessage());
+    }
+    
+    return response;
+}
 }

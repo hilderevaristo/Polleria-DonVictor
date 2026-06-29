@@ -254,6 +254,7 @@ body {
     flex-shrink: 0 !important;
 }
 
+
 /* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
     .sidebar {

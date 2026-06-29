@@ -18,21 +18,28 @@ function agregarAlCarrito(id, nombre, precio, img) {
 }
 
 function actualizarCarrito() {
+    // ✅ Verificar que el elemento existe
     const lista = document.getElementById('lista-carrito');
     const badge = document.getElementById('carrito-cantidad');
     const footer = document.querySelector('.carrito-footer');
 
-    lista.innerHTML = ''; 
+    // Si no existe el carrito en la página, salir
+    if (!lista) {
+        console.log('⚠️ Carrito no visible en esta página');
+        return;
+    }
+
+    lista.innerHTML = '';
     let subtotal = 0;
     let totalItems = 0;
 
     if (carrito.length === 0) {
         lista.innerHTML = `<div class="text-center text-muted mt-5">Tu carrito está vacío</div>`;
-        badge.innerText = '0';
-        footer.style.display = 'none';
+        if (badge) badge.innerText = '0';
+        if (footer) footer.style.display = 'none';
         cerrarCarrito();
     } else {
-        footer.style.display = 'block';
+        if (footer) footer.style.display = 'block';
 
         carrito.forEach((p, index) => {
             subtotal += p.precio * p.cantidad;
@@ -58,11 +65,14 @@ function actualizarCarrito() {
                 </div>`;
         });
 
-        badge.innerText = totalItems;
+        if (badge) badge.innerText = totalItems;
     }
 
-    document.getElementById('subtotal').innerText = 'S/ ' + subtotal.toFixed(2);
-    document.getElementById('total').innerText = 'S/ ' + (subtotal + 5.00).toFixed(2); // +5 de Delivery
+    const subtotalEl = document.getElementById('subtotal');
+    const totalEl = document.getElementById('total');
+    
+    if (subtotalEl) subtotalEl.innerText = 'S/ ' + subtotal.toFixed(2);
+    if (totalEl) totalEl.innerText = 'S/ ' + (subtotal + 5.00).toFixed(2);
 }
 
 function cambiarCant(index, variacion) {
@@ -84,11 +94,17 @@ function vaciarCarrito() {
 }
 
 function abrirCarrito() {
-    document.getElementById('carrito-sidebar').classList.add('active');
+    const sidebar = document.getElementById('carrito-sidebar');
+    if (sidebar) {
+        sidebar.classList.add('active');
+    }
 }
 
 function cerrarCarrito() {
-    document.getElementById('carrito-sidebar').classList.remove('active');
+    const sidebar = document.getElementById('carrito-sidebar');
+    if (sidebar) {
+        sidebar.classList.remove('active');
+    }
 }
 
 function animarCarritoBoton() {
@@ -168,7 +184,6 @@ function confirmarPedido() {
     const nombre = document.getElementById('cli-nombre').value;
     const telefono = document.getElementById('cli-telefono').value;
     
-    // Si es delivery pedimos dirección, si es recojo enviamos un texto por defecto
     let direccion = "";
     if (tipoEntregaActual === "Delivery") {
         direccion = document.getElementById('cli-direccion').value;
@@ -192,6 +207,7 @@ function confirmarPedido() {
         telefonoCliente: telefono,
         direccionCliente: direccion,
         metodoPago: metodoPago,
+        tipoEntrega: tipoEntregaActual,
         items: carrito.map(item => ({
             productoId: parseInt(item.id),
             cantidad: item.cantidad,
@@ -199,7 +215,8 @@ function confirmarPedido() {
         }))
     };
 
-    fetch('/api/pedidos/guardar', {
+    // ✅ URL CORREGIDA
+    fetch('/procesarPedido', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(pedidoData)
@@ -210,7 +227,13 @@ function confirmarPedido() {
             document.getElementById('carrito-cantidad').innerText = '0';
             document.getElementById('vista-checkout').style.display = 'none';
             document.getElementById('vista-exito').style.display = 'flex';
+        } else {
+            alert('Error al confirmar el pedido');
         }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al procesar el pedido');
     });
 }
 

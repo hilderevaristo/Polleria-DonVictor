@@ -1,4 +1,17 @@
- function filtrarPedidos() {
+function cambiarIcono(element) {
+    const icon = element.querySelector('i.fa-chevron-down, i.fa-chevron-up');
+    if (icon) {
+        if (icon.classList.contains('fa-chevron-down')) {
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+        } else {
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+        }
+    }
+}
+
+        function filtrarPedidos() {
             const input = document.getElementById('buscadorPedidos');
             if (!input) return;
             const filter = input.value.toUpperCase();
@@ -15,3 +28,4 @@
                 }
             }
         }
+        
