@@ -6,6 +6,7 @@
     <title>Productos | Panel Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
 </head>
 <body>
@@ -22,7 +23,6 @@
             <li class="active"><a th:href="@{/admin/productos}"><i class="fas fa-box"></i> Productos</a></li>
             <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a></li>
             <li><a th:href="@{/admin/pedidos}"><i class="fas fa-shopping-cart"></i> Órdenes</a></li>
-            <li><a href="#"><i class="fas fa-cog"></i> Configuración</a></li>
         </ul>
         <div class="sidebar-footer">
             <a th:href="@{/logout}" class="btn btn-logout">
@@ -35,26 +35,93 @@
     <div class="main-content">
         <div class="top-header">
             <div class="d-flex justify-content-between align-items-center">
-                <h4><i class="fas fa-box text-primary"></i> Productos</h4>
+                <div>
+                    <h4><i class="fas fa-box text-primary"></i> Productos</h4>
+                    <p class="text-muted small">Gestiona el menú de DonVictor</p>
+                </div>
                 <div class="d-flex align-items-center gap-3">
                     <span class="text-muted small">Bienvenido, <strong th:text="${adminNombre}">Admin</strong></span>
-                    <a th:href="@{/}" class="btn btn-sm btn-outline-secondary">
-                        <i class="fas fa-arrow-left"></i> Volver al sitio
-                    </a>
                 </div>
             </div>
-            <p class="text-muted small">Lista de productos registrados en el sistema</p>
         </div>
 
-        <div class="card mt-4">
-            <div class="card-body">
-                <h5 class="text-center">📦 Sección de Productos</h5>
-                <p class="text-center text-muted">Aquí puedes gestionar los productos del catálogo</p>
+        <!-- Botón Agregar Producto -->
+        <div class="mb-3">
+            <button class="btn btn-danger" onclick="window.location.href='/admin/productos/nuevo'">
+                <i class="fas fa-plus me-2"></i> Nuevo Producto
+            </button>
+        </div>
+
+        <!-- Tabla de productos -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-list me-2"></i>Productos</h5>
+                <span class="badge bg-primary" th:text="${totalProductos}">0</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="tablaProductos">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 30%;">Producto</th>
+                                <th style="width: 15%;">Categoría</th>
+                                <th style="width: 12%;">Precio</th>
+                                <th style="width: 10%;">Promo</th>
+                                <th style="width: 33%;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="producto : ${listaProductos}">
+                                <td>
+                                    <div>
+                                        <div class="fw-semibold" th:text="${producto.nombre}">1/4 Pollo a la Brasa</div>
+                                        <small class="text-muted" th:text="${producto.descripcion}">Jugoso cuarto de pollo asado a la leña con papas fritas y ensalada fresca.</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge" 
+                                          th:class="${producto.categoria == 'Pollos' ? 'bg-danger' : producto.categoria == 'Bebidas' ? 'bg-info' : producto.categoria == 'Combos' ? 'bg-warning text-dark' : 'bg-secondary'}"
+                                          th:text="${producto.categoria}">Pollos</span>
+                                </td>
+                                <td class="fw-bold text-danger">S/ <span th:text="${producto.precio}">0.00</span></td>
+                                <td>
+                                    <span th:if="${producto.promo}" class="badge bg-success">Promo</span>
+                                    <span th:unless="${producto.promo}" class="text-muted">—</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-outline-primary" th:onclick="'editarProducto(' + ${producto.id} + ')'">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" th:onclick="'eliminarProducto(' + ${producto.id} + ')'">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-success" th:onclick="'verProducto(' + ${producto.id} + ')'">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script th:src="@{/js/admin.js}"></script>
+    <script>
+        function editarProducto(id) {
+            alert('Editar producto ID: ' + id);
+        }
+        function eliminarProducto(id) {
+            if (confirm('¿Estás seguro de eliminar este producto?')) {
+                alert('Eliminar producto ID: ' + id);
+            }
+        }
+        function verProducto(id) {
+            alert('Ver producto ID: ' + id);
+        }
+    </script>
 </body>
 </html>

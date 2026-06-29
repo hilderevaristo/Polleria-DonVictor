@@ -236,19 +236,11 @@ public class DonVictorController {
         return "admin/usuarios";
     }
 
-    @GetMapping("/admin/productos")
-    public String adminProductos(HttpSession session, Model model) {
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
-
-        if (usuario == null || !"ADMIN".equals(usuario.getRol())) {
-            return "redirect:/login";
-        }
-
-        model.addAttribute("adminNombre", usuario.getNombre());
-        model.addAttribute("pagina", "productos");
-
-        return "admin/productos";
-    }
+   // ========== ADMIN PRODUCTOS ==========
+@GetMapping("/admin/productos")
+public String productosSimple() {
+    return "admin/productos";
+}
 
     @PostMapping("/admin/eliminarUsuario")
     public String eliminarUsuario(@RequestParam Long id,
