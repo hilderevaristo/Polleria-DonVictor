@@ -53,22 +53,7 @@ public class DonVictorController {
         this.detallePedidoRepository = detallePedidoRepository;
     }
 
-    /*
-     * @GetMapping("/")
-     * public String index(HttpSession session, Model model) {
-     * 
-     * model.addAttribute("productos", productoRepository.findAll());
-     * 
-     * Usuario usuario = (Usuario) session.getAttribute("usuario");
-     * 
-     * if (usuario != null) {
-     * model.addAttribute("usuarioNombre", usuario.getNombre());
-     * model.addAttribute("usuarioRol", usuario.getRol());
-     * }
-     * 
-     * return "index";
-     * }
-     */
+   
     @GetMapping("/")
     public String index(HttpSession session, Model model) {
 
@@ -267,63 +252,6 @@ public String productosSimple() {
         return "redirect:/admin/usuarios";
     }
 
-    // ========== PANEL PEDIDOS ==========
-/* 
-  @GetMapping("/admin/pedidos")
-public String adminPedidos(HttpSession session, Model model) {
-    try {
-        System.out.println("=== ADMIN PEDIDOS ===");
-        
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
-        
-        if (usuario == null || !"ADMIN".equals(usuario.getRol())) {
-            System.out.println("❌ Usuario no autorizado");
-            return "redirect:/login";
-        }
-        
-        System.out.println("✅ Usuario autorizado: " + usuario.getNombre());
-        
-        // Obtener todas las órdenes
-        List<Pedido> listaPedidos = pedidoRepository.findAllByOrderByFechaPedidoDesc();
-        System.out.println("📦 Pedidos encontrados: " + listaPedidos.size());
-        
-        // Formatear fechas
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        List<String> fechasFormateadas = new ArrayList<>();
-        for (Pedido p : listaPedidos) {
-            if (p.getFechaPedido() != null) {
-                fechasFormateadas.add(sdf.format(p.getFechaPedido()));
-            } else {
-                fechasFormateadas.add("Sin fecha");
-            }
-        }
-        
-        // Estadísticas
-        long totalPedidos = listaPedidos.size();
-        long completados = pedidoRepository.countByEstado("CONFIRMADO");
-        long pendientes = pedidoRepository.countByEstado("PENDIENTE");
-        double ingresos = listaPedidos.stream().mapToDouble(Pedido::getTotal).sum();
-        
-        model.addAttribute("listaPedidos", listaPedidos);
-        model.addAttribute("fechasFormateadas", fechasFormateadas);
-        model.addAttribute("totalPedidos", totalPedidos);
-        model.addAttribute("completados", completados);
-        model.addAttribute("pendientes", pendientes);
-        model.addAttribute("ingresos", ingresos);
-        model.addAttribute("adminNombre", usuario.getNombre());
-        model.addAttribute("pagina", "pedidos");
-        
-        System.out.println("✅ Modelo cargado correctamente");
-        return "admin/pedidos";
-        
-    } catch (Exception e) {
-        System.out.println("❌ ERROR: " + e.getMessage());
-        e.printStackTrace();
-        return "redirect:/admin/dashboard";
-    }
-}
-*/
-/* */
 @GetMapping("/admin/pedidos")
 public String adminPedidos(HttpSession session, Model model) {
     Usuario usuario = (Usuario) session.getAttribute("usuario");
