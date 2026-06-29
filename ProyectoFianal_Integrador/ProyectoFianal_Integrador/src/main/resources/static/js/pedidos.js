@@ -1,5 +1,6 @@
-function cambiarIcono(element) {
-    const icon = element.querySelector('i.fa-chevron-down, i.fa-chevron-up');
+
+function cambiarIcono(element, id) {
+    const icon = document.getElementById('icono-' + id);
     if (icon) {
         if (icon.classList.contains('fa-chevron-down')) {
             icon.classList.remove('fa-chevron-down');
@@ -10,7 +11,6 @@ function cambiarIcono(element) {
         }
     }
 }
-
         function filtrarPedidos() {
             const input = document.getElementById('buscadorPedidos');
             if (!input) return;

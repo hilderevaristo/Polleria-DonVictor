@@ -255,6 +255,148 @@ body {
 }
 
 
+/* ========== ESTILOS PARA ESTADOS DINÁMICOS (Órdenes) ========== */
+.badge {
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.3px;
+    display: inline-block;
+}
+
+.badge.bg-success {
+    background-color: #28a745 !important;
+    color: #ffffff !important;
+}
+
+.badge.bg-warning {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+}
+
+.badge.bg-info {
+    background-color: #17a2b8 !important;
+    color: #ffffff !important;
+}
+
+.badge.bg-danger {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+}
+
+/* ========== DETALLE DE LA ORDEN (estilo imagen) ========== */
+.detalle-orden-card {
+    background-color: #f9fafb;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 8px 0;
+    border-left: 4px solid #dc3545;
+}
+
+.detalle-orden-card .detalle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.detalle-orden-card .detalle-header h6 {
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.detalle-orden-card .detalle-header h6 i {
+    color: #dc3545;
+    margin-right: 8px;
+}
+
+.detalle-orden-card .detalle-header .email-cliente {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.detalle-orden-card .detalle-header .email-cliente i {
+    color: #dc3545;
+    margin-right: 4px;
+}
+
+/* Tabla de productos dentro del detalle */
+.detalle-orden-card .table-detalle {
+    font-size: 0.85rem;
+    margin-bottom: 0;
+}
+
+.detalle-orden-card .table-detalle thead th {
+    background-color: #e9ecef;
+    color: #333;
+    font-weight: 600;
+    border-bottom: none;
+    padding: 8px 12px;
+}
+
+.detalle-orden-card .table-detalle tbody td {
+    padding: 8px 12px;
+    vertical-align: middle;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.detalle-orden-card .table-detalle tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.detalle-orden-card .table-detalle .total-row {
+    font-weight: 700;
+    color: #1a1a2e;
+}
+
+.detalle-orden-card .table-detalle .total-row td {
+    padding-top: 10px;
+    border-top: 2px solid #dc3545;
+}
+
+/* Badge de estado en el detalle */
+.detalle-orden-card .badge-estado {
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.detalle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.detalle-header h6 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.detalle-header h6 .badge {
+    font-size: 0.7rem;
+    padding: 4px 12px;
+}
+
+.email-cliente {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.email-cliente i {
+    color: #dc3545;
+}
 /* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
     .sidebar {
