@@ -113,10 +113,12 @@
                                 <th style="width: 20%;">Cliente</th>
                                 <th style="width: 15%;">Teléfono</th>
                                 <th style="width: 25%;">Dirección</th>
+                                <th style="width: 12%;">Método Pago</th> <!-- ← NUEVA COLUMNA -->
                                 <th style="width: 10%;">Total</th>
                                 <th style="width: 15%;">Fecha</th>
                                 <th style="width: 10%;">Estado</th>
                                 <th style="width: 50px;"></th>
+                                <th style="width: 120px;">Acción</th> <!-- ← NUEVA COLUMNA -->
                             </tr>
                         </thead>
                         <tbody>
@@ -136,6 +138,7 @@
                                 </td>
                                 <td th:text="${pedido.telefonoCliente}">987654321</td>
                                 <td th:text="${pedido.direccionEntrega}">Dirección</td>
+                                <td th:text="${pedido.metodoPago}">Contraentrega</td> <!-- ← NUEVO -->
                                 <td>S/ <span th:text="${pedido.total}">0.00</span></td>
                                 <td th:text="${pedido.fechaPedido}">2026-06-28</td>
                                 <td>
@@ -145,6 +148,12 @@
                                 </td>
                                 <td>
                                     <i class="fas fa-chevron-down text-muted" th:id="'icono-' + ${pedido.id}"></i>
+                                </td>
+                                <td style="width: 120px;">
+                                    <button class="btn btn-sm btn-outline-primary"
+                                        th:onclick="'abrirModal(' + ${pedido.id} + ')'">
+                                        <i class="fas fa-eye me-1"></i> Ver
+                                    </button>
                                 </td>
                             </tr>
 
@@ -207,6 +216,26 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+        <!-- MODAL PARA VER DETALLE DEL PEDIDO -->
+        <div class="modal fade" id="modalPedido" tabindex="-1" aria-labelledby="modalPedidoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: #1a1a2e; color: white;">
+                        <h5 class="modal-title" id="modalPedidoLabel">
+                            <i class="fas fa-receipt me-2"></i> Detalle del Pedido
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="modalBody">
+                        <!-- Contenido cargado dinámicamente -->
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-danger" role="status"></div>
+                            <p class="mt-2">Cargando...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
