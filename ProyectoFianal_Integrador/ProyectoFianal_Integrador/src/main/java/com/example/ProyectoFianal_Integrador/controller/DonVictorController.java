@@ -31,8 +31,6 @@ import java.util.HashMap;
 import java.util.List; // ← Agregar al inicio
 import java.util.Map;
 
-
-
 @Controller
 public class DonVictorController {
 
@@ -53,7 +51,6 @@ public class DonVictorController {
         this.detallePedidoRepository = detallePedidoRepository;
     }
 
-   
     @GetMapping("/")
     public String index(HttpSession session, Model model) {
 
@@ -221,10 +218,118 @@ public class DonVictorController {
         return "admin/usuarios";
     }
 
+    // ========== ADMIN PRODUCTOS ==========
    // ========== ADMIN PRODUCTOS ==========
 @GetMapping("/admin/productos")
-public String productosSimple() {
-    return "admin/productos";
+public String adminProductos(HttpSession session, Model model) {
+    try {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        if (usuario == null || !"ADMIN".equals(usuario.getRol())) {
+            return "redirect:/login";
+        }
+        
+        List<Producto> listaProductos = productoRepository.findAll();
+        
+        model.addAttribute("listaProductos", listaProductos);
+        model.addAttribute("totalProductos", listaProductos.size());
+        model.addAttribute("adminNombre", usuario.getNombre());
+        model.addAttribute("pagina", "productos");
+        
+        return "admin/productos";
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+        return "admin/dashboard";
+    }
+}
+
+// ========== EDITAR PRODUCTO ==========
+@GetMapping("/admin/productos/editar/{id}")
+public String editarProducto(@PathVariable Long id, HttpSession session, Model model) {
+    try {
+        Usuario admin = (Usuario) session.getAttribute("usuario");
+        if (admin == null || !"ADMIN".equals(admin.getRol())) {
+            return "redirect:/login";
+        }
+        
+        Producto producto = productoRepository.findById(id).orElse(null);
+        if (producto == null) {
+            return "redirect:/admin/productos";
+        }
+        
+        model.addAttribute("producto", producto);
+        model.addAttribute("adminNombre", admin.getNombre());
+        
+        return "admin/productos-editar";
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+        return "redirect:/admin/productos";
+    }
+}
+
+// ========== ACTUALIZAR PRODUCTO ==========
+@PostMapping("/admin/productos/actualizar")
+public String actualizarProducto(@RequestParam Long id,
+                                 @RequestParam String nombre,
+                                 @RequestParam String descripcion,
+                                 @RequestParam Double precio,
+                                 @RequestParam String categoria,
+                                 RedirectAttributes redirectAttributes) {
+    try {
+        Producto producto = productoRepository.findById(id).orElse(null);
+        if (producto == null) {
+            redirectAttributes.addFlashAttribute("error", "Producto no encontrado");
+            return "redirect:/admin/productos";
+        }
+        
+        producto.setNombre(nombre);
+        producto.setDescripcion(descripcion);
+        producto.setPrecio(precio);
+        producto.setCategoria(categoria);
+        productoRepository.save(producto);
+        
+        redirectAttributes.addFlashAttribute("exito", "✅ Producto actualizado correctamente");
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+        redirectAttributes.addFlashAttribute("error", "❌ Error: " + e.getMessage());
+    }
+    
+    return "redirect:/admin/productos";
+}
+
+// ========== ELIMINAR PRODUCTO ==========
+@PostMapping("/admin/productos/eliminar/{id}")
+@ResponseBody
+public Map<String, Object> eliminarProducto(@PathVariable Long id, HttpSession session) {
+    Map<String, Object> response = new HashMap<>();
+    
+    try {
+        Usuario admin = (Usuario) session.getAttribute("usuario");
+        if (admin == null || !"ADMIN".equals(admin.getRol())) {
+            response.put("success", false);
+            response.put("message", "No autorizado");
+            return response;
+        }
+        
+        Producto producto = productoRepository.findById(id).orElse(null);
+        if (producto == null) {
+            response.put("success", false);
+            response.put("message", "Producto no encontrado");
+            return response;
+        }
+        
+        productoRepository.delete(producto);
+        response.put("success", true);
+        response.put("message", "Producto eliminado correctamente");
+        
+    } catch (Exception e) {
+        response.put("success", false);
+        response.put("message", e.getMessage());
+    }
+    
+    return response;
 }
 
     @PostMapping("/admin/eliminarUsuario")
@@ -252,120 +357,120 @@ public String productosSimple() {
         return "redirect:/admin/usuarios";
     }
 
-@GetMapping("/admin/pedidos")
-public String adminPedidos(HttpSession session, Model model) {
-    Usuario usuario = (Usuario) session.getAttribute("usuario");
-    
-    if (usuario == null || !"ADMIN".equals(usuario.getRol())) {
-        return "redirect:/login";
-    }
-    
-    try {
-        List<Pedido> listaPedidos = pedidoRepository.findAll();
-        
-        long totalPedidos = listaPedidos.size();
-        long completados = listaPedidos.stream().filter(p -> "CONFIRMADO".equals(p.getEstado())).count();
-        long pendientes = listaPedidos.stream().filter(p -> "PENDIENTE".equals(p.getEstado())).count();
-        double ingresos = listaPedidos.stream().mapToDouble(Pedido::getTotal).sum();
-        
-        model.addAttribute("listaPedidos", listaPedidos);
-        model.addAttribute("totalPedidos", totalPedidos);
-        model.addAttribute("completados", completados);
-        model.addAttribute("pendientes", pendientes);
-        model.addAttribute("ingresos", ingresos);
-        model.addAttribute("adminNombre", usuario.getNombre());
-        model.addAttribute("pagina", "pedidos");
-        
-    } catch (Exception e) {
-        System.out.println("❌ ERROR: " + e.getMessage());
-        e.printStackTrace();
-        model.addAttribute("listaPedidos", new ArrayList<>());
-        model.addAttribute("totalPedidos", 0);
-        model.addAttribute("completados", 0);
-        model.addAttribute("pendientes", 0);
-        model.addAttribute("ingresos", 0.0);
-        model.addAttribute("adminNombre", usuario.getNombre());
-        model.addAttribute("pagina", "pedidos");
-    }
-    
-    return "admin/pedidos";
-}
 
-
-@PostMapping(value = "/procesarPedido", consumes = "application/json")
-@ResponseBody
-public Map<String, Object> procesarPedido(@RequestBody Map<String, Object> pedidoData,
-                                          HttpSession session) {
-    
-    Map<String, Object> response = new HashMap<>();
-    
-    try {
-        String nombreCliente = (String) pedidoData.get("nombreCliente");
-        String telefonoCliente = (String) pedidoData.get("telefonoCliente");
-        String direccionCliente = (String) pedidoData.get("direccionCliente");
-        String metodoPago = (String) pedidoData.get("metodoPago");
-        String tipoEntrega = (String) pedidoData.get("tipoEntrega");
-        
+    @GetMapping("/admin/pedidos")
+    public String adminPedidos(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
-        
-        // Crear pedido
-        Pedido pedido = new Pedido();
-        pedido.setUsuario(usuario);
-        pedido.setNombreCliente(nombreCliente);
-        pedido.setTelefonoCliente(telefonoCliente);
-        pedido.setDireccionEntrega(direccionCliente);
-        pedido.setMetodoPago(metodoPago);
-        pedido.setEstado("PENDIENTE");
-        pedido.setFechaPedido(LocalDateTime.now());
-        
-        // Calcular totales
-        List<Map<String, Object>> items = (List<Map<String, Object>>) pedidoData.get("items");
-        double subtotal = 0;
-        for (Map<String, Object> item : items) {
-            double precio = ((Number) item.get("precioUnitario")).doubleValue();
-            int cantidad = (int) item.get("cantidad");
-            subtotal += precio * cantidad;
+
+        if (usuario == null || !"ADMIN".equals(usuario.getRol())) {
+            return "redirect:/login";
         }
-        
-        double delivery = "Delivery".equals(tipoEntrega) ? 5.00 : 0.00;
-        double total = subtotal + delivery;
-        
-        pedido.setSubtotal(subtotal);
-        pedido.setDelivery(delivery);
-        pedido.setTotal(total);
-        
-        Pedido pedidoGuardado = pedidoRepository.save(pedido);
-        
-        // Guardar detalles
-        for (Map<String, Object> item : items) {
-            Long productoId = ((Number) item.get("productoId")).longValue();
-            int cantidad = (int) item.get("cantidad");
-            double precio = ((Number) item.get("precioUnitario")).doubleValue();
-            
-            Producto producto = productoRepository.findById(productoId).orElse(null);
-            if (producto != null) {
-                DetallePedido detalle = new DetallePedido();
-                detalle.setPedido(pedidoGuardado);
-                detalle.setProducto(producto);
-                detalle.setCantidad(cantidad);
-                detalle.setPrecioUnitario(precio);
-                detalle.setSubtotal(precio * cantidad);
-                detallePedidoRepository.save(detalle);
-            }
+
+        try {
+            List<Pedido> listaPedidos = pedidoRepository.findAll();
+
+            long totalPedidos = listaPedidos.size();
+            long completados = listaPedidos.stream().filter(p -> "CONFIRMADO".equals(p.getEstado())).count();
+            long pendientes = listaPedidos.stream().filter(p -> "PENDIENTE".equals(p.getEstado())).count();
+            double ingresos = listaPedidos.stream().mapToDouble(Pedido::getTotal).sum();
+
+            model.addAttribute("listaPedidos", listaPedidos);
+            model.addAttribute("totalPedidos", totalPedidos);
+            model.addAttribute("completados", completados);
+            model.addAttribute("pendientes", pendientes);
+            model.addAttribute("ingresos", ingresos);
+            model.addAttribute("adminNombre", usuario.getNombre());
+            model.addAttribute("pagina", "pedidos");
+
+        } catch (Exception e) {
+            System.out.println("❌ ERROR: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("listaPedidos", new ArrayList<>());
+            model.addAttribute("totalPedidos", 0);
+            model.addAttribute("completados", 0);
+            model.addAttribute("pendientes", 0);
+            model.addAttribute("ingresos", 0.0);
+            model.addAttribute("adminNombre", usuario.getNombre());
+            model.addAttribute("pagina", "pedidos");
         }
-        
-        session.removeAttribute("carrito");
-        
-        response.put("success", true);
-        response.put("message", "Pedido confirmado con éxito");
-        
-    } catch (Exception e) {
-        e.printStackTrace();
-        response.put("success", false);
-        response.put("message", e.getMessage());
+
+        return "admin/pedidos";
     }
-    
-    return response;
-}
+
+    @PostMapping(value = "/procesarPedido", consumes = "application/json")
+    @ResponseBody
+    public Map<String, Object> procesarPedido(@RequestBody Map<String, Object> pedidoData,
+            HttpSession session) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String nombreCliente = (String) pedidoData.get("nombreCliente");
+            String telefonoCliente = (String) pedidoData.get("telefonoCliente");
+            String direccionCliente = (String) pedidoData.get("direccionCliente");
+            String metodoPago = (String) pedidoData.get("metodoPago");
+            String tipoEntrega = (String) pedidoData.get("tipoEntrega");
+
+            Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+            // Crear pedido
+            Pedido pedido = new Pedido();
+            pedido.setUsuario(usuario);
+            pedido.setNombreCliente(nombreCliente);
+            pedido.setTelefonoCliente(telefonoCliente);
+            pedido.setDireccionEntrega(direccionCliente);
+            pedido.setMetodoPago(metodoPago);
+            pedido.setEstado("PENDIENTE");
+            pedido.setFechaPedido(LocalDateTime.now());
+
+            // Calcular totales
+            List<Map<String, Object>> items = (List<Map<String, Object>>) pedidoData.get("items");
+            double subtotal = 0;
+            for (Map<String, Object> item : items) {
+                double precio = ((Number) item.get("precioUnitario")).doubleValue();
+                int cantidad = (int) item.get("cantidad");
+                subtotal += precio * cantidad;
+            }
+
+            double delivery = "Delivery".equals(tipoEntrega) ? 5.00 : 0.00;
+            double total = subtotal + delivery;
+
+            pedido.setSubtotal(subtotal);
+            pedido.setDelivery(delivery);
+            pedido.setTotal(total);
+
+            Pedido pedidoGuardado = pedidoRepository.save(pedido);
+
+            // Guardar detalles
+            for (Map<String, Object> item : items) {
+                Long productoId = ((Number) item.get("productoId")).longValue();
+                int cantidad = (int) item.get("cantidad");
+                double precio = ((Number) item.get("precioUnitario")).doubleValue();
+
+                Producto producto = productoRepository.findById(productoId).orElse(null);
+                if (producto != null) {
+                    DetallePedido detalle = new DetallePedido();
+                    detalle.setPedido(pedidoGuardado);
+                    detalle.setProducto(producto);
+                    detalle.setCantidad(cantidad);
+                    detalle.setPrecioUnitario(precio);
+                    detalle.setSubtotal(precio * cantidad);
+                    detallePedidoRepository.save(detalle);
+                }
+            }
+
+            session.removeAttribute("carrito");
+
+            response.put("success", true);
+            response.put("message", "Pedido confirmado con éxito");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+
+        return response;
+    }
 
 }
