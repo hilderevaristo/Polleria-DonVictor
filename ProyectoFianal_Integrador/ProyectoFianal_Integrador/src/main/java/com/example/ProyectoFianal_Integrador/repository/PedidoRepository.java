@@ -13,7 +13,8 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     @Query("SELECT DISTINCT p FROM Pedido p " +
            "LEFT JOIN FETCH p.detalles d " +
            "LEFT JOIN FETCH d.producto")
-    List<Pedido> findAllWithDetails();
+    
+List<Pedido> findAllWithDetails();
     
     List<Pedido> findAllByOrderByFechaPedidoDesc();
     long countByEstado(String estado);

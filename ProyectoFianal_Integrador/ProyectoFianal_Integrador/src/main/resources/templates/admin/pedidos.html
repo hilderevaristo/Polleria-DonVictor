@@ -140,7 +140,9 @@
                                 <td th:text="${pedido.direccionEntrega}">Dirección</td>
                                 <td th:text="${pedido.metodoPago}">Contraentrega</td> <!-- ← NUEVO -->
                                 <td>S/ <span th:text="${pedido.total}">0.00</span></td>
-                                <td th:text="${pedido.fechaPedido}">2026-06-28</td>
+                                <td
+                                    th:text="${pedido.fechaPedido != null ? #temporals.format(pedido.fechaPedido, 'dd/MM/yyyy') : 'Sin fecha'}">
+                                    28/06/2026</td>
                                 <td>
                                     <span class="badge"
                                         th:class="${pedido.estado == 'CONFIRMADO' ? 'bg-success' : pedido.estado == 'PENDIENTE' ? 'bg-warning text-dark' : pedido.estado == 'EN_PROCESO' ? 'bg-info text-white' : 'bg-danger'}"
@@ -160,7 +162,7 @@
                             <!-- ====== FILA DEL DETALLE (abajo de cada pedido) ====== -->
                             <!-- ====== FILA DEL DETALLE ====== -->
                             <tr th:each="pedido : ${listaPedidos}">
-                                <td colspan="8" class="p-0" style="padding: 0 !important;">
+                                <td colspan="10" class="p-0" style="padding: 0 !important;">
                                     <div class="collapse" th:id="'detalle-' + ${pedido.id}"
                                         data-bs-parent="#tablaPedidos">
                                         <div class="detalle-orden-card">
