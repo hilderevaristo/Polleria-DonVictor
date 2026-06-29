@@ -1,12 +1,10 @@
-  function editarProducto(id) {
+ function editarProducto(id) {
             window.location.href = '/admin/productos/editar/' + id;
         }
 
         function eliminarProducto(id) {
             if (confirm('¿Estás seguro de eliminar este producto?')) {
-                fetch('/admin/productos/eliminar/' + id, {
-                    method: 'POST'
-                })
+                fetch('/admin/productos/eliminar/' + id, { method: 'POST' })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -16,7 +14,7 @@
                         alert('❌ Error: ' + data.message);
                     }
                 })
-                .catch(error => alert('❌ Error al eliminar'));
+                .catch(() => alert('❌ Error al eliminar'));
             }
         }
 

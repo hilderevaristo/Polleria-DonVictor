@@ -165,10 +165,21 @@ body {
     flex-shrink: 0;
 }
 
-.stat-icon.bg-primary { background: linear-gradient(135deg, #667eea, #764ba2); }
-.stat-icon.bg-success { background: linear-gradient(135deg, #11998e, #38ef7d); }
-.stat-icon.bg-warning { background: linear-gradient(135deg, #f093fb, #f5576c); }
-.stat-icon.bg-danger { background: linear-gradient(135deg, #dc3545, #ff6b6b); }
+.stat-icon.bg-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.stat-icon.bg-success {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+}
+
+.stat-icon.bg-warning {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.stat-icon.bg-danger {
+    background: linear-gradient(135deg, #dc3545, #ff6b6b);
+}
 
 .stat-info h3 {
     font-size: 1.8rem;
@@ -222,6 +233,7 @@ body {
     border-radius: 20px;
     font-weight: 500;
 }
+
 .avatar-circle {
     width: 42px;
     height: 42px;
@@ -241,6 +253,7 @@ body {
 .avatar-circle:hover {
     transform: scale(1.1);
 }
+
 .avatar-circle {
     width: 35px !important;
     height: 35px !important;
@@ -495,34 +508,202 @@ body {
 .badge.bg-secondary {
     background-color: #6c757d !important;
 }
+
+
+/* ========== ESTILO PRODUCTOS ========== */
+.producto-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+    background: white;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+}
+
+.producto-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.producto-card .nombre {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a2e;
+}
+
+.producto-card .descripcion {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 2px;
+}
+
+.producto-card .categoria-badge {
+    font-size: 0.7rem;
+    padding: 4px 14px;
+    border-radius: 50px;
+    font-weight: 500;
+}
+
+.producto-card .precio {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #dc3545;
+}
+
+.producto-card .btn-accion {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    border: none;
+}
+
+.producto-card .btn-accion:hover {
+    transform: scale(1.08);
+}
+
+.producto-card .btn-accion.editar {
+    background-color: #e9ecef;
+    color: #0d6efd;
+}
+
+.producto-card .btn-accion.editar:hover {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.producto-card .btn-accion.eliminar {
+    background-color: #e9ecef;
+    color: #dc3545;
+}
+
+.producto-card .btn-accion.eliminar:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+.producto-card .btn-accion.ver {
+    background-color: #e9ecef;
+    color: #198754;
+}
+
+.producto-card .btn-accion.ver:hover {
+    background-color: #198754;
+    color: white;
+}
+
+.producto-card .separador {
+    width: 1px;
+    height: 30px;
+    background-color: #e9ecef;
+}
+
+.producto-card .info-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 20px;
+}
+
+@media (max-width: 768px) {
+    .producto-card .info-grid {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .producto-card .acciones-group {
+        margin-top: 8px;
+    }
+}
+
+/* ========== CATEGORÍAS ESTILIZADAS ========== */
+.badge-categoria {
+    display: inline-block;
+    padding: 5px 16px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    min-width: 85px;
+    text-align: center;
+}
+
+.badge-categoria.promociones {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    color: white;
+    box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+}
+
+.badge-categoria.pollos {
+    background: linear-gradient(135deg, #dc3545, #ff6b6b);
+    color: white;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.badge-categoria.bebidas {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    color: white;
+    box-shadow: 0 2px 8px rgba(79, 172, 254, 0.3);
+}
+
+.badge-categoria.combos {
+    background: linear-gradient(135deg, #f6d365, #fda085);
+    color: #2c1810;
+    box-shadow: 0 2px 8px rgba(253, 160, 133, 0.3);
+}
+
+.badge-categoria.parrillas {
+    background: linear-gradient(135deg, #a8edea, #fed6e3);
+    color: #2c1810;
+    box-shadow: 0 2px 8px rgba(168, 237, 234, 0.3);
+}
+
+.badge-categoria.postres {
+    background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+    color: #2c1810;
+    box-shadow: 0 2px 8px rgba(251, 194, 235, 0.3);
+}
+
+.badge-categoria.entradas {
+    background: linear-gradient(135deg, #ffecd2, #fcb69f);
+    color: #2c1810;
+    box-shadow: 0 2px 8px rgba(252, 182, 159, 0.3);
+}
+
 /* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
     .sidebar {
         width: 60px;
         padding: 10px 0;
     }
-    
+
     .sidebar-brand span,
     .sidebar-brand small,
     .sidebar-menu li a span,
     .sidebar-footer .btn-logout span {
         display: none;
     }
-    
+
     .sidebar-menu li a {
         justify-content: center;
         padding: 12px;
     }
-    
+
     .sidebar-footer .btn-logout {
         padding: 12px;
     }
-    
+
     .main-content {
         margin-left: 60px;
         padding: 15px;
     }
-    
+
     .stat-card {
         padding: 15px;
     }
