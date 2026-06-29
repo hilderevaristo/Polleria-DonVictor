@@ -441,6 +441,42 @@ body {
 .card-body .btn-outline-danger.active {
     background-color: #dc3545;
 }
+
+
+
+/* ========== FILTROS DE ESTADO ========== */
+.filtros-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.btn-filtro {
+    background-color: transparent !important;
+    border: 1.5px solid #e0e0e0 !important;
+    color: #6c757d !important;
+    border-radius: 8px !important;
+    padding: 5px 18px !important;
+    font-size: 0.8rem !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-filtro:hover {
+    border-color: #dc3545 !important;
+    color: #dc3545 !important;
+}
+
+.btn-filtro.active {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: white !important;
+}
+
+.btn-filtro.active:hover {
+    background-color: #bb2d3b !important;
+    border-color: #bb2d3b !important;
+}
 /* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
     .sidebar {

@@ -97,45 +97,45 @@
             </div>
         </div>
         <!-- Filtros por estado -->
-<!-- Buscador + Filtros (misma fila) -->
-<div class="card mb-4">
-    <div class="card-body">
-        <div class="row g-2 align-items-center">
-            <!-- Buscador -->
-            <div class="col-md-5">
-                <div class="input-group">
-                    <span class="input-group-text bg-white border-end-0">
-                        <i class="fas fa-search text-muted"></i>
-                    </span>
-                    <input type="text" id="buscadorPedidos" class="form-control border-start-0"
-                           placeholder="Buscar por orden, cliente o email..." 
-                           onkeyup="filtrarPedidos()">
-                </div>
-            </div>
-            
-            <!-- Filtros de estado -->
-            <div class="col-md-7">
-                <div class="d-flex flex-wrap gap-1 justify-content-md-end">
-                    <button class="btn btn-sm btn-outline-primary active" onclick="filtrarPorEstado('todos', this)">
-                        Todos
-                    </button>
-                    <button class="btn btn-sm btn-outline-warning" onclick="filtrarPorEstado('PENDIENTE', this)">
-                        Pendiente
-                    </button>
-                    <button class="btn btn-sm btn-outline-info" onclick="filtrarPorEstado('EN_PROCESO', this)">
-                        En proceso
-                    </button>
-                    <button class="btn btn-sm btn-outline-success" onclick="filtrarPorEstado('CONFIRMADO', this)">
-                        Completado
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="filtrarPorEstado('CANCELADO', this)">
-                        Cancelado
-                    </button>
+        <!-- Buscador + Filtros (misma fila) -->
+        <!-- Buscador + Filtros -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row g-2 align-items-center">
+                    <!-- Buscador -->
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="fas fa-search text-muted"></i>
+                            </span>
+                            <input type="text" id="buscadorPedidos" class="form-control border-start-0"
+                                placeholder="Buscar por orden, cliente o email..." onkeyup="filtrarPedidos()">
+                        </div>
+                    </div>
+
+                    <!-- Filtros de estado -->
+                    <div class="col-md-7">
+                        <div class="filtros-container justify-content-md-end">
+                            <button class="btn btn-filtro active" onclick="filtrarPorEstado('todos', this)">
+                                Todos
+                            </button>
+                            <button class="btn btn-filtro" onclick="filtrarPorEstado('PENDIENTE', this)">
+                                Pendiente
+                            </button>
+                            <button class="btn btn-filtro" onclick="filtrarPorEstado('EN_PROCESO', this)">
+                                En proceso
+                            </button>
+                            <button class="btn btn-filtro" onclick="filtrarPorEstado('CONFIRMADO', this)">
+                                Completado
+                            </button>
+                            <button class="btn btn-filtro" onclick="filtrarPorEstado('CANCELADO', this)">
+                                Cancelado
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
         <!-- Tabla de pedidos con detalle expandible (acordeón) -->
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
