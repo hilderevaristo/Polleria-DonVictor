@@ -397,6 +397,7 @@ public Map<String, Object> eliminarProducto(@PathVariable Long id, HttpSession s
         return "admin/pedidos";
     }
 
+
     @PostMapping(value = "/procesarPedido", consumes = "application/json")
     @ResponseBody
     public Map<String, Object> procesarPedido(@RequestBody Map<String, Object> pedidoData,
