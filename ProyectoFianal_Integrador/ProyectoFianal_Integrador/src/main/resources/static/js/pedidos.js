@@ -131,3 +131,79 @@ function aplicarFiltros() {
     }
 }
 
+function editarEstado(pedidoId, estadoActual) {
+    console.log("🖊️ Editando pedido:", pedidoId, "Estado actual:", estadoActual);
+    
+    const nuevoEstado = prompt(
+        'Selecciona el nuevo estado del pedido:\n\n' +
+        '1. Pendiente\n' +
+        '2. Confirmado\n' +
+        '3. En preparación\n' +
+        '4. Listo\n' +
+        '5. En camino\n' +
+        '6. Completado\n' +
+        '7. Cancelado\n\n' +
+        'Escribe el número (1-7):'
+    );
+    
+    if (nuevoEstado === null || nuevoEstado === '') return;
+    
+    const estados = {
+        '1': 'PENDIENTE',
+        '2': 'CONFIRMADO',
+        '3': 'EN_PREPARACION',
+        '4': 'LISTO',
+        '5': 'EN_CAMINO',
+        '6': 'COMPLETADO',
+        '7': 'CANCELADO'
+    };
+    
+    const estadoSeleccionado = estados[nuevoEstado];
+    if (!estadoSeleccionado) {
+        alert('❌ Opción inválida. Elige un número del 1 al 7.');
+        return;
+    }
+    
+    if (!confirm(`¿Cambiar estado a "${estadoSeleccionado}"?`)) return;
+    
+    // Enviar al servidor
+    const formData = new URLSearchParams();
+    formData.append('id', pedidoId);
+    formData.append('estado', estadoSeleccionado);
+    
+    fetch('/admin/pedido-cambiar-estado', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ Estado actualizado correctamente');
+            location.reload();
+        } else {
+            alert('❌ Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('❌ Error al cambiar el estado: ' + error.message);
+    });
+}
+
+
+// ========== CONFIGURAR BOTONES DE EDICIÓN ==========
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.btn-editar-estado').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            // ✅ Detener propagación del evento
+            e.stopPropagation();
+            
+            const id = this.getAttribute('data-id');
+            const estado = this.getAttribute('data-estado');
+            editarEstado(id, estado);
+        });
+    });
+});

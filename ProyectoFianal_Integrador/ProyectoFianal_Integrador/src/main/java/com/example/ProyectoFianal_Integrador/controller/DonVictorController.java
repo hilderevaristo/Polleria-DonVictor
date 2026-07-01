@@ -397,6 +397,53 @@ public Map<String, Object> eliminarProducto(@PathVariable Long id, HttpSession s
         return "admin/pedidos";
     }
 
+@PostMapping("/admin/pedido-cambiar-estado")
+@ResponseBody
+public Map<String, Object> cambiarEstadoPedido(@RequestParam Long id, @RequestParam String estado) {
+    Map<String, Object> response = new HashMap<>();
+    
+    try {
+        System.out.println("📦 Cambiando estado - ID: " + id + ", Nuevo estado: " + estado);
+        
+        Pedido pedido = pedidoRepository.findById(id).orElse(null);
+        if (pedido == null) {
+            response.put("success", false);
+            response.put("message", "Pedido no encontrado");
+            return response;
+        }
+        
+        // ✅ ESTADOS PERMITIDOS
+        String[] estadosPermitidos = {"PENDIENTE", "CONFIRMADO", "EN_PREPARACION", "LISTO", "EN_CAMINO", "COMPLETADO", "CANCELADO"};
+        
+        boolean estadoValido = false;
+        for (String e : estadosPermitidos) {
+            if (e.equals(estado)) {
+                estadoValido = true;
+                break;
+            }
+        }
+        
+        if (!estadoValido) {
+            response.put("success", false);
+            response.put("message", "Estado no válido: " + estado);
+            return response;
+        }
+        
+        pedido.setEstado(estado);
+        pedidoRepository.save(pedido);
+        
+        System.out.println("✅ Estado actualizado correctamente");
+        response.put("success", true);
+        response.put("message", "Estado actualizado correctamente");
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.put("success", false);
+        response.put("message", e.getMessage());
+    }
+    
+    return response;
+}
 
     @PostMapping(value = "/procesarPedido", consumes = "application/json")
     @ResponseBody
