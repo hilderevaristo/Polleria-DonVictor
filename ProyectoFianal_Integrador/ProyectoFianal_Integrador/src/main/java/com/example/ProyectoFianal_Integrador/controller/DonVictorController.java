@@ -359,43 +359,50 @@ public Map<String, Object> eliminarProducto(@PathVariable Long id, HttpSession s
 
 
     @GetMapping("/admin/pedidos")
-    public String adminPedidos(HttpSession session, Model model) {
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
+public String adminPedidos(HttpSession session, Model model) {
+    Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (usuario == null || !"ADMIN".equals(usuario.getRol())) {
-            return "redirect:/login";
-        }
-
-        try {
-            List<Pedido> listaPedidos = pedidoRepository.findAll();
-
-            long totalPedidos = listaPedidos.size();
-            long completados = listaPedidos.stream().filter(p -> "CONFIRMADO".equals(p.getEstado())).count();
-            long pendientes = listaPedidos.stream().filter(p -> "PENDIENTE".equals(p.getEstado())).count();
-            double ingresos = listaPedidos.stream().mapToDouble(Pedido::getTotal).sum();
-
-            model.addAttribute("listaPedidos", listaPedidos);
-            model.addAttribute("totalPedidos", totalPedidos);
-            model.addAttribute("completados", completados);
-            model.addAttribute("pendientes", pendientes);
-            model.addAttribute("ingresos", ingresos);
-            model.addAttribute("adminNombre", usuario.getNombre());
-            model.addAttribute("pagina", "pedidos");
-
-        } catch (Exception e) {
-            System.out.println("❌ ERROR: " + e.getMessage());
-            e.printStackTrace();
-            model.addAttribute("listaPedidos", new ArrayList<>());
-            model.addAttribute("totalPedidos", 0);
-            model.addAttribute("completados", 0);
-            model.addAttribute("pendientes", 0);
-            model.addAttribute("ingresos", 0.0);
-            model.addAttribute("adminNombre", usuario.getNombre());
-            model.addAttribute("pagina", "pedidos");
-        }
-
-        return "admin/pedidos";
+    if (usuario == null || !"ADMIN".equals(usuario.getRol())) {
+        return "redirect:/login";
     }
+
+    try {
+        List<Pedido> listaPedidos = pedidoRepository.findAll();
+
+        long totalPedidos = listaPedidos.size();
+        // ✅ COMPARAR SIN IMPORTAR MAYÚSCULAS/MINÚSCULAS
+        long completados = listaPedidos.stream()
+                .filter(p -> p.getEstado() != null && p.getEstado().toUpperCase().equals("COMPLETADO"))
+                .count();
+        long pendientes = listaPedidos.stream()
+                .filter(p -> p.getEstado() != null && p.getEstado().toUpperCase().equals("PENDIENTE"))
+                .count();
+        double ingresos = listaPedidos.stream()
+                .mapToDouble(p -> p.getTotal() != null ? p.getTotal() : 0.0)
+                .sum();
+
+        model.addAttribute("listaPedidos", listaPedidos);
+        model.addAttribute("totalPedidos", totalPedidos);
+        model.addAttribute("completados", completados);
+        model.addAttribute("pendientes", pendientes);
+        model.addAttribute("ingresos", ingresos);
+        model.addAttribute("adminNombre", usuario.getNombre());
+        model.addAttribute("pagina", "pedidos");
+
+    } catch (Exception e) {
+        System.out.println("❌ ERROR: " + e.getMessage());
+        e.printStackTrace();
+        model.addAttribute("listaPedidos", new ArrayList<>());
+        model.addAttribute("totalPedidos", 0);
+        model.addAttribute("completados", 0);
+        model.addAttribute("pendientes", 0);
+        model.addAttribute("ingresos", 0.0);
+        model.addAttribute("adminNombre", usuario.getNombre());
+        model.addAttribute("pagina", "pedidos");
+    }
+
+    return "admin/pedidos";
+}
 
 @PostMapping("/admin/pedido-cambiar-estado")
 @ResponseBody
@@ -412,8 +419,8 @@ public Map<String, Object> cambiarEstadoPedido(@RequestParam Long id, @RequestPa
             return response;
         }
         
-        // ✅ ESTADOS PERMITIDOS
-        String[] estadosPermitidos = {"PENDIENTE", "CONFIRMADO", "EN_PREPARACION", "LISTO", "EN_CAMINO", "COMPLETADO", "CANCELADO"};
+        // ✅ ESTADOS PERMITIDOS (actualizado con tus estados)
+        String[] estadosPermitidos = {"PENDIENTE", "EN_PROCESO", "EN_CAMINO", "COMPLETADO", "CANCELADO"};
         
         boolean estadoValido = false;
         for (String e : estadosPermitidos) {
