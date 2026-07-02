@@ -358,7 +358,7 @@ public Map<String, Object> eliminarProducto(@PathVariable Long id, HttpSession s
     }
 
 
-    @GetMapping("/admin/pedidos")
+  @GetMapping("/admin/pedidos")
 public String adminPedidos(HttpSession session, Model model) {
     Usuario usuario = (Usuario) session.getAttribute("usuario");
 
@@ -369,8 +369,15 @@ public String adminPedidos(HttpSession session, Model model) {
     try {
         List<Pedido> listaPedidos = pedidoRepository.findAll();
 
+        // ✅ LOG PARA VER LOS DATOS
+        System.out.println("=== DATOS DE PEDIDOS ===");
+        System.out.println("Total pedidos en BD: " + listaPedidos.size());
+        
+        for (Pedido p : listaPedidos) {
+            System.out.println("ID: " + p.getId() + " - Estado: '" + p.getEstado() + "'");
+        }
+
         long totalPedidos = listaPedidos.size();
-        // ✅ COMPARAR SIN IMPORTAR MAYÚSCULAS/MINÚSCULAS
         long completados = listaPedidos.stream()
                 .filter(p -> p.getEstado() != null && p.getEstado().toUpperCase().equals("COMPLETADO"))
                 .count();
@@ -380,6 +387,10 @@ public String adminPedidos(HttpSession session, Model model) {
         double ingresos = listaPedidos.stream()
                 .mapToDouble(p -> p.getTotal() != null ? p.getTotal() : 0.0)
                 .sum();
+
+        System.out.println("Completados contados: " + completados);
+        System.out.println("Pendientes contados: " + pendientes);
+        System.out.println("Ingresos: " + ingresos);
 
         model.addAttribute("listaPedidos", listaPedidos);
         model.addAttribute("totalPedidos", totalPedidos);

@@ -717,6 +717,59 @@ body {
     font-size: 1.1rem;
     opacity: 0;
 }
+/* ========== BOTÓN PARA ABRIR SIDEBAR EN MÓVIL ========== */
+/* ========== SIDEBAR RESPONSIVE ========== */
+.sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 9999;
+    background-color: #1a1a2e;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 1.3rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.sidebar-toggle:hover {
+    background-color: #dc3545;
+}
+
+@media (max-width: 768px) {
+    .sidebar-toggle {
+        display: block !important;
+    }
+    
+    .sidebar {
+        width: 0 !important;
+        padding: 0 !important;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        background-color: #1a1a2e;
+        z-index: 9998;
+    }
+    
+    .sidebar.active {
+        width: 260px !important;
+        padding: 20px 0 !important;
+        overflow-y: auto;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.2);
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        padding: 15px;
+        padding-top: 70px;
+    }
+}
 /*
 .btn-estado-modal.activo .estado-check {
     opacity: 1;
@@ -729,34 +782,133 @@ body {
 */
 
 /* ========== RESPONSIVE ========== */
+/* ========== RESPONSIVE PARA MÓVIL ========== */
 @media (max-width: 768px) {
+    /* Sidebar oculto por defecto en móvil */
     .sidebar {
-        width: 60px;
-        padding: 10px 0;
+        width: 0;
+        padding: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
     }
-
-    .sidebar-brand span,
-    .sidebar-brand small,
-    .sidebar-menu li a span,
-    .sidebar-footer .btn-logout span {
-        display: none;
+    
+    .sidebar.active {
+        width: 250px;
+        padding: 20px 0;
+        overflow-y: auto;
     }
-
-    .sidebar-menu li a {
-        justify-content: center;
-        padding: 12px;
+    
+    /* Botón para abrir sidebar en móvil */
+    .sidebar-toggle {
+        display: block !important;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 9999;
+        background: #1a1a2e;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 1.2rem;
     }
-
-    .sidebar-footer .btn-logout {
-        padding: 12px;
-    }
-
+    
+    /* Contenido principal ocupa todo el ancho */
     .main-content {
-        margin-left: 60px;
+        margin-left: 0 !important;
         padding: 15px;
+        padding-top: 70px;
     }
-
+    
+    /* Tarjetas de estadísticas en móvil */
+    .row.g-4 {
+        gap: 10px;
+    }
+    
+    .col-md-3 {
+        width: 50% !important;
+        flex: 0 0 50%;
+        max-width: 50%;
+        padding: 5px !important;
+    }
+    
     .stat-card {
-        padding: 15px;
+        padding: 12px;
+        border-radius: 12px;
+    }
+    
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+    
+    .stat-info h3 {
+        font-size: 1.2rem;
+    }
+    
+    .stat-info span {
+        font-size: 0.7rem;
+    }
+    
+    /* Tabla responsive - scroll horizontal */
+    .table-responsive {
+        overflow-x: auto !important;
+    }
+    
+    .table {
+        font-size: 0.75rem;
+        min-width: 600px;
+    }
+    
+    .table thead th,
+    .table tbody td {
+        padding: 6px 8px !important;
+        white-space: nowrap;
+    }
+    
+    /* Buscador y filtros en móvil */
+    .card-body .row {
+        flex-direction: column;
+    }
+    
+    .card-body .col-md-5,
+    .card-body .col-md-7 {
+        width: 100% !important;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .filtros-container {
+        justify-content: center !important;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
+    
+    .btn-filtro {
+        font-size: 0.65rem !important;
+        padding: 4px 12px !important;
+    }
+    
+    /* Tarjetas de estadísticas en una sola fila */
+    .row.g-4 {
+        flex-wrap: wrap;
+    }
+    
+    /* Modal en móvil */
+    .modal-dialog {
+        margin: 10px !important;
+    }
+}
+@media (max-width: 480px) {
+    .col-md-3 {
+        width: 100% !important;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+@media (max-width: 480px) {
+    .stat-info h3 {
+        font-size: 1.5rem !important;
     }
 }
