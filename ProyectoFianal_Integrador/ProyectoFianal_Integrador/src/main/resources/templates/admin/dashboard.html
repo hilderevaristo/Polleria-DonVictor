@@ -13,11 +13,13 @@
 </head>
 
 <body>
+
+   
     <!-- Botón para abrir sidebar en móvil -->
-<!-- Botón para abrir sidebar en móvil -->
-<button class="sidebar-toggle" onclick="toggleSidebar()">
-    <i class="fas fa-bars"></i>
-</button>
+    <!-- Botón para abrir sidebar en móvil -->
+    <button class="sidebar-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
 
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
@@ -36,10 +38,22 @@
             <li th:class="${pagina == 'usuarios' ? 'active' : ''}">
                 <a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a>
             </li>
-          <li th:class="${pagina == 'pedidos' ? 'active' : ''}">
-            <a th:href="@{/admin/pedidos}"><i class="fas fa-shopping-cart"></i> Órdenes</a>
-           </li>        
+            <li th:class="${pagina == 'pedidos' ? 'active' : ''}">
+                <a th:href="@{/admin/pedidos}"><i class="fas fa-shopping-cart"></i> Órdenes</a>
+            </li>
         </ul>
+
+         <div class="sidebar-footer">
+        <!-- ✅ BOTÓN PARA VER EL SITIO WEB -->
+        <a th:href="@{/}" target="_blank" class="btn btn-outline-light w-100 mb-2"
+            style="border-radius: 10px; padding: 10px; font-size: 0.85rem; border-color: rgba(255,255,255,0.2);">
+            <i class="fas fa-external-link-alt me-2"></i> Ver sitio web
+        </a>
+
+        <a th:href="@{/logout}" class="btn btn-logout">
+            <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+        </a>
+    </div>
         <div class="sidebar-footer">
             <a th:href="@{/logout}" class="btn btn-logout">
                 <i class="fas fa-sign-out-alt"></i> Cerrar sesión
@@ -212,16 +226,16 @@
         </div>
 
     </div>
-    
+
     <script>
-    // ========== TOGGLE SIDEBAR ==========      
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        if (sidebar) {
-            sidebar.classList.toggle('active');
+        // ========== TOGGLE SIDEBAR ==========      
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('active');
+            }
         }
-    }
-</script>
+    </script>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

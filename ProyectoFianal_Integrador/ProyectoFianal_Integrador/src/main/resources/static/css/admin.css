@@ -625,57 +625,39 @@ body {
 .badge-categoria {
     display: inline-block;
     padding: 5px 16px;
-    border-radius: 50px;
-    font-size: 0.75rem;
+    border-radius: 30px;
+    font-size: 0.7rem;
     font-weight: 600;
-    letter-spacing: 0.3px;
+    background-color: #f5f0e8;
+    color: #8b7355;
+    border: 1px solid #e8ddd0;
     text-transform: uppercase;
-    min-width: 85px;
-    text-align: center;
+    letter-spacing: 0.5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+/* ========== BOTÓN VER SITIO WEB ========== */
+.btn-sitio-web {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #ccc;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+    margin-bottom: 8px;
 }
 
-.badge-categoria.promociones {
-    background: linear-gradient(135deg, #f093fb, #f5576c);
+.btn-sitio-web:hover {
+    background-color: rgba(255, 255, 255, 0.15);
     color: white;
-    box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+    border-color: #dc3545;
 }
-
-.badge-categoria.pollos {
-    background: linear-gradient(135deg, #dc3545, #ff6b6b);
-    color: white;
-    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
-}
-
-.badge-categoria.bebidas {
-    background: linear-gradient(135deg, #4facfe, #00f2fe);
-    color: white;
-    box-shadow: 0 2px 8px rgba(79, 172, 254, 0.3);
-}
-
-.badge-categoria.combos {
-    background: linear-gradient(135deg, #f6d365, #fda085);
-    color: #2c1810;
-    box-shadow: 0 2px 8px rgba(253, 160, 133, 0.3);
-}
-
-.badge-categoria.parrillas {
-    background: linear-gradient(135deg, #a8edea, #fed6e3);
-    color: #2c1810;
-    box-shadow: 0 2px 8px rgba(168, 237, 234, 0.3);
-}
-
-.badge-categoria.postres {
-    background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
-    color: #2c1810;
-    box-shadow: 0 2px 8px rgba(251, 194, 235, 0.3);
-}
-
-.badge-categoria.entradas {
-    background: linear-gradient(135deg, #ffecd2, #fcb69f);
-    color: #2c1810;
-    box-shadow: 0 2px 8px rgba(252, 182, 159, 0.3);
-}
-
 
 /* ========== BOTONES DE ESTADO EN MODAL ========== */
 .btn-estado-modal {

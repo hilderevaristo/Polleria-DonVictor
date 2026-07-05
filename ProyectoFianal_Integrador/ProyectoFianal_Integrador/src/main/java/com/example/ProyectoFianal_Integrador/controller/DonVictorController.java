@@ -19,11 +19,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.ProyectoFianal_Integrador.repository.PedidoRepository;
 
+import org.springframework.web.multipart.MultipartFile;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -222,25 +225,21 @@ public class DonVictorController {
    // ========== ADMIN PRODUCTOS ==========
 @GetMapping("/admin/productos")
 public String adminProductos(HttpSession session, Model model) {
-    try {
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
-        if (usuario == null || !"ADMIN".equals(usuario.getRol())) {
-            return "redirect:/login";
-        }
-        
-        List<Producto> listaProductos = productoRepository.findAll();
-        
-        model.addAttribute("listaProductos", listaProductos);
-        model.addAttribute("totalProductos", listaProductos.size());
-        model.addAttribute("adminNombre", usuario.getNombre());
-        model.addAttribute("pagina", "productos");
-        
-        return "admin/productos";
-        
-    } catch (Exception e) {
-        e.printStackTrace();
-        return "admin/dashboard";
+    Usuario usuario = (Usuario) session.getAttribute("usuario");
+    
+    if (usuario == null || !"ADMIN".equals(usuario.getRol())) {
+        return "redirect:/login";
     }
+    
+    // ✅ OBTENER PRODUCTOS DESDE LA BD
+    List<Producto> listaProductos = productoRepository.findAll();
+    
+    model.addAttribute("listaProductos", listaProductos);
+    model.addAttribute("totalProductos", listaProductos.size());
+    model.addAttribute("adminNombre", usuario.getNombre());
+    model.addAttribute("pagina", "productos");
+    
+    return "admin/productos";
 }
 
 // ========== EDITAR PRODUCTO ==========
@@ -325,6 +324,54 @@ public Map<String, Object> eliminarProducto(@PathVariable Long id, HttpSession s
         response.put("message", "Producto eliminado correctamente");
         
     } catch (Exception e) {
+        response.put("success", false);
+        response.put("message", e.getMessage());
+    }
+    
+    return response;
+}
+
+// ========== MOSTRAR FORMULARIO NUEVO PRODUCTO ==========
+@GetMapping("/admin/productos/nuevo")
+public String nuevoProducto(HttpSession session, Model model) {
+    Usuario usuario = (Usuario) session.getAttribute("usuario");
+    if (usuario == null || !"ADMIN".equals(usuario.getRol())) {
+        return "redirect:/login";
+    }
+    model.addAttribute("adminNombre", usuario.getNombre());
+    return "admin/productos-nuevo";
+}
+
+// ========== GUARDAR PRODUCTO (DESDE MODAL) ==========
+@PostMapping("/admin/productos/guardar")
+@ResponseBody
+public Map<String, Object> guardarProducto(@RequestParam String nombre,
+                                           @RequestParam(required = false) String descripcion,
+                                           @RequestParam Double precio,
+                                           @RequestParam String categoria,
+                                           @RequestParam(required = false) String imagenUrl) {
+    Map<String, Object> response = new HashMap<>();
+    
+    try {
+        System.out.println("=== GUARDAR PRODUCTO ===");
+        System.out.println("Nombre: " + nombre);
+        System.out.println("Precio: " + precio);
+        System.out.println("Categoria: " + categoria);
+        
+        Producto producto = new Producto();
+        producto.setNombre(nombre);
+        producto.setDescripcion(descripcion != null ? descripcion : "");
+        producto.setPrecio(precio);
+        producto.setCategoria(categoria);
+        producto.setImagenUrl(imagenUrl);
+        
+        productoRepository.save(producto);
+        
+        response.put("success", true);
+        response.put("message", "Producto creado correctamente");
+        
+    } catch (Exception e) {
+        e.printStackTrace();
         response.put("success", false);
         response.put("message", e.getMessage());
     }

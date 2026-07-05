@@ -14,6 +14,8 @@
 
 <body>
 
+   
+
     <!-- Botón para abrir sidebar en móvil -->
     <!-- Botón para abrir sidebar en móvil -->
     <button class="sidebar-toggle" onclick="toggleSidebar()">
@@ -30,8 +32,20 @@
             <li><a th:href="@{/admin/dashboard}"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
             <li class="active"><a th:href="@{/admin/productos}"><i class="fas fa-box"></i> Productos</a></li>
             <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a></li>
-            <li><a th:href="@{/admin/pedidos}"><i class="fas fa-shopping-cart"></i> Órdenes</a></li>
+            <li><a th:href="@{/admin/pedidos}"><i class="fas fa-shopping-cart"></i> Ordenes</a></li>
         </ul>
+
+         <div class="sidebar-footer">
+        <!-- ✅ BOTÓN PARA VER EL SITIO WEB -->
+        <a th:href="@{/}" target="_blank" class="btn btn-outline-light w-100 mb-2"
+            style="border-radius: 10px; padding: 10px; font-size: 0.85rem; border-color: rgba(255,255,255,0.2);">
+            <i class="fas fa-external-link-alt me-2"></i> Ver sitio web
+        </a>
+
+        <a th:href="@{/logout}" class="btn btn-logout">
+            <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+        </a>
+    </div>
         <div class="sidebar-footer">
             <a th:href="@{/logout}" class="btn btn-logout">
                 <i class="fas fa-sign-out-alt"></i> Cerrar sesión
@@ -55,7 +69,7 @@
 
         <!-- Botón Agregar Producto -->
         <div class="mb-3">
-            <button class="btn btn-danger" onclick="window.location.href='/admin/productos/nuevo'">
+            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalNuevoProducto">
                 <i class="fas fa-plus me-2"></i> Nuevo Producto
             </button>
         </div>
@@ -80,22 +94,20 @@
                         <tbody>
                             <tr th:each="producto : ${listaProductos}">
                                 <td>
-                                    <div>
-                                        <div class="fw-semibold" th:text="${producto.nombre}">1/4 Pollo a la Brasa</div>
-                                        <small class="text-muted" th:text="${producto.descripcion}">Jugoso cuarto de
-                                            pollo asado a la leña con papas fritas y ensalada fresca.</small>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <!-- ✅ IMAGEN DEL PRODUCTO USANDO imagen_url -->
+                                        <img th:src="@{/} + ${producto.imagenUrl}" th:alt="${producto.nombre}"
+                                            style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;"
+                                            onerror="this.src='https://ui-avatars.com/api/?name=' + ${producto.nombre} + '&background=dc3545&color=fff&size=60'">
+                                        <div>
+                                            <div class="fw-semibold" th:text="${producto.nombre}">Nombre Producto</div>
+                                            <small class="text-muted"
+                                                th:text="${producto.descripcion}">Descripción</small>
+                                        </div>
                                     </div>
                                 </td>
-                                <!-- ✅ CATEGORÍA CON NUEVOS ESTILOS -->
                                 <td>
-                                    <span class="badge-categoria" th:class="${producto.categoria == 'Pollos' ? 'badge-categoria pollos' : 
-                         producto.categoria == 'Bebidas' ? 'badge-categoria bebidas' : 
-                         producto.categoria == 'Combos' ? 'badge-categoria combos' : 
-                         producto.categoria == 'Parrillas' ? 'badge-categoria parrillas' : 
-                         producto.categoria == 'Promociones' ? 'badge-categoria promociones' : 
-                         producto.categoria == 'Postres' ? 'badge-categoria postres' : 
-                         producto.categoria == 'Entradas' ? 'badge-categoria entradas' : 
-                         'badge-categoria'}" th:text="${producto.categoria}">Pollos</span>
+                                    <span class="badge-categoria" th:text="${producto.categoria}">Categoría</span>
                                 </td>
                                 <td class="fw-bold text-danger">S/ <span th:text="${producto.precio}">0.00</span></td>
                                 <td>
@@ -117,15 +129,90 @@
             </div>
         </div>
     </div>
+
+
+    <!-- ============================================================ -->
+    <!-- MODAL PARA NUEVO PRODUCTO -->
+    <!-- ============================================================ -->
+    <div class="modal fade" id="modalNuevoProducto" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="border-bottom: 1px solid #f0f0f0; padding: 20px 30px;">
+                    <h5 class="modal-title fw-bold" style="color: #1a1a2e;">
+                        <i style="color: #dc3545;"></i> Nuevo Producto
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formNuevoProducto" th:action="@{/admin/productos/guardar}" method="post">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Nombre <span class="text-danger">*</span></label>
+                                    <input type="text" name="nombre" class="form-control"
+                                        placeholder="Ej: Combo Familiar" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Descripción</label>
+                                    <textarea name="descripcion" class="form-control" rows="2"
+                                        placeholder="Descripción del producto..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Precio (S/) <span
+                                            class="text-danger">*</span></label>
+                                    <input type="number" step="0.01" name="precio" class="form-control"
+                                        placeholder="0.00" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Categoría <span
+                                            class="text-danger">*</span></label>
+                                    <select name="categoria" class="form-control" required>
+                                        <option value="">Seleccionar...</option>
+                                        <option value="Pollos">Pollos</option>
+                                        <option value="Promociones">Promociones</option>
+                                        <option value="Piqueos">Piqueos</option>
+                                        <option value="Hamburguesas">Hamburguesas</option>
+                                        <option value="Wraps">Wraps</option>
+                                        <option value="Acompañamientos">Acompañamientos</option>
+                                        <option value="Postres">Postres</option>
+                                        <option value="Bebidas">Bebidas</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">URL de imagen</label>
+                                    <input type="text" name="imagenUrl" class="form-control"
+                                        placeholder="https://ejemplo.com/imagen.jpg">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 justify-content-end"
+                            style="border-top: 1px solid #f0f0f0; padding-top: 20px;">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"
+                                style="border-radius: 12px; padding: 10px 28px; font-weight: 600; font-size: 0.95rem;">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-danger"
+                                style="border-radius: 12px; padding: 10px 28px; font-weight: 600; font-size: 0.95rem;">
+                                Crear producto
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-    // ========== TOGGLE SIDEBAR ==========
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        if (sidebar) {
-            sidebar.classList.toggle('active');
+        // ========== TOGGLE SIDEBAR ==========
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('active');
+            }
         }
-    }
-</script>
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/productos.js}"></script>
