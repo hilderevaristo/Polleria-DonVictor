@@ -33,7 +33,7 @@
             <li><a th:href="@{/admin/dashboard}"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
             <li><a th:href="@{/admin/productos}"><i class="fas fa-box"></i> Productos</a></li>
             <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a></li>
-            <li class="active"><a th:href="@{/admin/pedidos}"><i class="fas fa-shopping-cart"></i> Órdenes</a></li>
+            <li class="active"><a th:href="@{/admin/pedidos}"><i class="fas fa-shopping-cart"></i> Ordenes</a></li>
         </ul>
         <div class="sidebar-footer">
             <a th:href="@{/logout}" class="btn btn-logout">
@@ -47,7 +47,7 @@
         <div class="top-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h4><i class="fas fa-shopping-cart text-primary"></i> Órdenes de Compra</h4>
+                    <h4>Ordenes de Compra</h4>
                     <p class="text-muted small">Historial de pedidos de los clientes</p>
                 </div>
                 <div class="d-flex align-items-center gap-3">
@@ -60,9 +60,7 @@
         <div class="row g-4 mb-4">
             <div class="col-md-3">
                 <div class="stat-card">
-                    <div class="stat-icon bg-primary">
-                        <i class="fas fa-shopping-cart"></i>
-                    </div>
+                    
                     <div class="stat-info">
                         <h3 th:text="${totalPedidos}">0</h3>
                         <span>Total órdenes</span>
@@ -149,7 +147,7 @@
         <!-- Tabla de pedidos con detalle expandible (acordeón) -->
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="fas fa-list me-2"></i>Lista de Órdenes</h5>
+                <h5 class="mb-0">Lista de Ordenes</h5>
                 <span class="badge bg-primary" th:text="${totalPedidos}">0</span>
             </div>
             <div class="card-body p-0">
