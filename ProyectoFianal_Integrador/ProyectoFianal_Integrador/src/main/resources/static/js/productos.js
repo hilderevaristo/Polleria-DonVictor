@@ -192,3 +192,60 @@ function toggleSidebar() {
             }
         });
     }
+
+    // ========== BUSCADOR DE PRODUCTOS ==========
+// ========== BUSCADOR DE PRODUCTOS CON MENSAJE ==========
+function filtrarProductos() {
+    const input = document.getElementById('buscadorProductos');
+    if (!input) return;
+    
+    const filter = input.value.toUpperCase().trim();
+    const table = document.getElementById('tablaProductos');
+    if (!table) return;
+    
+    const rows = table.getElementsByTagName('tr');
+    let encontrados = 0;
+
+    // Recorrer filas (empezar desde 1 para saltar el encabezado)
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const nombre = row.getElementsByTagName('td')[0]?.textContent?.toUpperCase() || '';
+        const categoria = row.getElementsByTagName('td')[1]?.textContent?.toUpperCase() || '';
+        
+        if (nombre.includes(filter) || categoria.includes(filter)) {
+            row.style.display = '';
+            encontrados++;
+        } else {
+            row.style.display = 'none';
+        }
+    }
+
+    // ✅ MOSTRAR MENSAJE SI NO HAY RESULTADOS
+    let mensajeNoResultados = document.getElementById('mensajeNoResultados');
+    
+    if (filter.length > 0 && encontrados === 0) {
+        if (!mensajeNoResultados) {
+            mensajeNoResultados = document.createElement('tr');
+            mensajeNoResultados.id = 'mensajeNoResultados';
+            mensajeNoResultados.innerHTML = `
+                <td colspan="4" class="text-center py-4" style="background-color: #f8f9fa;">
+                    <i class="fas fa-search fa-2x text-muted mb-2" style="display: block;"></i>
+                    <p class="text-muted mb-0">
+                        <strong>🔍 No se encontraron productos para "<span id="textoBuscado">${input.value}</span>"</strong>
+                    </p>
+                </td>
+            `;
+            table.appendChild(mensajeNoResultados);
+        } else {
+            mensajeNoResultados.style.display = '';
+            const textoBuscado = document.getElementById('textoBuscado');
+            if (textoBuscado) {
+                textoBuscado.textContent = input.value;
+            }
+        }
+    } else {
+        if (mensajeNoResultados) {
+            mensajeNoResultados.style.display = 'none';
+        }
+    }
+}
