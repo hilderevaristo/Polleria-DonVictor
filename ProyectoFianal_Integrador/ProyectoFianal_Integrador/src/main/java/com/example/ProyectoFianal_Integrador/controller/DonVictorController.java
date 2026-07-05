@@ -245,57 +245,20 @@ public String adminProductos(HttpSession session, Model model) {
 // ========== EDITAR PRODUCTO ==========
 @GetMapping("/admin/productos/editar/{id}")
 public String editarProducto(@PathVariable Long id, HttpSession session, Model model) {
-    try {
-        Usuario admin = (Usuario) session.getAttribute("usuario");
-        if (admin == null || !"ADMIN".equals(admin.getRol())) {
-            return "redirect:/login";
-        }
-        
-        Producto producto = productoRepository.findById(id).orElse(null);
-        if (producto == null) {
-            return "redirect:/admin/productos";
-        }
-        
-        model.addAttribute("producto", producto);
-        model.addAttribute("adminNombre", admin.getNombre());
-        
-        return "admin/productos-editar";
-        
-    } catch (Exception e) {
-        e.printStackTrace();
-        return "redirect:/admin/productos";
-    }
-}
-
-// ========== ACTUALIZAR PRODUCTO ==========
-@PostMapping("/admin/productos/actualizar")
-public String actualizarProducto(@RequestParam Long id,
-                                 @RequestParam String nombre,
-                                 @RequestParam String descripcion,
-                                 @RequestParam Double precio,
-                                 @RequestParam String categoria,
-                                 RedirectAttributes redirectAttributes) {
-    try {
-        Producto producto = productoRepository.findById(id).orElse(null);
-        if (producto == null) {
-            redirectAttributes.addFlashAttribute("error", "Producto no encontrado");
-            return "redirect:/admin/productos";
-        }
-        
-        producto.setNombre(nombre);
-        producto.setDescripcion(descripcion);
-        producto.setPrecio(precio);
-        producto.setCategoria(categoria);
-        productoRepository.save(producto);
-        
-        redirectAttributes.addFlashAttribute("exito", "✅ Producto actualizado correctamente");
-        
-    } catch (Exception e) {
-        e.printStackTrace();
-        redirectAttributes.addFlashAttribute("error", "❌ Error: " + e.getMessage());
+    Usuario admin = (Usuario) session.getAttribute("usuario");
+    if (admin == null || !"ADMIN".equals(admin.getRol())) {
+        return "redirect:/login";
     }
     
-    return "redirect:/admin/productos";
+    Producto producto = productoRepository.findById(id).orElse(null);
+    if (producto == null) {
+        return "redirect:/admin/productos";
+    }
+    
+    model.addAttribute("producto", producto);
+    model.addAttribute("adminNombre", admin.getNombre());
+    
+    return "admin/productos-editar";
 }
 
 // ========== ELIMINAR PRODUCTO ==========
@@ -320,15 +283,92 @@ public Map<String, Object> eliminarProducto(@PathVariable Long id, HttpSession s
         }
         
         productoRepository.delete(producto);
+        
         response.put("success", true);
         response.put("message", "Producto eliminado correctamente");
         
     } catch (Exception e) {
+        e.printStackTrace();
         response.put("success", false);
         response.put("message", e.getMessage());
     }
     
     return response;
+}
+
+// ========== OBTENER PRODUCTO (para editar en modal) ==========
+@GetMapping("/admin/productos/obtener/{id}")
+@ResponseBody
+public Map<String, Object> obtenerProducto(@PathVariable Long id) {
+    Map<String, Object> response = new HashMap<>();
+    
+    try {
+        System.out.println("📦 Obteniendo producto ID: " + id);
+        
+        Producto producto = productoRepository.findById(id).orElse(null);
+        if (producto == null) {
+            response.put("success", false);
+            response.put("message", "Producto no encontrado");
+            return response;
+        }
+        
+        Map<String, Object> productoData = new HashMap<>();
+        productoData.put("id", producto.getId());
+        productoData.put("nombre", producto.getNombre());
+        productoData.put("descripcion", producto.getDescripcion());
+        productoData.put("precio", producto.getPrecio());
+        productoData.put("categoria", producto.getCategoria());
+        productoData.put("imagenUrl", producto.getImagenUrl());
+        
+        response.put("success", true);
+        response.put("producto", productoData);
+        
+        System.out.println("✅ Producto encontrado: " + producto.getNombre());
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.put("success", false);
+        response.put("message", e.getMessage());
+    }
+    
+    return response;
+}
+
+// ========== ACTUALIZAR PRODUCTO ==========
+@PostMapping("/admin/productos/actualizar")
+public String actualizarProducto(@RequestParam Long id,
+                                 @RequestParam String nombre,
+                                 @RequestParam(required = false) String descripcion,
+                                 @RequestParam Double precio,
+                                 @RequestParam String categoria,
+                                 @RequestParam(required = false) String imagenUrl,
+                                 RedirectAttributes redirectAttributes) {
+    try {
+        System.out.println("📦 Actualizando producto ID: " + id);
+        
+        Producto producto = productoRepository.findById(id).orElse(null);
+        if (producto == null) {
+            redirectAttributes.addFlashAttribute("error", "Producto no encontrado");
+            return "redirect:/admin/productos";
+        }
+        
+        producto.setNombre(nombre);
+        producto.setDescripcion(descripcion);
+        producto.setPrecio(precio);
+        producto.setCategoria(categoria);
+        producto.setImagenUrl(imagenUrl);
+        
+        productoRepository.save(producto);
+        
+        redirectAttributes.addFlashAttribute("exito", "✅ Producto actualizado correctamente");
+        System.out.println("✅ Producto actualizado: " + nombre);
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+        redirectAttributes.addFlashAttribute("error", "❌ Error: " + e.getMessage());
+    }
+    
+    return "redirect:/admin/productos";
 }
 
 // ========== MOSTRAR FORMULARIO NUEVO PRODUCTO ==========

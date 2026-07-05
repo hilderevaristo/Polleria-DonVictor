@@ -1,4 +1,4 @@
-function editarProducto(id) {
+/*function editarProducto(id) {
     window.location.href = '/admin/productos/editar/' + id;
 }
 
@@ -21,6 +21,7 @@ function eliminarProducto(id) {
 function verProducto(id) {
     alert('Ver producto ID: ' + id);
 }
+    */
 
 // ========== TOGGLE SIDEBAR ==========
 function toggleSidebar() {
@@ -90,3 +91,70 @@ function toggleSidebar() {
             });
         }
     });
+      // ========== EDITAR PRODUCTO (ABRE MODAL) ==========
+      // ========== EDITAR PRODUCTO ==========
+    function editarProducto(boton) {
+        const id = boton.getAttribute('data-id');
+        console.log("📦 Editando producto ID:", id);
+        
+        if (!id) {
+            Swal.fire({
+                icon: 'error',
+                title: '❌ Error',
+                text: 'No se pudo obtener el ID del producto',
+                confirmButtonColor: '#dc3545'
+            });
+            return;
+        }
+        
+        // ✅ Redirige a la página de edición
+        window.location.href = '/admin/productos/editar/' + id;
+    }
+
+    // ========== ELIMINAR PRODUCTO ==========
+    function eliminarProducto(id) {
+        Swal.fire({
+            title: '¿Eliminar producto?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/admin/productos/eliminar/' + id, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '✅ Eliminado',
+                            text: data.message,
+                            timer: 1500,
+                            timerProgressBar: true,
+                            showConfirmButton: false
+                        }).then(() => location.reload());
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '❌ Error',
+                            text: data.message,
+                            confirmButtonColor: '#dc3545'
+                        });
+                    }
+                })
+                .catch(() => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '❌ Error',
+                        text: 'Error al eliminar el producto',
+                        confirmButtonColor: '#dc3545'
+                    });
+                });
+            }
+        });
+    }

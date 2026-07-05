@@ -10,11 +10,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <!-- ✅ AGREGAR SWEETALERT2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
 
-   
+
 
     <!-- Botón para abrir sidebar en móvil -->
     <!-- Botón para abrir sidebar en móvil -->
@@ -35,17 +37,17 @@
             <li><a th:href="@{/admin/pedidos}"><i class="fas fa-shopping-cart"></i> Ordenes</a></li>
         </ul>
 
-         <div class="sidebar-footer">
-        <!-- ✅ BOTÓN PARA VER EL SITIO WEB -->
-        <a th:href="@{/}" target="_blank" class="btn btn-outline-light w-100 mb-2"
-            style="border-radius: 10px; padding: 10px; font-size: 0.85rem; border-color: rgba(255,255,255,0.2);">
-            <i class="fas fa-external-link-alt me-2"></i> Ver sitio web
-        </a>
+        <div class="sidebar-footer">
+            <!-- ✅ BOTÓN PARA VER EL SITIO WEB -->
+            <a th:href="@{/}" target="_blank" class="btn btn-outline-light w-100 mb-2"
+                style="border-radius: 10px; padding: 10px; font-size: 0.85rem; border-color: rgba(255,255,255,0.2);">
+                <i class="fas fa-external-link-alt me-2"></i> Ver sitio web
+            </a>
 
-        <a th:href="@{/logout}" class="btn btn-logout">
-            <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-        </a>
-    </div>
+            <a th:href="@{/logout}" class="btn btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+            </a>
+        </div>
         <div class="sidebar-footer">
             <a th:href="@{/logout}" class="btn btn-logout">
                 <i class="fas fa-sign-out-alt"></i> Cerrar sesión
@@ -111,16 +113,21 @@
                                 </td>
                                 <td class="fw-bold text-danger">S/ <span th:text="${producto.precio}">0.00</span></td>
                                 <td>
+                                <td>
                                     <div class="d-flex gap-2">
-                                        <button class="btn btn-sm btn-outline-primary"
-                                            th:onclick="'editarProducto(' + ${producto.id} + ')'">
+                                        <!-- EDITAR (CORREGIDO) -->
+                                        <button class="btn btn-sm btn-outline-primary btn-editar-producto"
+                                            th:attr="data-id=${producto.id}" onclick="editarProducto(this)">
                                             <i class="fas fa-edit"></i>
                                         </button>
+
+                                        <!-- ELIMINAR -->
                                         <button class="btn btn-sm btn-outline-danger"
                                             th:onclick="'eliminarProducto(' + ${producto.id} + ')'">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
+                                </td>
                                 </td>
                             </tr>
                         </tbody>
@@ -196,6 +203,111 @@
                             <button type="submit" class="btn btn-danger"
                                 style="border-radius: 12px; padding: 10px 28px; font-weight: 600; font-size: 0.95rem;">
                                 Crear producto
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODAL PARA EDITAR PRODUCTO -->
+    <!-- ============================================================ -->
+    <div class="modal fade" id="modalEditarProducto" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 550px;">
+            <div class="modal-content"
+                style="border-radius: 24px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.12);">
+
+                <!-- HEADER -->
+                <div class="modal-header" style="border-bottom: 1px solid #f0f0f0; padding: 20px 28px;">
+                    <h5 class="modal-title fw-bold" style="color: #1a1a2e; font-size: 1.2rem;">
+                        <i class="fas fa-edit me-2" style="color: #dc3545;"></i> Editar Producto
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- BODY -->
+                <div class="modal-body" style="padding: 28px; background-color: #ffffff;">
+                    <form id="formEditarProducto" action="/admin/productos/actualizar" method="post">
+                        <input type="hidden" name="id" id="edit-id">
+
+                        <!-- Nombre -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold"
+                                style="color: #333; font-size: 0.85rem; margin-bottom: 6px;">
+                                Nombre <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" name="nombre" id="edit-nombre" class="form-control"
+                                placeholder="Ej: Combo Familiar"
+                                style="border-radius: 12px; padding: 11px 16px; border: 1.5px solid #e8e8e8; font-size: 0.95rem;"
+                                required>
+                        </div>
+
+                        <!-- Categoría -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold"
+                                style="color: #333; font-size: 0.85rem; margin-bottom: 6px;">
+                                Categoría <span class="text-danger">*</span>
+                            </label>
+                            <select name="categoria" id="edit-categoria" class="form-control"
+                                style="border-radius: 12px; padding: 11px 16px; border: 1.5px solid #e8e8e8; font-size: 0.95rem;"
+                                required>
+                                <option value="Pollos">Pollos</option>
+                                <option value="Promociones">Promociones</option>
+                                <option value="Piqueos">Piqueos</option>
+                                <option value="Hamburguesas">Hamburguesas</option>
+                                <option value="Wraps">Wraps</option>
+                                <option value="Acompañamientos">Acompañamientos</option>
+                                <option value="Postres">Postres</option>
+                                <option value="Bebidas">Bebidas</option>
+                            </select>
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold"
+                                style="color: #333; font-size: 0.85rem; margin-bottom: 6px;">
+                                Descripción
+                            </label>
+                            <textarea name="descripcion" id="edit-descripcion" class="form-control" rows="2"
+                                placeholder="Descripción del producto..."
+                                style="border-radius: 12px; padding: 11px 16px; border: 1.5px solid #e8e8e8; font-size: 0.95rem; resize: vertical;"></textarea>
+                        </div>
+
+                        <!-- URL de imagen -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold"
+                                style="color: #333; font-size: 0.85rem; margin-bottom: 6px;">
+                                URL de imagen
+                            </label>
+                            <input type="text" name="imagenUrl" id="edit-imagenUrl" class="form-control"
+                                placeholder="https://ejemplo.com/imagen.jpg"
+                                style="border-radius: 12px; padding: 11px 16px; border: 1.5px solid #e8e8e8; font-size: 0.95rem;">
+                        </div>
+
+                        <!-- Precio -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold"
+                                style="color: #333; font-size: 0.85rem; margin-bottom: 6px;">
+                                Precio (S/) <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" step="0.01" name="precio" id="edit-precio" class="form-control"
+                                placeholder="0.00"
+                                style="border-radius: 12px; padding: 11px 16px; border: 1.5px solid #e8e8e8; font-size: 0.95rem;"
+                                required>
+                        </div>
+
+                        <!-- BOTONES -->
+                        <div class="d-flex gap-2 justify-content-end"
+                            style="border-top: 1px solid #f0f0f0; padding-top: 20px;">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"
+                                style="border-radius: 12px; padding: 10px 28px; font-weight: 600; font-size: 0.95rem;">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-danger"
+                                style="border-radius: 12px; padding: 10px 28px; font-weight: 600; font-size: 0.95rem;">
+                                <i class="fas fa-save me-2"></i> Guardar cambios
                             </button>
                         </div>
                     </form>
