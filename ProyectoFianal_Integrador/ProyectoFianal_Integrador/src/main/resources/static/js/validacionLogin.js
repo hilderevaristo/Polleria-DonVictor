@@ -1,4 +1,4 @@
-// JavaScript para animación del botón Ingresar
+// JavaScript para animación y mensajes del botón Ingresar
 document.addEventListener('DOMContentLoaded', function() {
 
     const formLogin = document.getElementById('formLogin');
@@ -8,35 +8,109 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (formLogin) {
         formLogin.addEventListener('submit', function(event) {
-            // Validar que los campos no estén vacíos
+            event.preventDefault(); // ✅ Evita que la página se recargue
+
             const email = document.querySelector('input[name="email"]').value;
             const password = document.querySelector('input[name="password"]').value;
 
+            // ✅ Validar campos vacíos
             if (!email || !password) {
-                event.preventDefault();
-                alert('Por favor completa todos los campos');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campos incompletos',
+                    text: 'Por favor completa todos los campos',
+                    confirmButtonColor: '#dc3545',
+                    confirmButtonText: 'Entendido'
+                });
                 return false;
             }
 
-            // Activar animación en el botón
+            // ✅ Activar animación en el botón
             btnIngresar.classList.add('cargando');
             btnTexto.innerHTML = 'Ingresando';
             btnSpinner.style.display = 'inline-block';
 
-            // Agregar puntos suspensivos animados con intervalo
+            // Puntos suspensivos animados
             let puntos = 0;
             const intervalo = setInterval(() => {
                 puntos = (puntos + 1) % 4;
-                const textoBase = 'Ingresando';
-                const puntosTexto = '.'.repeat(puntos);
-                btnTexto.innerHTML = `${textoBase}${puntosTexto}`;
+                btnTexto.innerHTML = `Ingresando${'.'.repeat(puntos)}`;
             }, 500);
 
-            // Guardar el intervalo para detenerlo si el formulario falla (opcional)
-            formLogin.setAttribute('data-intervalo', intervalo);
+            // ✅ Enviar datos con fetch (sin recargar)
+            const formData = new URLSearchParams();
+            formData.append('email', email);
+            formData.append('password', password);
 
-            // El formulario se envía automáticamente
-            return true;
+            fetch('/procesarLogin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Detener animación
+                clearInterval(intervalo);
+                btnIngresar.classList.remove('cargando');
+                btnTexto.innerHTML = 'Ingresar';
+                btnSpinner.style.display = 'none';
+
+                if (data.success) {
+                    // ✅ Login exitoso - Mostrar bienvenida
+                    Swal.fire({
+                        icon: 'success',
+                        title: `¡Bienvenido, ${data.nombre}!`,
+                        text: 'Inicio de sesión exitoso',
+                        timer: 1500,
+                        timerProgressBar: true,
+                        showConfirmButton: false
+                    }).then(() => {
+                        // Redirigir según el rol
+                        if (data.rol === 'ADMIN') {
+                            window.location.href = '/admin/dashboard';
+                        } else {
+                            window.location.href = '/';
+                        }
+                    });
+                } else {
+                    // ✅ Login fallido - Mostrar error
+                    let mensaje = '❌ Correo o contraseña incorrectos';
+                    if (data.errorMsg === 'usuario_no_existe') {
+                        mensaje = '❌ El correo no está registrado';
+                    } else if (data.errorMsg === 'contrasena_incorrecta') {
+                        mensaje = '❌ Contraseña incorrecta';
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de inicio de sesión',
+                        text: mensaje,
+                        confirmButtonColor: '#dc3545',
+                        confirmButtonText: 'Intentar de nuevo',
+                        timer: 4000,
+                        timerProgressBar: true
+                    });
+                }
+            })
+            .catch(error => {
+                clearInterval(intervalo);
+                btnIngresar.classList.remove('cargando');
+                btnTexto.innerHTML = 'Ingresar';
+                btnSpinner.style.display = 'none';
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error al iniciar sesión',
+                    confirmButtonColor: '#dc3545',
+                    confirmButtonText: 'Entendido'
+                });
+                console.error('Error:', error);
+            });
+
+            return false;
         });
     }
 
@@ -45,7 +119,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnOlvidePass) {
         btnOlvidePass.addEventListener('click', function(e) {
             e.preventDefault();
-            alert('📧 Envía un correo a soporte@donvictor.com para recuperar tu contraseña');
+            Swal.fire({
+                icon: 'info',
+                title: 'Recuperar contraseña',
+                text: '📧 Envía un correo a soporte@donvictor.com para recuperar tu contraseña',
+                confirmButtonColor: '#dc3545',
+                confirmButtonText: 'Entendido'
+            });
         });
     }
 });

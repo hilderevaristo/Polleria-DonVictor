@@ -18,10 +18,41 @@ let pedidoIdActual = null;
 
 // ========== FILTRAR POR ESTADO ==========
 function filtrarPorEstado(estado, boton) {
-    estadoFiltroActual = estado;
-    document.querySelectorAll('.btn-filtro').forEach(btn => btn.classList.remove('active'));
-    if (boton) boton.classList.add('active');
-    aplicarFiltros();
+    console.log("Filtrando por:", estado);
+    document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('active'));
+    boton.classList.add('active');
+    
+    const table = document.getElementById('tablaPedidos');
+    if (!table) return;
+    const rows = table.getElementsByTagName('tr');
+    
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        // ✅ Saltar filas de detalle (con colspan)
+        if (row.querySelector('td[colspan]')) {
+            continue;
+        }
+        
+        // ✅ Buscar el estado en toda la fila
+        const celdas = row.getElementsByTagName('td');
+        let estadoCelda = '';
+        for (let j = 0; j < celdas.length; j++) {
+            // Buscar el texto que coincida con algún estado
+            const texto = celdas[j]?.textContent?.toUpperCase() || '';
+            if (texto.includes('PENDIENTE') || texto.includes('EN_PROCESO') || 
+                texto.includes('EN_CAMINO') || texto.includes('COMPLETADO') || 
+                texto.includes('CANCELADO')) {
+                estadoCelda = texto.trim();
+                break;
+            }
+        }
+        
+        if (estado === 'todos') {
+            row.style.display = '';
+        } else {
+            row.style.display = estadoCelda.includes(estado.toUpperCase()) ? '' : 'none';
+        }
+    }
 }
 
 // ========== FILTRAR POR BÚSQUEDA ==========

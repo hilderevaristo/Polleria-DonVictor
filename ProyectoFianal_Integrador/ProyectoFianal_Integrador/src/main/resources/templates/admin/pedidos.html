@@ -17,7 +17,7 @@
 <body>
 
 
-   
+
     <!-- Botón para abrir sidebar en móvil -->
     <!-- Botón para abrir sidebar en móvil -->
     <button class="sidebar-toggle" onclick="toggleSidebar()">
@@ -38,17 +38,17 @@
             <li class="active"><a th:href="@{/admin/pedidos}"><i class="fas fa-shopping-cart"></i> Ordenes</a></li>
         </ul>
 
-         <div class="sidebar-footer">
-        <!-- ✅ BOTÓN PARA VER EL SITIO WEB -->
-        <a th:href="@{/}" target="_blank" class="btn btn-outline-light w-100 mb-2"
-            style="border-radius: 10px; padding: 10px; font-size: 0.85rem; border-color: rgba(255,255,255,0.2);">
-            <i class="fas fa-external-link-alt me-2"></i> Ver sitio web
-        </a>
+        <div class="sidebar-footer">
+            <!-- ✅ BOTÓN PARA VER EL SITIO WEB -->
+            <a th:href="@{/}" target="_blank" class="btn btn-outline-light w-100 mb-2"
+                style="border-radius: 10px; padding: 10px; font-size: 0.85rem; border-color: rgba(255,255,255,0.2);">
+                <i class="fas fa-external-link-alt me-2"></i> Ver sitio web
+            </a>
 
-        <a th:href="@{/logout}" class="btn btn-logout">
-            <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-        </a>
-    </div>
+            <a th:href="@{/logout}" class="btn btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+            </a>
+        </div>
         <div class="sidebar-footer">
             <a th:href="@{/logout}" class="btn btn-logout">
                 <i class="fas fa-sign-out-alt"></i> Cerrar sesión
@@ -138,19 +138,19 @@
                             <button class="btn btn-filtro active" onclick="filtrarPorEstado('todos', this)">
                                 Todos
                             </button>
-                            <button class="btn btn-filtro" onclick="filtrarPorEstado('pendiente', this)">
+                            <button class="btn btn-filtro" onclick="filtrarPorEstado('PENDIENTE', this)">
                                 Pendiente
                             </button>
-                            <button class="btn btn-filtro" onclick="filtrarPorEstado('en_proceso', this)">
+                            <button class="btn btn-filtro" onclick="filtrarPorEstado('EN_PROCESO', this)">
                                 En proceso
                             </button>
-                            <button class="btn btn-filtro" onclick="filtrarPorEstado('en_camino', this)">
+                            <button class="btn btn-filtro" onclick="filtrarPorEstado('EN_CAMINO', this)">
                                 En camino
                             </button>
-                            <button class="btn btn-filtro" onclick="filtrarPorEstado('completado', this)">
+                            <button class="btn btn-filtro" onclick="filtrarPorEstado('COMPLETADO', this)">
                                 Completado
                             </button>
-                            <button class="btn btn-filtro" onclick="filtrarPorEstado('cancelado', this)">
+                            <button class="btn btn-filtro" onclick="filtrarPorEstado('CANCELADO', this)">
                                 Cancelado
                             </button>
                         </div>

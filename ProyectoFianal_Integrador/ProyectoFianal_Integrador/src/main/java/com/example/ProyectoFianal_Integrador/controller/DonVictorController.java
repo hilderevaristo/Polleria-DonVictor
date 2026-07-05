@@ -103,44 +103,46 @@ public class DonVictorController {
     }
 
     @PostMapping("/procesarLogin")
-    public String procesarLogin(@RequestParam String email,
-            @RequestParam String password,
-            HttpSession session,
-            Model model) {
+@ResponseBody
+public Map<String, Object> procesarLogin(@RequestParam String email,
+                                         @RequestParam String password,
+                                         HttpSession session) {
 
-        System.out.println("=== LOGIN ===");
-        System.out.println("Email: " + email);
-        System.out.println("Password: " + password);
+    Map<String, Object> response = new HashMap<>();
 
-        Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
+    System.out.println("=== INTENTO DE LOGIN ===");
+    System.out.println("Email: " + email);
 
-        if (usuario == null) {
-            System.out.println("❌ Usuario NO existe");
-            model.addAttribute("error", "Correo o contraseña incorrectos");
-            return "login";
-        }
+    // Buscar usuario por email
+    Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
 
-        System.out.println("✅ Usuario: " + usuario.getNombre());
-        System.out.println("Rol: " + usuario.getRol());
-        System.out.println("Password en BD: " + usuario.getPassword());
-
-        // ✅ COMPARACIÓN DIRECTA (sin encriptación)
-        if (usuario.getPassword().equals(password)) {
-            System.out.println("✅ Contraseña correcta");
-            session.setAttribute("usuario", usuario);
-
-            if ("ADMIN".equals(usuario.getRol())) {
-                System.out.println("🔐 Admin → dashboard");
-                return "redirect:/admin/dashboard";
-            }
-            System.out.println("🏠 Usuario → index");
-            return "redirect:/";
-        } else {
-            System.out.println("❌ Contraseña incorrecta");
-            model.addAttribute("error", "Correo o contraseña incorrectos");
-            return "login";
-        }
+    // ✅ CASO 1: Usuario NO existe
+    if (usuario == null) {
+        System.out.println("❌ Usuario NO existe");
+        response.put("success", false);
+        response.put("errorMsg", "usuario_no_existe");
+        return response;
     }
+
+    // ✅ CASO 2: Contraseña incorrecta
+    if (!usuario.getPassword().equals(password)) {
+        System.out.println("❌ Contraseña incorrecta");
+        response.put("success", false);
+        response.put("errorMsg", "contrasena_incorrecta");
+        return response;
+    }
+
+    // ✅ CASO 3: Login exitoso
+    System.out.println("✅ Usuario: " + usuario.getNombre());
+    System.out.println("Rol: " + usuario.getRol());
+    session.setAttribute("usuario", usuario);
+
+    response.put("success", true);
+    response.put("nombre", usuario.getNombre());
+    response.put("rol", usuario.getRol());
+
+    return response;
+}
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
