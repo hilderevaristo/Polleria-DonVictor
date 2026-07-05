@@ -296,6 +296,12 @@ public Map<String, Object> eliminarProducto(@PathVariable Long id, HttpSession s
     return response;
 }
 
+
+@GetMapping("/admin/productos/test")
+@ResponseBody
+public String test() {
+    return "✅ El controlador funciona!";
+}
 // ========== OBTENER PRODUCTO (para editar en modal) ==========
 @GetMapping("/admin/productos/obtener/{id}")
 @ResponseBody

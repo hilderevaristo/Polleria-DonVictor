@@ -94,22 +94,56 @@ function toggleSidebar() {
       // ========== EDITAR PRODUCTO (ABRE MODAL) ==========
       // ========== EDITAR PRODUCTO ==========
     function editarProducto(boton) {
-        const id = boton.getAttribute('data-id');
-        console.log("📦 Editando producto ID:", id);
-        
-        if (!id) {
+    const id = boton.getAttribute('data-id');
+    console.log("📦 Editando producto ID:", id);
+    
+    if (!id) {
+        Swal.fire({
+            icon: 'error',
+            title: '❌ Error',
+            text: 'No se pudo obtener el ID del producto',
+            confirmButtonColor: '#dc3545'
+        });
+        return;
+    }
+    
+    // ✅ OBTENER DATOS DEL PRODUCTO
+    fetch('/admin/productos/obtener/' + id)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const producto = data.producto;
+                
+                // Llenar el formulario del modal
+                document.getElementById('edit-id').value = producto.id;
+                document.getElementById('edit-nombre').value = producto.nombre;
+                document.getElementById('edit-descripcion').value = producto.descripcion || '';
+                document.getElementById('edit-precio').value = producto.precio;
+                document.getElementById('edit-categoria').value = producto.categoria;
+                document.getElementById('edit-imagenUrl').value = producto.imagenUrl || '';
+                
+                // Abrir modal
+                const modal = new bootstrap.Modal(document.getElementById('modalEditarProducto'));
+                modal.show();
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '❌ Error',
+                    text: data.message,
+                    confirmButtonColor: '#dc3545'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
             Swal.fire({
                 icon: 'error',
                 title: '❌ Error',
-                text: 'No se pudo obtener el ID del producto',
+                text: 'Error al cargar el producto',
                 confirmButtonColor: '#dc3545'
             });
-            return;
-        }
-        
-        // ✅ Redirige a la página de edición
-        window.location.href = '/admin/productos/editar/' + id;
-    }
+        });
+}
 
     // ========== ELIMINAR PRODUCTO ==========
     function eliminarProducto(id) {
