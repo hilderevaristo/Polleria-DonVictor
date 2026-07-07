@@ -186,7 +186,7 @@
                             <tr th:each="pedido, status : ${listaPedidos}" style="cursor: pointer;"
                                 data-bs-toggle="collapse" th:data-bs-target="'#detalle-' + ${pedido.id}"
                                 data-bs-parent="#tablaPedidos" aria-expanded="false"
-                                onclick="cambiarIcono(this, ${pedido.id})">
+                                th:onclick="|cambiarIcono(this, ${pedido.id})|">
 
                                 <td th:text="${status.index + 1}">1</td>
                                 <td>

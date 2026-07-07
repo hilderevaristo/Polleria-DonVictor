@@ -116,7 +116,7 @@
                                         <!-- ✅ IMAGEN DEL PRODUCTO USANDO imagen_url -->
                                         <img th:src="@{/} + ${producto.imagenUrl}" th:alt="${producto.nombre}"
                                             style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;"
-                                            onerror="this.src='https://ui-avatars.com/api/?name=' + ${producto.nombre} + '&background=dc3545&color=fff&size=60'">
+                                            th:onerror="|this.src='https://ui-avatars.com/api/?name=${producto.nombre}&background=dc3545&color=fff&size=60'|">
                                         <div>
                                             <div class="fw-semibold" th:text="${producto.nombre}">Nombre Producto</div>
                                             <small class="text-muted"

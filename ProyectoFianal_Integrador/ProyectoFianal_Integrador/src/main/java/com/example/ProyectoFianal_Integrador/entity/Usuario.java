@@ -30,6 +30,9 @@ public class Usuario {
     @Column(name = "fecha_registro")
     private LocalDateTime fechaRegistro;
     
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private java.util.List<Direccion> direcciones;
+    
     // Constructores
     public Usuario() {}
     
