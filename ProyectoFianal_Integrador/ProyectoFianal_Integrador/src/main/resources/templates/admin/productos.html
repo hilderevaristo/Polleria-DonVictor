@@ -110,43 +110,42 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="producto : ${listaProductos}">
-                                <td>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <!-- ✅ IMAGEN DEL PRODUCTO USANDO imagen_url -->
-                                        <img th:src="@{/} + ${producto.imagenUrl}" th:alt="${producto.nombre}"
-                                            style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;"
-                                            th:onerror="|this.src='https://ui-avatars.com/api/?name=${producto.nombre}&background=dc3545&color=fff&size=60'|">
-                                        <div>
-                                            <div class="fw-semibold" th:text="${producto.nombre}">Nombre Producto</div>
-                                            <small class="text-muted"
-                                                th:text="${producto.descripcion}">Descripción</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="badge-categoria" th:text="${producto.categoria}">Categoría</span>
-                                </td>
-                                <td class="fw-bold text-danger">S/ <span th:text="${producto.precio}">0.00</span></td>
-                                <td>
-                                <td>
-                                    <div class="d-flex gap-2">
-                                        <!-- EDITAR (CORREGIDO) -->
-                                        <button class="btn btn-sm btn-outline-primary btn-editar-producto"
-                                            th:attr="data-id=${producto.id}" onclick="editarProducto(this)">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
+    <tr th:if="${#lists.isEmpty(listaProductos)}">
+        <td colspan="4" class="text-center py-4 text-muted">No hay productos registrados en el menú.</td>
+    </tr>
+    
+    <tr th:each="producto : ${listaProductos}">
+        <td>
+            <div class="d-flex align-items-center gap-3">
+                <img th:src="${producto.imagenUrl != null} ? '/' + ${producto.imagenUrl} : ''" 
+     th:alt="${producto.nombre}"
+     style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;"
+     th:onerror="this.src='https://ui-avatars.com/api/?name=' + this.alt + '&background=dc3545&color=fff&size=60'">
+                <div>
+                    <div class="fw-semibold" th:text="${producto.nombre}">Nombre Producto</div>
+                    <small class="text-muted" th:text="${producto.descripcion}">Descripción</small>
+                </div>
+            </div>
+        </td>
+        <td>
+            <span class="badge bg-secondary px-2 py-1.5" style="border-radius: 6px; font-size: 0.85rem;" th:text="${producto.categoria}">Categoría</span>
+        </td>
+        <td class="fw-bold text-danger">S/ <span th:text="${producto.precio}">0.00</span></td>
+        <td>
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-primary btn-editar-producto"
+                    th:attr="data-id=${producto.id}" onclick="editarProducto(this)">
+                    <i class="fas fa-edit"></i>
+                </button>
 
-                                        <!-- ELIMINAR -->
-                                        <button class="btn btn-sm btn-outline-danger"
-                                            th:onclick="'eliminarProducto(' + ${producto.id} + ')'">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                                </td>
-                            </tr>
-                        </tbody>
+                <button class="btn btn-sm btn-outline-danger"
+                    th:attr="data-id=${producto.id}" onclick="eliminarProducto(this.getAttribute('data-id'))">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+</tbody>
                     </table>
                 </div>
             </div>

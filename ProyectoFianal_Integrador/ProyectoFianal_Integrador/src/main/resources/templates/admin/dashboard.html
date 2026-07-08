@@ -142,47 +142,25 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><strong>ORD-001</strong></td>
-                                <td>María García López</td>
-                                <td>2 items</td>
-                                <td>S/ 101.00</td>
-                                <td>18-may., 02:30 p. m.</td>
-                                <td><span class="badge bg-success">Completado</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>ORD-002</strong></td>
-                                <td>Carlos Mendoza Ruiz</td>
-                                <td>2 items</td>
-                                <td>S/ 156.00</td>
-                                <td>18-may., 08:15 a. m.</td>
-                                <td><span class="badge bg-success">Completado</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>ORD-003</strong></td>
-                                <td>Ana Torres Vargas</td>
-                                <td>2 items</td>
-                                <td>S/ 108.00</td>
-                                <td>17-may., 03:00 p. m.</td>
-                                <td><span class="badge bg-success">Completado</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>ORD-004</strong></td>
-                                <td>Luis Ramírez Ponce</td>
-                                <td>3 items</td>
-                                <td>S/ 99.00</td>
-                                <td>17-may., 07:45 a. m.</td>
-                                <td><span class="badge bg-warning text-dark">En proceso</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>ORD-005</strong></td>
-                                <td>Patricia Flores Quispe</td>
-                                <td>2 items</td>
-                                <td>S/ 189.00</td>
-                                <td>16-may., 01:20 p. m.</td>
-                                <td><span class="badge bg-success">Completado</span></td>
-                            </tr>
-                        </tbody>
+    <tr th:if="${#lists.isEmpty(listaPedidos)}">
+        <td colspan="6" class="text-center py-3 text-muted">No hay órdenes registradas en el sistema.</td>
+    </tr>
+    
+    <tr th:each="pedido : ${listaPedidos}">
+        <td><strong th:text="'ORD-' + ${pedido.id}">ORD-000</strong></td>
+        <td th:text="${pedido.nombreCliente}">Nombre Cliente</td>
+        <td><span>Delivery</span></td>
+        <td class="fw-bold text-danger" th:text="'S/ ' + ${pedido.total}">S/ 0.00</td>
+        <td th:text="${pedido.fechaPedido != null ? #temporals.format(pedido.fechaPedido, 'dd/MM/yyyy hh:mm a') : 'Sin fecha'}">Fecha</td>
+        <td>
+            <span class="badge" 
+                  th:classappend="${pedido.estado == 'PENDIENTE' ? 'bg-warning text-dark' : 
+                                   (pedido.estado == 'COMPLETADO' ? 'bg-success' : 
+                                   (pedido.estado == 'CANCELADO' ? 'bg-danger' : 'bg-info'))}"
+                  th:text="${pedido.estado}">Pendiente</span>
+        </td>
+    </tr>
+</tbody>
                     </table>
                 </div>
             </div>

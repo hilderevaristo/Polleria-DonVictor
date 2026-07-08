@@ -131,38 +131,35 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="user, status : ${listaUsuarios}">
-                                <td th:text="${status.index + 1}">1</td>
-                                <td>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <!-- AVATAR CON ESTILO EN LÍNEA -->
-                                        <div
-                                            style="width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 16px; background-color: #0d6efd; flex-shrink: 0; text-transform: uppercase; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                                            <span th:text="${#strings.substring(user.nombre, 0, 2)}">MG</span>
-                                        </div>
-                                        <div>
-                                            <div class="fw-semibold" th:text="${user.nombre}">María García</div>
-                                            <small class="text-muted" th:text="${user.email}">maria@email.com</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td th:text="${user.email}">maria@email.com</td>
-                                <td th:text="${user.telefono}">987654321</td>
-                                <td
-                                    th:text="${user.fechaRegistro != null ? #temporals.format(user.fechaRegistro, 'dd/MM/yyyy') : 'Sin fecha'}">
-                                    20/06/2026</td>
-                                <td class="text-center">
-
-                                    <!-- ✅ BOTÓN CON SWEETALERT -->
-                                    <button type="button" class="btn btn-danger btn-sm"
-                                        th:attr="data-id=${user.id}, data-nombre=${user.nombre}"
-                                        onclick="confirmarEliminar(this)">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-
-                                </td>
-                            </tr>
-                        </tbody>
+    <tr th:if="${#lists.isEmpty(listaUsuarios)}">
+        <td colspan="6" class="text-center py-4 text-muted">No hay clientes registrados en el sistema todavía.</td>
+    </tr>
+    
+    <tr th:each="user, status : ${listaUsuarios}">
+        <td th:text="${status.index + 1}">1</td>
+        <td>
+            <div class="d-flex align-items-center gap-3">
+                <div style="width: 42px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 15px; background-color: #0d6efd; flex-shrink: 0; text-transform: uppercase; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                    <span th:text="${user.nombre != null and !user.nombre.isEmpty()} ? ${#strings.substring(user.nombre, 0, 1)} : 'U'">U</span>
+                </div>
+                <div>
+                    <div class="fw-semibold" th:text="${user.nombre}">María García</div>
+                    <small class="text-muted" style="font-size: 0.8rem;" th:text="${user.email}">maria@email.com</small>
+                </div>
+            </div>
+        </td>
+        <td th:text="${user.email}">maria@email.com</td>
+        <td th:text="${user.telefono}">987654321</td>
+        <td th:text="${user.fechaRegistro != null ? #temporals.format(user.fechaRegistro, 'dd/MM/yyyy') : 'Sin fecha'}">20/06/2026</td>
+        <td class="text-center">
+            <button type="button" class="btn btn-danger btn-sm"
+                th:attr="data-id=${user.id}, data-nombre=${user.nombre}"
+                onclick="confirmarEliminar(this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        </td>
+    </tr>
+</tbody>
                     </table>
                 </div>
             </div>

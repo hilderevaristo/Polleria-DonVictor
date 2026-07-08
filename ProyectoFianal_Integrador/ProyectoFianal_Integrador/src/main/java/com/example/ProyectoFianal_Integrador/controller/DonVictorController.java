@@ -192,10 +192,25 @@ public Map<String, Object> procesarLogin(@RequestParam String email,
             return "redirect:/login";
         }
 
-        model.addAttribute("totalProductos", 12);
-        model.addAttribute("totalUsuarios", usuarioRepository.count());
-        model.addAttribute("totalOrdenes", 12);
-        model.addAttribute("totalIngresos", 1294.00);
+        long totalProductos = productoRepository.count();
+        long totalUsuarios = usuarioRepository.count();
+
+        List<Pedido> todosLosPedidos = pedidoRepository.findAll();
+        long totalOrdenes = todosLosPedidos.size();
+
+        double totalIngresos = todosLosPedidos.stream()
+                .filter(p -> p.getEstado() != null && !"CANCELADO".equals(p.getEstado().toUpperCase()))
+                .mapToDouble(p -> p.getTotal() != null ? p.getTotal() : 0.0)
+                .sum();
+
+        model.addAttribute("totalProductos", totalProductos);
+        model.addAttribute("totalUsuarios", totalUsuarios);
+        model.addAttribute("totalOrdenes", totalOrdenes);
+        model.addAttribute("totalIngresos", totalIngresos);
+
+        model.addAttribute("listaUsuarios", usuarioRepository.findAll());
+        model.addAttribute("listaPedidos", todosLosPedidos);
+        
         model.addAttribute("adminNombre", usuario.getNombre());
         model.addAttribute("pagina", "dashboard");
 
@@ -204,39 +219,31 @@ public Map<String, Object> procesarLogin(@RequestParam String email,
 
     // ========== ADMIN USUARIOS ==========
     @GetMapping("/admin/usuarios")
-    public String adminUsuarios(HttpSession session, Model model) {
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
+public String adminUsuarios(HttpSession session, Model model) {
+    Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        // Verificar que el usuario está logueado y es ADMIN
-        if (usuario == null) {
-            return "redirect:/login";
-        }
-
-        if (!"ADMIN".equals(usuario.getRol())) {
-            return "redirect:/";
-        }
-
-        try {
-            // Obtener todos los usuarios EXCEPTO el admin actual
-            List<Usuario> listaUsuarios = usuarioRepository.findAll();
-            listaUsuarios.removeIf(u -> u.getEmail().equals(usuario.getEmail()));
-
-            // Enviar datos a la vista
-            model.addAttribute("listaUsuarios", listaUsuarios);
-            model.addAttribute("totalUsuarios", listaUsuarios.size());
-
-        } catch (Exception e) {
-            System.out.println("❌ Error al obtener usuarios: " + e.getMessage());
-            model.addAttribute("listaUsuarios", new ArrayList<>());
-            model.addAttribute("totalUsuarios", 0);
-        }
-
-        model.addAttribute("adminNombre", usuario.getNombre());
-        model.addAttribute("pagina", "usuarios");
-
-        return "admin/usuarios";
+    if (usuario == null || !"ADMIN".equals(usuario.getRol())) {
+        return "redirect:/login";
     }
 
+    try {
+        // Obtener todos los usuarios de la base de datos menos el administrador en sesión
+        List<Usuario> listaUsuarios = usuarioRepository.findAll();
+        listaUsuarios.removeIf(u -> u.getEmail().equals(usuario.getEmail()));
+
+        model.addAttribute("listaUsuarios", listaUsuarios);
+        model.addAttribute("totalUsuarios", listaUsuarios.size());
+    } catch (Exception e) {
+        System.out.println("❌ Error al obtener usuarios: " + e.getMessage());
+        model.addAttribute("listaUsuarios", new ArrayList<>());
+        model.addAttribute("totalUsuarios", 0);
+    }
+
+    model.addAttribute("adminNombre", usuario.getNombre());
+    model.addAttribute("pagina", "usuarios");
+
+    return "admin/usuarios";
+}
     // ========== ADMIN PRODUCTOS ==========
    // ========== ADMIN PRODUCTOS ==========
 @GetMapping("/admin/productos")
@@ -247,7 +254,7 @@ public String adminProductos(HttpSession session, Model model) {
         return "redirect:/login";
     }
     
-    // ✅ OBTENER PRODUCTOS DESDE LA BD
+    // 📊 Traemos la lista real de la base de datos
     List<Producto> listaProductos = productoRepository.findAll();
     
     model.addAttribute("listaProductos", listaProductos);
