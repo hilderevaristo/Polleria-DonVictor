@@ -1,6 +1,6 @@
 package com.example.ProyectoFianal_Integrador.entity;
 
-
+import java.util.List;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -31,7 +31,7 @@ public class Usuario {
     private LocalDateTime fechaRegistro;
     
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private java.util.List<Direccion> direcciones;
+private List<Direccion> direcciones;
     
     // Constructores
     public Usuario() {}
@@ -66,4 +66,12 @@ public class Usuario {
     
     public LocalDateTime getFechaRegistro() { return fechaRegistro; }
     public void setFechaRegistro(LocalDateTime fechaRegistro) { this.fechaRegistro = fechaRegistro; }
+
+    public List<Direccion> getDirecciones() { 
+        return direcciones; 
+    }
+
+    public void setDirecciones(List<Direccion> direcciones) { 
+        this.direcciones = direcciones; 
+    }
 }

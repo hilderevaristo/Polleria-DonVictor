@@ -58,6 +58,17 @@ public class DonVictorController {
     public String index(HttpSession session, Model model) {
 
         try {
+            // ✅ CORRECCIÓN: Refrescar el usuario en sesión con sus direcciones
+            Usuario usuarioSession = (Usuario) session.getAttribute("usuario");
+            if (usuarioSession != null) {
+                Usuario usuarioCompleto = usuarioRepository.findById(usuarioSession.getId()).orElse(null);
+                if (usuarioCompleto != null) {
+                    // Forzamos la inicialización llamando al getter del proxy LAZY
+                    usuarioCompleto.getDirecciones().size(); 
+                    session.setAttribute("usuario", usuarioCompleto);
+                }
+            }
+
             model.addAttribute("productos", productoRepository.findAll());
             System.out.println("Productos: " + productoRepository.findAll().size());
         } catch (Exception e) {
@@ -135,6 +146,9 @@ public Map<String, Object> procesarLogin(@RequestParam String email,
     // ✅ CASO 3: Login exitoso
     System.out.println("✅ Usuario: " + usuario.getNombre());
     System.out.println("Rol: " + usuario.getRol());
+    
+    // ✅ CORRECCIÓN: Forzar la carga de la lista LAZY antes de guardar en sesión
+    usuario.getDirecciones().size(); 
     session.setAttribute("usuario", usuario);
 
     response.put("success", true);

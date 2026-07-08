@@ -46,40 +46,53 @@
                 </button>
 
                 <form id="form-pedido">
-                    <input type="text" id="cli-nombre" class="form-control mb-3 custom-input"
-                        placeholder="Nombre completo" required>
-                    <input type="tel" id="cli-telefono" class="form-control mb-3 custom-input" placeholder="Teléfono"
-                        required>
+    <input type="text" id="cli-nombre" class="form-control mb-3 custom-input"
+        placeholder="Nombre completo" th:value="${session.usuario != null ? session.usuario.nombre : ''}" required>
+    <input type="tel" id="cli-telefono" class="form-control mb-3 custom-input" 
+        placeholder="Teléfono" th:value="${session.usuario != null ? session.usuario.telefono : ''}" required>
 
-                    <h6 class="fw-bold mb-3">Tipo de entrega</h6>
-                    <div class="d-flex gap-2 mb-3">
-                        <button type="button" class="btn btn-metodo-pago active w-50" data-tipo="Delivery"
-                            onclick="seleccionarTipoEntrega(this)">
-                            <i class="fas fa-motorcycle me-2"></i> Delivery
-                        </button>
-                        <button type="button" class="btn btn-metodo-pago w-50" data-tipo="Recojo"
-                            onclick="seleccionarTipoEntrega(this)">
-                            <i class="fas fa-store me-2"></i> Recojo local
-                        </button>
-                    </div>
+    <h6 class="fw-bold mb-3">Tipo de entrega</h6>
+    <div class="d-flex gap-2 mb-3">
+        <button type="button" class="btn btn-metodo-pago active w-50" data-tipo="Delivery"
+            onclick="seleccionarTipoEntrega(this)">
+            <i class="fas fa-motorcycle me-2"></i> Delivery
+        </button>
+        <button type="button" class="btn btn-metodo-pago w-50" data-tipo="Recojo"
+            onclick="seleccionarTipoEntrega(this)">
+            <i class="fas fa-store me-2"></i> Recojo local
+        </button>
+    </div>
 
-                    <div id="contenedor-direccion">
-                        <input type="text" id="cli-direccion" class="form-control mb-4 custom-input"
-                            placeholder="Dirección de entrega">
-                    </div>
+    <div id="contenedor-direccion">
+        <label class="form-label small fw-bold text-muted">Dirección de entrega</label>
+        <select id="cli-direccion" class="form-control mb-3 custom-input" required>
+            <option value="" disabled th:selected="${session.usuario == null or #lists.isEmpty(direcciones)}">Selecciona una dirección...</option>
+            
+            <option th:each="dir : ${session.usuario?.direcciones}" 
+        th:value="${dir.direccionExacta}" 
+        th:text="${dir.alias} + ': ' + ${dir.direccionExacta}"
+        th:selected="${dir.esPredeterminada}">
+</option>
 
-                    <h6 class="fw-bold mb-3">Método de pago</h6>
-                    <div class="d-flex gap-2 mb-4" id="contenedor-metodos-pago">
-                        <button type="button" class="btn btn-pago-final active w-50" data-metodo="Contraentrega"
-                            onclick="seleccionarPagoFinal(this)">
-                            <i class="fas fa-money-bill-wave me-2"></i> Contraentrega
-                        </button>
-                        <button type="button" class="btn btn-pago-final w-50" data-metodo="Yape"
-                            onclick="seleccionarPagoFinal(this)">
-                            <i class="fas fa-mobile-alt me-2"></i> Yape
-                        </button>
-                    </div>
-                </form>
+            <option value="OTRA">📍 Otra dirección (Ingresar manualmente)</option>
+        </select>
+
+        <input type="text" id="cli-direccion-manual" class="form-control mb-4 custom-input"
+            placeholder="Escribe tu dirección exacta aquí" style="display:none;">
+    </div>
+
+    <h6 class="fw-bold mb-3">Método de pago</h6>
+    <div class="d-flex gap-2 mb-4" id="contenedor-metodos-pago">
+        <button type="button" class="btn btn-pago-final active w-50" data-metodo="Contraentrega"
+            onclick="seleccionarPagoFinal(this)">
+            <i class="fas fa-money-bill-wave me-2"></i> Contraentrega
+        </button>
+        <button type="button" class="btn btn-pago-final w-50" data-metodo="Yape"
+            onclick="seleccionarPagoFinal(this)">
+            <i class="fas fa-mobile-alt me-2"></i> Yape
+        </button>
+    </div>
+</form>
             </div>
 
             <div class="carrito-footer">

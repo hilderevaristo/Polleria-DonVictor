@@ -115,10 +115,27 @@ function animarCarritoBoton() {
     }
 }
 
+// Manejo dinámico del despliegue del input de dirección manual
 document.addEventListener("DOMContentLoaded", function () {
-    actualizarCarrito();
+    const selectDireccion = document.getElementById('cli-direccion');
+    
+    if (selectDireccion) {
+        selectDireccion.addEventListener('change', function() {
+            const manualInput = document.getElementById('cli-direccion-manual');
+            if (manualInput) {
+                if (this.value === 'OTRA') {
+                    manualInput.style.display = 'block';
+                    manualInput.required = true;
+                    manualInput.focus();
+                } else {
+                    manualInput.style.display = 'none';
+                    manualInput.required = false;
+                    manualInput.value = ''; // Limpiamos si regresa a un alias establecido
+                }
+            }
+        });
+    }
 });
-
 
 
 function abrirCheckout() {
@@ -137,9 +154,15 @@ function actualizarTotalesCheckout() {
     let subtotal = 0;
     carrito.forEach(p => subtotal += p.precio * p.cantidad);
 
-    document.getElementById('checkout-subtotal').innerText = 'S/ ' + subtotal.toFixed(2);
-    document.getElementById('checkout-delivery').innerText = 'S/ ' + costoDelivery.toFixed(2);
-    document.getElementById('checkout-total').innerText = 'S/ ' + (subtotal + costoDelivery).toFixed(2);
+    const subtotalEl = document.getElementById('checkout-subtotal');
+    const deliveryEl = document.getElementById('checkout-delivery');
+    const totalEl = document.getElementById('checkout-total');
+
+    if (subtotalEl && deliveryEl && totalEl) {
+        subtotalEl.innerText = 'S/ ' + subtotal.toFixed(2);
+        deliveryEl.innerText = 'S/ ' + costoDelivery.toFixed(2);
+        totalEl.innerText = 'S/ ' + (subtotal + costoDelivery).toFixed(2);
+    }
 }
 
 // NUEVA FUNCIÓN: Cambia entre Delivery y Recojo
@@ -186,16 +209,26 @@ function confirmarPedido() {
     
     let direccion = "";
     if (tipoEntregaActual === "Delivery") {
-        direccion = document.getElementById('cli-direccion').value;
+        const selectDir = document.getElementById('cli-direccion');
+        
+        if (selectDir) {
+            if (selectDir.value === 'OTRA') {
+                direccion = document.getElementById('cli-direccion-manual').value;
+            } else {
+                direccion = selectDir.value;
+            }
+        }
+        
         if (!direccion) {
-            alert("Por favor, ingresa tu dirección de entrega.");
+            alert("Por favor, selecciona o ingresa tu dirección de entrega.");
             return;
         }
     } else {
         direccion = "Recojo en el local";
     }
 
-    const metodoPago = document.querySelector('.btn-pago-final.active').getAttribute('data-metodo');
+    const botonPagoActivo = document.querySelector('.btn-pago-final.active');
+    const metodoPago = botonPagoActivo ? botonPagoActivo.getAttribute('data-metodo') : "Contraentrega";
 
     if (!nombre || !telefono) {
         alert("Por favor, completa tus datos de contacto.");
@@ -215,7 +248,7 @@ function confirmarPedido() {
         }))
     };
 
-    // ✅ URL CORREGIDA
+    // El punto rojo desaparecerá aquí porque toda la estructura superior quedó limpia
     fetch('/procesarPedido', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
