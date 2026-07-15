@@ -141,11 +141,11 @@
                             <button class="btn btn-filtro" onclick="filtrarPorEstado('pendiente', this)">
                                 Pendiente
                             </button>
-                            <button class="btn btn-filtro" onclick="filtrarPorEstado('en_proceso', this)">
-                                En proceso
+                            <button class="btn btn-filtro" onclick="filtrarPorEstado('procesando', this)">
+                                Procesando
                             </button>
-                            <button class="btn btn-filtro" onclick="filtrarPorEstado('en_camino', this)">
-                                En camino
+                            <button class="btn btn-filtro" onclick="filtrarPorEstado('enviado', this)">
+                                Enviado
                             </button>
                             <button class="btn btn-filtro" onclick="filtrarPorEstado('completado', this)">
                                 Completado
@@ -206,12 +206,12 @@
                                 <td>
                                     <span class="badge" th:class="${pedido.estado == 'completado' ? 'bg-success' : 
              pedido.estado == 'pendiente' ? 'bg-warning text-dark' : 
-             pedido.estado == 'en_proceso' ? 'bg-info text-white' : 
-             pedido.estado == 'en_camino' ? 'bg-secondary text-white' : 
+             pedido.estado == 'procesando' ? 'bg-info text-white' : 
+             pedido.estado == 'enviado' ? 'bg-secondary text-white' : 
              pedido.estado == 'cancelado' ? 'bg-danger' : 'bg-secondary'}" th:text="${pedido.estado == 'completado' ? 'Completado' : 
            pedido.estado == 'pendiente' ? 'Pendiente' : 
-           pedido.estado == 'en_proceso' ? 'En proceso' : 
-           pedido.estado == 'en_camino' ? 'En camino' : 
+           pedido.estado == 'procesando' ? 'Procesando' : 
+           pedido.estado == 'enviado' ? 'Enviado' : 
            pedido.estado == 'cancelado' ? 'Cancelado' : pedido.estado}">Pendiente</span>
                                 </td>
                                 <td>

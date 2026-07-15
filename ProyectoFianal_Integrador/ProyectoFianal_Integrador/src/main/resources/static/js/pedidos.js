@@ -5,10 +5,10 @@ let pedidoIdActual = null;
 // ========== CONFIGURACIÓN DE ESTADOS ==========
 const ESTADOS_CONFIG = {
     'pendiente': { texto: 'PENDIENTE', color: '#FFA500' },
-    'en_proceso': { texto: 'EN PROCESO', color: '#FFD700' },
-    'en_camino': { texto: 'EN CAMINO', color: '#1E90FF' },
-    'completado': { texto: 'COMPLETADO', color: '#28A745' },
-    'cancelado': { texto: 'CANCELADO', color: '#DC3545' }
+    'procesando': { texto: 'procesando', color: '#FFD700' },
+    'enviado': { texto: 'enviado', color: '#1E90FF' },
+    'completado': { texto: 'completado', color: '#28A745' },
+    'cancelado': { texto: 'cancelado', color: '#DC3545' }
 };
 
 // ========== OBTENER COLOR DEL ESTADO ==========
@@ -23,18 +23,30 @@ function getTextoEstado(estado) {
     return ESTADOS_CONFIG[key]?.texto || estado?.toUpperCase() || 'DESCONOCIDO';
 }
 
-// ========== CAMBIAR ICONO DEL DETALLE ==========
-function cambiarIcono(element, id) {
-    const icon = document.getElementById('icono-' + id);
-    if (icon) {
-        if (icon.classList.contains('fa-chevron-down')) {
-            icon.classList.remove('fa-chevron-down');
-            icon.classList.add('fa-chevron-up');
-        } else {
-            icon.classList.remove('fa-chevron-up');
-            icon.classList.add('fa-chevron-down');
+// ========== OBTENER ESTADO DE UNA FILA ==========
+function obtenerEstadoDeFila(row) {
+    const celdas = row.getElementsByTagName('td');
+    if (celdas.length < 8) return '';
+    
+    // Obtener el texto de la celda 7 (columna Estado)
+    const estadoCelda = celdas[7];
+    if (!estadoCelda) return '';
+    
+    // Obtener el texto limpio (sin HTML)
+    const textoCompleto = estadoCelda.textContent?.toLowerCase()?.trim() || '';
+    
+    console.log("🔍 Texto de estado encontrado:", textoCompleto);
+    
+    // Buscar cualquiera de los estados conocidos
+    const estados = ['pendiente', 'procesando', 'enviado', 'completado', 'cancelado'];
+    for (const estado of estados) {
+        if (textoCompleto.includes(estado)) {
+            console.log("✅ Estado detectado:", estado);
+            return estado;
         }
     }
+    
+    return textoCompleto;
 }
 
 // ========== FILTRAR POR ESTADO ==========
@@ -45,28 +57,26 @@ function filtrarPorEstado(estado, boton) {
     if (boton) boton.classList.add('active');
     
     estadoFiltroActual = estado.toLowerCase();
+    console.log("📌 estadoFiltroActual:", estadoFiltroActual);
     
     const table = document.getElementById('tablaPedidos');
-    if (!table) return;
+    if (!table) {
+        console.error("❌ Tabla no encontrada");
+        return;
+    }
     
     const rows = table.getElementsByTagName('tr');
     let encontrados = 0;
     
     for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
+        
+        // Saltar filas de detalle
         if (row.querySelector('td[colspan]')) continue;
         
-        const celdas = row.getElementsByTagName('td');
-        let estadoCelda = '';
-        for (let j = 0; j < celdas.length; j++) {
-            const texto = celdas[j]?.textContent?.toLowerCase()?.trim() || '';
-            if (texto.includes('pendiente') || texto.includes('en_proceso') || 
-                texto.includes('en_camino') || texto.includes('completado') || 
-                texto.includes('cancelado')) {
-                estadoCelda = texto;
-                break;
-            }
-        }
+        // Obtener el estado de la fila
+        const estadoCelda = obtenerEstadoDeFila(row);
+        console.log(`Fila ${i}: estadoCelda = "${estadoCelda}"`);
         
         if (estado === 'todos') {
             row.style.display = '';
@@ -76,8 +86,10 @@ function filtrarPorEstado(estado, boton) {
             if (estadoCelda.includes(estadoFiltro)) {
                 row.style.display = '';
                 encontrados++;
+                console.log(`✅ Fila ${i} coincide con "${estadoFiltro}"`);
             } else {
                 row.style.display = 'none';
+                console.log(`❌ Fila ${i} NO coincide (${estadoCelda} vs ${estadoFiltro})`);
             }
         }
     }
@@ -102,6 +114,8 @@ function aplicarFiltros() {
 
     for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
+        
+        // Manejar filas de detalle
         if (row.querySelector('td[colspan]')) {
             const prevRow = rows[i - 1];
             if (prevRow && prevRow.style.display !== 'none') {
@@ -117,15 +131,8 @@ function aplicarFiltros() {
         const telefono = celdas[2]?.textContent?.toUpperCase() || '';
         const direccion = celdas[3]?.textContent?.toUpperCase() || '';
         
-        // Obtener estado de la celda 7
-        let estado = celdas[7]?.textContent?.toLowerCase()?.trim() || '';
-        // Extraer solo el estado (sin el badge)
-        for (const key of Object.keys(ESTADOS_CONFIG)) {
-            if (estado.includes(key)) {
-                estado = key;
-                break;
-            }
-        }
+        // Obtener estado usando la función auxiliar
+        const estadoCelda = obtenerEstadoDeFila(row);
 
         const coincideBusqueda = filter === '' || 
             cliente.includes(filter) || 
@@ -133,7 +140,7 @@ function aplicarFiltros() {
             direccion.includes(filter);
         
         const coincideEstado = estadoFiltroActual === 'todos' || 
-            estado.includes(estadoFiltroActual);
+            estadoCelda.includes(estadoFiltroActual);
 
         if (coincideBusqueda && coincideEstado) {
             row.style.display = '';
@@ -143,6 +150,7 @@ function aplicarFiltros() {
         }
     }
 
+    // Mostrar mensaje de no resultados
     let mensajeNoResultados = document.getElementById('mensajeNoResultados');
     if (filter.length > 0 && encontrados === 0) {
         if (!mensajeNoResultados) {
@@ -179,15 +187,15 @@ function abrirModalEstado(boton) {
     const container = document.getElementById('botonesEstados');
     if (!container) {
         console.error("❌ Contenedor 'botonesEstados' no encontrado");
-        alert('Error: No se encontró el contenedor de estados.\nAsegúrate de tener: <div id="botonesEstados"></div>');
+        alert('Error: No se encontró el contenedor de estados');
         return;
     }
     container.innerHTML = '';
     
     const estados = [
         { valor: 'pendiente', texto: 'Pendiente', color: '#FFA500' },
-        { valor: 'en_proceso', texto: 'En proceso', color: '#FFD700' },
-        { valor: 'en_camino', texto: 'En camino', color: '#1E90FF' },
+        { valor: 'procesando', texto: 'procesando', color: '#FFD700' },
+        { valor: 'enviado', texto: 'enviado', color: '#1E90FF' },
         { valor: 'completado', texto: 'Completado', color: '#28A745' },
         { valor: 'cancelado', texto: 'Cancelado', color: '#DC3545' }
     ];
@@ -218,14 +226,6 @@ function abrirModalEstado(boton) {
             </span>
             <span style="color:#28a745; font-weight:bold; font-size:18px;">${esActivo ? '✓' : ''}</span>
         `;
-        btn.onmouseover = function() {
-            this.style.borderColor = '#28a745';
-            this.style.background = '#f8f9fa';
-        };
-        btn.onmouseout = function() {
-            this.style.borderColor = esActivo ? '#28a745' : '#e9ecef';
-            this.style.background = esActivo ? '#f0fff4' : 'white';
-        };
         btn.onclick = function() { seleccionarEstado(this); };
         container.appendChild(btn);
     });
@@ -233,7 +233,7 @@ function abrirModalEstado(boton) {
     const modalElement = document.getElementById('modalCambiarEstado');
     if (!modalElement) {
         console.error("❌ Modal 'modalCambiarEstado' no encontrado");
-        alert('Error: No se encontró el modal.\nAsegúrate de tener el modal con id="modalCambiarEstado"');
+        alert('Error: No se encontró el modal');
         return;
     }
     
@@ -255,23 +255,17 @@ function seleccionarEstado(boton) {
     const nuevoEstadoMinuscula = nuevoEstado.toLowerCase();
     
     console.log("📦 Estado seleccionado:", nuevoEstadoMinuscula);
-    console.log("📦 ID del pedido:", pedidoIdActual);
     
-    // Cerrar modal
     cerrarModalEstado();
     
-    // Preparar datos
     const formData = new URLSearchParams();
     formData.append('id', pedidoIdActual);
     formData.append('estado', nuevoEstadoMinuscula);
     
     console.log("📤 Enviando:", formData.toString());
     
-    // 🔥 URL del backend (AJUSTAR SEGÚN TU CASO)
     const url = '/admin/pedido-cambiar-estado';
-    console.log("📤 URL:", url);
     
-    // Mostrar loading
     Swal.fire({
         title: '⏳ Actualizando...',
         text: 'Por favor espera',
@@ -290,14 +284,12 @@ function seleccionarEstado(boton) {
         body: formData
     })
     .then(response => {
-        console.log("📥 Status HTTP:", response.status);
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            throw new Error(`HTTP ${response.status}`);
         }
         return response.json();
     })
     .then(data => {
-        console.log("📥 Respuesta:", data);
         Swal.close();
         if (data.success) {
             Swal.fire({
@@ -313,28 +305,38 @@ function seleccionarEstado(boton) {
             Swal.fire({
                 title: '❌ Error',
                 text: data.message || 'Error al cambiar el estado',
-                icon: 'error',
-                confirmButtonColor: '#dc3545'
+                icon: 'error'
             });
         }
     })
     .catch((error) => {
-        console.error("❌ Error:", error);
         Swal.close();
         Swal.fire({
-            title: '❌ Error de conexión',
-            text: `No se pudo conectar con el servidor.\nURL: ${url}\nError: ${error.message}`,
-            icon: 'error',
-            confirmButtonColor: '#dc3545'
+            title: '❌ Error',
+            text: `Error: ${error.message}`,
+            icon: 'error'
         });
     });
+}
+
+// ========== CAMBIAR ICONO DEL DETALLE ==========
+function cambiarIcono(element, id) {
+    const icon = document.getElementById('icono-' + id);
+    if (icon) {
+        if (icon.classList.contains('fa-chevron-down')) {
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+        } else {
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+        }
+    }
 }
 
 // ========== INICIALIZAR ==========
 document.addEventListener('DOMContentLoaded', function() {
     console.log("🚀 Inicializando pedidos.js");
     
-    // Configurar botones de editar estado
     document.querySelectorAll('.btn-editar-estado').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -342,7 +344,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Configurar buscador
     const buscador = document.getElementById('buscadorPedidos');
     if (buscador) {
         buscador.addEventListener('keyup', function(e) {
@@ -352,7 +353,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Cerrar modal al hacer clic fuera
     const modal = document.getElementById('modalCambiarEstado');
     if (modal) {
         modal.addEventListener('click', function(e) {
@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("✅ Inicialización completada");
 });
 
-// ========== CERRAR MODAL CON ESC ==========
+// ========== CERRAR CON ESC ==========
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         cerrarModalEstado();
