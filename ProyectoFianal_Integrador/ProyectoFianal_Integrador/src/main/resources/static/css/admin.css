@@ -782,54 +782,74 @@ body {
 
 
 /* Estados de pedidos */
-.estado-pendiente {
-    background-color: #FFA500;  /* Naranja */
-    color: #ffffff;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 12px;
-    display: inline-block;
+/* ==========================================
+   ESTADOS CON BORDES - CLASES PERSONALIZADAS
+   ========================================== */
+
+/* Base para todos los estados */
+.estado-badge {
+    display: inline-block !important;
+    padding: 5px 16px !important;
+    border-radius: 50px !important;
+    font-weight: 600 !important;
+    font-size: 0.7rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    background: transparent !important;
+    border: 2.5px solid !important;
 }
 
-.estado-en_proceso {
-    background-color: #FFD700;  /* Amarillo */
-    color: #333333;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 12px;
-    display: inline-block;
-}
-
-.estado-en_camino {
-    background-color: #1E90FF;  /* Azul */
-    color: #ffffff;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 12px;
-    display: inline-block;
-}
-
+/* ========== COMPLETADO ========== */
 .estado-completado {
-    background-color: #28A745;  /* Verde */
-    color: #ffffff;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 12px;
-    display: inline-block;
+    color: #1a6e1a !important;
+    border-color: #28A745 !important;
+    background: transparent !important;
 }
 
+/* ========== PENDIENTE ========== */
+.estado-pendiente {
+    color: #b8860b !important;
+    border-color: #FFA500 !important;
+    background: transparent !important;
+}
+
+/* ========== PROCESANDO ========== */
+.estado-procesando {
+    color: #006699 !important;
+    border-color: #17a2b8 !important;
+    background: transparent !important;
+}
+
+/* ========== ENVIADO ========== */
+.estado-enviado {
+    color: #005a9e !important;
+    border-color: #1E90FF !important;
+    background: transparent !important;
+}
+
+/* ========== CANCELADO ========== */
 .estado-cancelado {
-    background-color: #DC3545;  /* Rojo */
-    color: #ffffff;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 12px;
-    display: inline-block;
+    color: #a11a1a !important;
+    border-color: #DC3545 !important;
+    background: transparent !important;
+}
+
+/* ========== DEFAULT ========== */
+.estado-default {
+    color: #6c757d !important;
+    border-color: #6c757d !important;
+    background: transparent !important;
+}
+
+/* ========== HOVER EFFECT ========== */
+.estado-completado:hover,
+.estado-pendiente:hover,
+.estado-procesando:hover,
+.estado-enviado:hover,
+.estado-cancelado:hover {
+    transform: scale(1.05) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
 }
 
 

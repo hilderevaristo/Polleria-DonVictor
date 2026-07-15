@@ -204,15 +204,17 @@
                                     th:text="${pedido.fechaPedido != null ? #temporals.format(pedido.fechaPedido, 'dd/MM/yyyy') : 'Sin fecha'}">
                                     28/06/2026</td>
                                 <td>
-                                    <span class="badge" th:class="${pedido.estado == 'completado' ? 'bg-success' : 
-             pedido.estado == 'pendiente' ? 'bg-warning text-dark' : 
-             pedido.estado == 'procesando' ? 'bg-info text-white' : 
-             pedido.estado == 'enviado' ? 'bg-secondary text-white' : 
-             pedido.estado == 'cancelado' ? 'bg-danger' : 'bg-secondary'}" th:text="${pedido.estado == 'completado' ? 'Completado' : 
-           pedido.estado == 'pendiente' ? 'Pendiente' : 
-           pedido.estado == 'procesando' ? 'Procesando' : 
-           pedido.estado == 'enviado' ? 'Enviado' : 
-           pedido.estado == 'cancelado' ? 'Cancelado' : pedido.estado}">Pendiente</span>
+                                    <span class="badge estado-badge" th:classappend="${pedido.estado == 'completado' ? 'estado-completado' : 
+                         pedido.estado == 'pendiente' ? 'estado-pendiente' : 
+                         pedido.estado == 'procesando' ? 'estado-procesando' : 
+                         pedido.estado == 'enviado' ? 'estado-enviado' : 
+                         pedido.estado == 'cancelado' ? 'estado-cancelado' : 'estado-default'}" th:text="${pedido.estado == 'completado' ? 'Completado' : 
+                   pedido.estado == 'pendiente' ? 'Pendiente' : 
+                   pedido.estado == 'procesando' ? 'Procesando' : 
+                   pedido.estado == 'enviado' ? 'Enviado' : 
+                   pedido.estado == 'cancelado' ? 'Cancelado' : pedido.estado}">
+                                        Pendiente
+                                    </span>
                                 </td>
                                 <td>
                                     <i class="fas fa-chevron-down text-muted" th:id="'icono-' + ${pedido.id}"></i>
