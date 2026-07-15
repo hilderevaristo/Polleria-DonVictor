@@ -1,5 +1,9 @@
 /* ========== ADMIN PANEL - ESTILOS ========== */
 
+/* ==========================================
+   ADMIN PANEL - ESTILO MILITAR OSCURO
+   ========================================== */
+
 * {
     margin: 0;
     padding: 0;
@@ -8,7 +12,8 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #f8f9fa;
+    background-color: #0d0d1a;
+    color: #e8e0d0;
 }
 
 /* ========== SIDEBAR ========== */
@@ -18,24 +23,25 @@ body {
     left: 0;
     width: 250px;
     height: 100vh;
-    background-color: #1a1a2e;
-    color: white;
+    background-color: #0a0a15;
+    color: #e8e0d0;
     padding: 20px 0;
     overflow-y: auto;
     z-index: 1000;
     transition: all 0.3s ease;
+    border-right: 2px solid #3d4a2a;
 }
 
 .sidebar-brand {
     text-align: center;
     padding: 0 20px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid #3d4a2a;
     margin-bottom: 20px;
 }
 
 .sidebar-brand i {
     font-size: 2rem;
-    color: #dc3545;
+    color: #c9a84c;
     display: block;
     margin-bottom: 5px;
 }
@@ -44,12 +50,14 @@ body {
     font-size: 1.2rem;
     font-weight: 700;
     display: block;
+    color: #e8e0d0;
 }
 
 .sidebar-brand small {
     font-size: 0.7rem;
-    color: #999;
+    color: #c9a84c;
     display: block;
+    letter-spacing: 2px;
 }
 
 .sidebar-menu {
@@ -67,7 +75,7 @@ body {
     align-items: center;
     gap: 12px;
     padding: 12px 15px;
-    color: #aaa;
+    color: #a8a8a8;
     text-decoration: none;
     border-radius: 10px;
     transition: all 0.3s;
@@ -77,16 +85,17 @@ body {
 .sidebar-menu li a i {
     width: 20px;
     text-align: center;
+    color: #c9a84c;
 }
 
 .sidebar-menu li a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
+    background-color: rgba(201, 168, 76, 0.1);
+    color: #e8e0d0;
 }
 
 .sidebar-menu li.active a {
-    background-color: #dc3545;
-    color: white;
+    background-color: rgba(201, 168, 76, 0.15);
+    color: #c9a84c;
 }
 
 .sidebar-footer {
@@ -104,9 +113,9 @@ body {
     gap: 10px;
     width: 100%;
     padding: 10px;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #aaa;
-    border: none;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #a8a8a8;
+    border: 1px solid #3d4a2a;
     border-radius: 10px;
     text-decoration: none;
     font-size: 0.9rem;
@@ -114,8 +123,8 @@ body {
 }
 
 .btn-logout:hover {
-    background-color: #dc3545;
-    color: white;
+    background-color: #c9a84c;
+    color: #0d0d1a;
 }
 
 /* ========== MAIN CONTENT ========== */
@@ -123,34 +132,41 @@ body {
     margin-left: 250px;
     padding: 20px 30px;
     min-height: 100vh;
+    background-color: #d4c9b0;
 }
 
 .top-header {
     padding-bottom: 20px;
-    border-bottom: 1px solid #e9ecef;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
     margin-bottom: 25px;
 }
 
 .top-header h4 {
     font-weight: 700;
-    color: #1a1a2e;
+    color: #e8e0d0;
     margin-bottom: 0;
+}
+
+.top-header .text-muted {
+    color: #a8a8a8 !important;
 }
 
 /* ========== STAT CARDS ========== */
 .stat-card {
-    background: white;
-    border-radius: 16px;
+    background: linear-gradient(145deg, #14142a, #1a1a2e);
+    border: 1px solid #3d4a2a;
+    border-radius: 12px;
     padding: 20px;
     display: flex;
     align-items: center;
     gap: 15px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     transition: transform 0.3s;
 }
 
 .stat-card:hover {
     transform: translateY(-5px);
+    border-color: #c9a84c;
 }
 
 .stat-icon {
@@ -161,72 +177,90 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
-    color: white;
+    color: #c9a84c;
     flex-shrink: 0;
+    background: rgba(201, 168, 76, 0.1);
+    border: 1px solid #3d4a2a;
 }
 
-.stat-icon.bg-primary {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-}
-
-.stat-icon.bg-success {
-    background: linear-gradient(135deg, #11998e, #38ef7d);
-}
-
-.stat-icon.bg-warning {
-    background: linear-gradient(135deg, #f093fb, #f5576c);
-}
-
+.stat-icon.bg-primary,
+.stat-icon.bg-success,
+.stat-icon.bg-warning,
 .stat-icon.bg-danger {
-    background: linear-gradient(135deg, #dc3545, #ff6b6b);
+    background: rgba(201, 168, 76, 0.1) !important;
 }
 
 .stat-info h3 {
     font-size: 1.8rem;
     font-weight: 700;
     margin: 0;
-    color: #1a1a2e;
+    color: #e8e0d0;
 }
 
 .stat-info span {
     font-size: 0.85rem;
-    color: #888;
+    color: #a8a8a8;
 }
+
 
 /* ========== CARD ========== */
 .card {
-    border: none;
-    border-radius: 16px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    background: linear-gradient(145deg, #14142a, #1a1a2e);
+    border: 1px solid #3d4a2a;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
 }
 
 .card-header {
-    background: white;
-    border-bottom: 1px solid #f0f0f0;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 2px solid #3d4a2a;
     padding: 15px 20px;
-    border-radius: 16px 16px 0 0;
 }
 
 .card-header h5 {
     font-weight: 600;
-    color: #1a1a2e;
+    color: #e8e0d0;
+    margin: 0;
 }
 
+.card-header .badge {
+    background: #c9a84c !important;
+    color: #0d0d1a !important;
+}
+
+.card-body {
+    background: transparent;
+}
+
+
+/* ========== TABLAS ========== */
 .table {
+    color: #e8e0d0;
     font-size: 0.9rem;
 }
 
 .table thead th {
-    background-color: #f8f9fa;
-    color: #555;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: #c9a84c;
     font-weight: 600;
-    border-bottom: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.75rem;
+    border-bottom: 2px solid #3d4a2a;
+    padding: 12px 16px;
 }
 
 .table tbody td {
+    padding: 12px 16px;
     vertical-align: middle;
-    padding: 12px 15px;
+    border-bottom: 1px solid rgba(61, 74, 42, 0.3);
 }
+
+.table tbody tr:hover {
+    background: rgba(201, 168, 76, 0.05);
+}
+
 
 .badge {
     padding: 5px 12px;
@@ -268,35 +302,54 @@ body {
 }
 
 
-/* ========== ESTILOS PARA ESTADOS DINÁMICOS (Órdenes) ========== */
+/* ========== BADGES ========== */
 .badge {
-    padding: 6px 14px;
-    border-radius: 50px;
+    padding: 5px 14px;
+    border-radius: 20px;
     font-weight: 600;
     font-size: 0.75rem;
-    letter-spacing: 0.3px;
-    display: inline-block;
 }
 
 .badge.bg-success {
-    background-color: #28a745 !important;
-    color: #ffffff !important;
+    background-color: transparent !important;
+    color: #1a6e1a !important;
+    border: 2px solid #28A745 !important;
+    padding: 4px 16px !important;
+    border-radius: 50px !important;
 }
 
 .badge.bg-warning {
-    background-color: #ffc107 !important;
-    color: #212529 !important;
+    background-color: transparent !important;
+    color: #b8860b !important;
+    border: 2px solid #FFA500 !important;
+    padding: 4px 16px !important;
+    border-radius: 50px !important;
 }
 
 .badge.bg-info {
-    background-color: #17a2b8 !important;
-    color: #ffffff !important;
+    background-color: transparent !important;
+    color: #006699 !important;
+    border: 2px solid #17a2b8 !important;
+    padding: 4px 16px !important;
+    border-radius: 50px !important;
 }
 
 .badge.bg-danger {
-    background-color: #dc3545 !important;
-    color: #ffffff !important;
+    background-color: transparent !important;
+    color: #a11a1a !important;
+    border: 2px solid #DC3545 !important;
+    padding: 4px 16px !important;
+    border-radius: 50px !important;
 }
+
+.badge.bg-secondary {
+     background-color: transparent !important;
+    color: #005a9e !important;
+    border: 2px solid #1E90FF !important;
+    padding: 4px 16px !important;
+    border-radius: 50px !important;
+}
+
 
 /* ========== DETALLE DE LA ORDEN (estilo imagen) ========== */
 .detalle-orden-card {
@@ -700,6 +753,11 @@ body {
     opacity: 0;
 }
 /* ========== BOTÓN PARA ABRIR SIDEBAR EN MÓVIL ========== */
+.sidebar {
+    background-color: #151519 !important;  /* Un poco más claro que #0a0a15 */
+    border-right: 1px solid rgba(45, 21, 21, 0.08) !important;  /* Borde más sutil */
+    box-shadow: 2px 0 15px rgba(21, 8, 8, 0.3) !important;
+}
 /* ========== SIDEBAR RESPONSIVE ========== */
 .sidebar-toggle {
     display: none;
@@ -1000,3 +1058,235 @@ body {
         font-size: 1.5rem !important;
     }
 }
+
+
+
+
+
+
+
+
+/* ==========================================
+   ESTILOS PARA DASHBOARD - INTERFAZ PRINCIPAL
+   ========================================== */
+/* ==========================================
+   FONDO BEIGE CLARO (BLANCO HUESO) - DASHBOARD
+   ========================================== */
+
+/* ========== MAIN CONTENT - FONDO BEIGE CLARO ========== */
+.main-content {
+    background-color: #f5f0e8 !important;  /* Beige muy claro */
+}
+
+/* ========== TOP HEADER ========== */
+.top-header h4 {
+    color: #2d2418 !important;
+}
+
+.top-header .text-muted {
+    color: #8a7a6a !important;
+}
+
+/* ========== STAT CARDS - BLANCO ========== */
+.stat-card {
+    background: #ffffff !important;  /* Blanco puro */
+    border: 1px solid #e8e0d0 !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+.stat-card .stat-icon {
+    background: rgba(201, 168, 76, 0.12) !important;
+    border: 1px solid #e8e0d0 !important;
+    color: #c9a84c !important;
+}
+
+.stat-card .stat-info h3 {
+    color: #2d2418 !important;
+}
+
+.stat-card .stat-info span {
+    color: #8a7a6a !important;
+}
+
+/* ========== CARDS - BLANCO ========== */
+.card {
+    background: #ffffff !important;  /* Blanco puro */
+    border: 1px solid #e8e0d0 !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+.card-header {
+    background: #ffffff !important;
+    border-bottom: 1px solid #f0ebe0 !important;
+}
+
+.card-header h5 {
+    color: #2d2418 !important;
+}
+
+.card-header .badge {
+    background: #c9a84c !important;
+    color: #1a1a2e !important;
+}
+
+/* ========== TABLAS ========== */
+.table {
+    color: #2d2418 !important;
+}
+
+.table thead th {
+    background-color: #f8f5f0 !important;
+    color: #6a5a4a !important;
+    border-bottom: 2px solid #f0ebe0 !important;
+    text-transform: uppercase !important;
+    font-size: 0.7rem !important;
+    letter-spacing: 0.5px !important;
+}
+
+.table tbody td {
+    border-bottom: 1px solid #f0ebe0 !important;
+}
+
+.table tbody tr:hover {
+    background: #f8f5f0 !important;
+}
+
+/* ========== BADGES DE ESTADO ========== */
+.badge.bg-success {
+    background-color: #28a745 !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.badge.bg-warning {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+    border: none !important;
+}
+
+.badge.bg-info {
+    background-color: #17a2b8 !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.badge.bg-danger {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.badge.bg-secondary {
+    background-color: #6c757d !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+/* ========== FILTROS ========== */
+.btn-filtro {
+    border: 1.5px solid #ddd6c8 !important;
+    color: #8a7a6a !important;
+}
+
+.btn-filtro:hover {
+    border-color: #c9a84c !important;
+    color: #2d2418 !important;
+}
+
+.btn-filtro.active {
+    background-color: #c9a84c !important;
+    border-color: #c9a84c !important;
+    color: #1a1a2e !important;
+}
+
+/* ========== INPUTS ========== */
+.form-control {
+    background: #ffffff !important;
+    border: 1.5px solid #ddd6c8 !important;
+    color: #2d2418 !important;
+}
+
+.form-control:focus {
+    border-color: #c9a84c !important;
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.12) !important;
+}
+
+.form-control::placeholder {
+    color: #b0a090 !important;
+}
+
+.input-group-text {
+    background: #ffffff !important;
+    border: 1.5px solid #ddd6c8 !important;
+    border-right: none !important;
+    color: #b0a090 !important;
+}
+
+/* ========== DETALLE ORDEN ========== */
+.detalle-orden-card {
+    background-color: #f8f5f0 !important;
+    border-left: 4px solid #c9a84c !important;
+}
+
+.detalle-orden-card .detalle-header h6 {
+    color: #2d2418 !important;
+}
+
+.detalle-orden-card .detalle-header .email-cliente {
+    color: #8a7a6a !important;
+}
+
+.detalle-orden-card .table-detalle thead th {
+    background-color: #ede8e0 !important;
+    color: #6a5a4a !important;
+}
+
+.detalle-orden-card .table-detalle tbody td {
+    color: #2d2418 !important;
+    border-bottom: 1px solid #ede8e0 !important;
+}
+
+.detalle-orden-card .table-detalle .total-row td {
+    border-top: 2px solid #c9a84c !important;
+    color: #2d2418 !important;
+}
+
+/* ========== BOTÓN DANGER ========== */
+.btn-danger {
+    background: #c9a84c !important;
+    border-color: #c9a84c !important;
+    color: #1a1a2e !important;
+}
+
+.btn-danger:hover {
+    background: #b8942a !important;
+    border-color: #b8942a !important;
+    color: #1a1a2e !important;
+}
+
+/* ========== SCROLLBAR ========== */
+::-webkit-scrollbar-thumb {
+    background: #c9a84c !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #b8942a !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
