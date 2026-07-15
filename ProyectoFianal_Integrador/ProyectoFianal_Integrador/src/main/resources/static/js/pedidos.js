@@ -293,7 +293,7 @@ function seleccionarEstado(boton) {
         Swal.close();
         if (data.success) {
             Swal.fire({
-                title: '✅ Éxito',
+                title: 'Exito',
                 text: 'Estado actualizado correctamente',
                 icon: 'success',
                 timer: 1500,
@@ -362,7 +362,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    console.log("✅ Inicialización completada");
+    console.log("Inicialización completada");
 });
 
 // ========== CERRAR CON ESC ==========
@@ -370,4 +370,149 @@ document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         cerrarModalEstado();
     }
+});
+
+// ========== ELIMINAR ORDEN ==========
+function eliminarOrden(id, cliente) {
+    console.log("🗑️ Eliminando orden - ID:", id, "Cliente:", cliente);
+    
+    // Verificar que los datos lleguen bien
+    if (!id || id === 'undefined' || id === 'null') {
+        Swal.fire({
+            title: '❌ Error',
+            text: 'ID de pedido no válido',
+            icon: 'error'
+        });
+        return;
+    }
+    
+    Swal.fire({
+        title: '⚠️ ¿Eliminar orden?',
+        html: `
+            <p>Estás a punto de eliminar la orden de <strong>${cliente || 'cliente desconocido'}</strong>.</p>
+            <p style="color: #dc3545; font-weight: bold;">¡Esta acción no se puede deshacer!</p>
+        `,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: '⏳ Eliminando...',
+                text: 'Por favor espera',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            const formData = new URLSearchParams();
+            formData.append('id', id);
+            
+            console.log("📤 Enviando petición a /admin/pedido-eliminar con ID:", id);
+            
+            fetch('/admin/pedido-eliminar', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(response => {
+                console.log("📥 Status HTTP:", response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("📥 Respuesta del backend:", data);
+                Swal.close();
+                if (data.success) {
+                    Swal.fire({
+                        title: '✅ Eliminado',
+                        text: 'La orden ha sido eliminada correctamente',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: '❌ Error',
+                        text: data.message || 'Error al eliminar la orden',
+                        icon: 'error',
+                        confirmButtonColor: '#dc3545'
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error("❌ Error en fetch:", error);
+                Swal.close();
+                Swal.fire({
+                    title: '❌ Error de conexión',
+                    text: `Error: ${error.message}`,
+                    icon: 'error',
+                    confirmButtonColor: '#dc3545'
+                });
+            });
+        }
+    });
+}
+
+
+// ========== INICIALIZAR BOTONES CON EVENT LISTENER ==========
+function inicializarBotonesEliminar() {
+    document.querySelectorAll('.btn-eliminar-orden').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const id = this.getAttribute('data-id');
+            const cliente = this.getAttribute('data-cliente');
+            console.log("🖱️ Click en eliminar - ID:", id, "Cliente:", cliente);
+            eliminarOrden(id, cliente);
+        });
+    });
+}
+
+// ========== AGREGAR A DOMContentLoaded ==========
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("🚀 Inicializando pedidos.js");
+    
+    // Botones de editar estado
+    document.querySelectorAll('.btn-editar-estado').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            abrirModalEstado(this);
+        });
+    });
+    
+    // ✅ BOTONES DE ELIMINAR
+    inicializarBotonesEliminar();
+    
+    // Buscador
+    const buscador = document.getElementById('buscadorPedidos');
+    if (buscador) {
+        buscador.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                aplicarFiltros();
+            }
+        });
+    }
+    
+    // Cerrar modal al hacer clic fuera
+    const modal = document.getElementById('modalCambiarEstado');
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarModalEstado();
+            }
+        });
+    }
+    
+    console.log("✅ Inicialización completada");
 });

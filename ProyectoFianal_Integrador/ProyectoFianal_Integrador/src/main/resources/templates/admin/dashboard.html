@@ -14,7 +14,7 @@
 
 <body>
 
-   
+
     <!-- Botón para abrir sidebar en móvil -->
     <!-- Botón para abrir sidebar en móvil -->
     <button class="sidebar-toggle" onclick="toggleSidebar()">
@@ -43,17 +43,17 @@
             </li>
         </ul>
 
-         <div class="sidebar-footer">
-        <!-- ✅ BOTÓN PARA VER EL SITIO WEB -->
-        <a th:href="@{/}" target="_blank" class="btn btn-outline-light w-100 mb-2"
-            style="border-radius: 10px; padding: 10px; font-size: 0.85rem; border-color: rgba(255,255,255,0.2);">
-            <i class="fas fa-external-link-alt me-2"></i> Ver sitio web
-        </a>
+        <div class="sidebar-footer">
+            <!-- ✅ BOTÓN PARA VER EL SITIO WEB -->
+            <a th:href="@{/}" target="_blank" class="btn btn-outline-light w-100 mb-2"
+                style="border-radius: 10px; padding: 10px; font-size: 0.85rem; border-color: rgba(255,255,255,0.2);">
+                <i class="fas fa-external-link-alt me-2"></i> Ver sitio web
+            </a>
 
-        <a th:href="@{/logout}" class="btn btn-logout">
-            <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-        </a>
-    </div>
+            <a th:href="@{/logout}" class="btn btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+            </a>
+        </div>
         <div class="sidebar-footer">
             <a th:href="@{/logout}" class="btn btn-logout">
                 <i class="fas fa-sign-out-alt"></i> Cerrar sesión
@@ -142,67 +142,31 @@
                             </tr>
                         </thead>
                         <tbody>
-    <tr th:if="${#lists.isEmpty(listaPedidos)}">
-        <td colspan="6" class="text-center py-3 text-muted">No hay órdenes registradas en el sistema.</td>
-    </tr>
-    
-    <tr th:each="pedido : ${listaPedidos}">
-        <td><strong th:text="'ORD-' + ${pedido.id}">ORD-000</strong></td>
-        <td th:text="${pedido.nombreCliente}">Nombre Cliente</td>
-        <td><span>Delivery</span></td>
-        <td class="fw-bold text-danger" th:text="'S/ ' + ${pedido.total}">S/ 0.00</td>
-        <td th:text="${pedido.fechaPedido != null ? #temporals.format(pedido.fechaPedido, 'dd/MM/yyyy hh:mm a') : 'Sin fecha'}">Fecha</td>
-        <td>
-            <span class="badge" 
-                  th:classappend="${pedido.estado == 'PENDIENTE' ? 'bg-warning text-dark' : 
+                            <tr th:if="${#lists.isEmpty(listaPedidos)}">
+                                <td colspan="6" class="text-center py-3 text-muted">No hay órdenes registradas en el
+                                    sistema.</td>
+                            </tr>
+
+                            <tr th:each="pedido : ${listaPedidos}">
+                                <td><strong th:text="'ORD-' + ${pedido.id}">ORD-000</strong></td>
+                                <td th:text="${pedido.nombreCliente}">Nombre Cliente</td>
+                                <td><span>Delivery</span></td>
+                                <td class="fw-bold text-danger" th:text="'S/ ' + ${pedido.total}">S/ 0.00</td>
+                                <td
+                                    th:text="${pedido.fechaPedido != null ? #temporals.format(pedido.fechaPedido, 'dd/MM/yyyy hh:mm a') : 'Sin fecha'}">
+                                    Fecha</td>
+                                <td>
+                                    <span class="badge" th:classappend="${pedido.estado == 'PENDIENTE' ? 'bg-warning text-dark' : 
                                    (pedido.estado == 'COMPLETADO' ? 'bg-success' : 
                                    (pedido.estado == 'CANCELADO' ? 'bg-danger' : 'bg-info'))}"
-                  th:text="${pedido.estado}">Pendiente</span>
-        </td>
-    </tr>
-</tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- ========== TABLA DE USUARIOS REGISTRADOS ========== -->
-        <div class="card mt-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="fas fa-users me-2"></i>Usuarios Registrados</h5>
-                <span class="badge bg-primary" th:text="${totalUsuarios}">0</span>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Email</th>
-                                <th>Teléfono</th>
-                                <th>Rol</th>
-                                <th>Fecha Registro</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="user : ${listaUsuarios}">
-                                <td th:text="${user.id}">1</td>
-                                <td th:text="${user.nombre}">Juan Pérez</td>
-                                <td th:text="${user.email}">juan@email.com</td>
-                                <td th:text="${user.telefono}">987654321</td>
-                                <td>
-                                    <span class="badge" th:class="${user.rol == 'ADMIN' ? 'bg-danger' : 'bg-primary'}"
-                                        th:text="${user.rol}">USER</span>
+                                        th:text="${pedido.estado}">Pendiente</span>
                                 </td>
-                                <td th:text="${#temporals.format(user.fechaRegistro, 'dd/MM/yyyy')}">20/06/2025</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-
     </div>
 
     <script>

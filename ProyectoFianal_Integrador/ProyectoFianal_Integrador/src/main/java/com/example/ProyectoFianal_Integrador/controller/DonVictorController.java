@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List; // ← Agregar al inicio
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class DonVictorController {
@@ -574,6 +575,39 @@ public Map<String, Object> cambiarEstadoPedido(@RequestParam Long id, @RequestPa
         e.printStackTrace();
         response.put("success", false);
         response.put("message", e.getMessage());
+    }
+    
+    return response;
+}
+
+
+@PostMapping("/admin/pedido-eliminar")
+@ResponseBody
+public Map<String, Object> eliminarPedido(@RequestParam Long id) {
+    Map<String, Object> response = new HashMap<>();
+    
+    try {
+        System.out.println("🗑️ Eliminando pedido ID: " + id);
+        
+        // Verificar si existe
+        Optional<Pedido> pedidoOpt = pedidoRepository.findById(id);
+        if (pedidoOpt.isEmpty()) {
+            response.put("success", false);
+            response.put("message", "Pedido no encontrado");
+            return response;
+        }
+        
+        // ✅ ELIMINAR EL PEDIDO
+        pedidoRepository.deleteById(id);
+        
+        System.out.println("✅ Pedido eliminado correctamente");
+        response.put("success", true);
+        response.put("message", "Pedido eliminado correctamente");
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.put("success", false);
+        response.put("message", "Error al eliminar: " + e.getMessage());
     }
     
     return response;

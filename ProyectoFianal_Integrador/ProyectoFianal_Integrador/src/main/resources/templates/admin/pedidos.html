@@ -217,12 +217,21 @@
                                 <td>
                                     <i class="fas fa-chevron-down text-muted" th:id="'icono-' + ${pedido.id}"></i>
                                 </td>
-                                <td style="width: 120px;">
-                                    <button class="btn btn-sm btn-outline-primary btn-editar-estado"
+                                <td style="width: 140px; white-space: nowrap;">
+                                    <!-- Botón Editar Estado -->
+                                    <button class="btn btn-sm btn-outline-primary btn-editar-estado me-1"
                                         th:attr="data-id=${pedido.id}, data-estado=${pedido.estado}"
-                                        onclick="event.stopPropagation(); abrirModalEstado(this)"
-                                        title="Cambiar estado">
+                                        onclick="event.stopPropagation(); abrirModalEstado(this)" title="Cambiar estado"
+                                        style="padding: 4px 8px; font-size: 12px;">
                                         <i class="fas fa-pen"></i>
+                                    </button>
+
+                                    <!-- ✅ BOTÓN ELIMINAR -->
+                                    <button class="btn btn-sm btn-outline-danger btn-eliminar-orden"
+                                        th:attr="data-id=${pedido.id}, data-cliente=${pedido.nombreCliente}"
+                                        onclick="event.stopPropagation(); eliminarOrden('${pedido.id}', '${pedido.nombreCliente}')"
+                                        title="Eliminar orden" style="padding: 4px 8px; font-size: 12px;">
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -316,7 +325,7 @@
                 <div
                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
                     <h5 style="margin: 0;">
-                         Cambiar Estado del Pedido
+                        Cambiar Estado del Pedido
                     </h5>
                     <button onclick="cerrarModalEstado()"
                         style="background: none; border: none; font-size: 24px; cursor: pointer; color: #999;">&times;</button>
