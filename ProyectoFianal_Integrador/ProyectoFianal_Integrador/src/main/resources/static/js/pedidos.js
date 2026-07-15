@@ -1,3 +1,28 @@
+// ========== VARIABLES GLOBALES ==========
+let estadoFiltroActual = 'todos';
+let pedidoIdActual = null;
+
+// ========== CONFIGURACIÓN DE ESTADOS ==========
+const ESTADOS_CONFIG = {
+    'pendiente': { texto: 'PENDIENTE', color: '#FFA500' },
+    'en_proceso': { texto: 'EN PROCESO', color: '#FFD700' },
+    'en_camino': { texto: 'EN CAMINO', color: '#1E90FF' },
+    'completado': { texto: 'COMPLETADO', color: '#28A745' },
+    'cancelado': { texto: 'CANCELADO', color: '#DC3545' }
+};
+
+// ========== OBTENER COLOR DEL ESTADO ==========
+function getColorEstado(estado) {
+    const key = estado?.toLowerCase() || '';
+    return ESTADOS_CONFIG[key]?.color || '#6C757D';
+}
+
+// ========== OBTENER TEXTO DEL ESTADO ==========
+function getTextoEstado(estado) {
+    const key = estado?.toLowerCase() || '';
+    return ESTADOS_CONFIG[key]?.texto || estado?.toUpperCase() || 'DESCONOCIDO';
+}
+
 // ========== CAMBIAR ICONO DEL DETALLE ==========
 function cambiarIcono(element, id) {
     const icon = document.getElementById('icono-' + id);
@@ -12,47 +37,52 @@ function cambiarIcono(element, id) {
     }
 }
 
-// ========== VARIABLES GLOBALES ==========
-let estadoFiltroActual = 'todos';
-let pedidoIdActual = null;
-
 // ========== FILTRAR POR ESTADO ==========
 function filtrarPorEstado(estado, boton) {
-    console.log("Filtrando por:", estado);
+    console.log("🔍 Filtrando por:", estado);
+    
     document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('active'));
-    boton.classList.add('active');
+    if (boton) boton.classList.add('active');
+    
+    estadoFiltroActual = estado.toLowerCase();
     
     const table = document.getElementById('tablaPedidos');
     if (!table) return;
+    
     const rows = table.getElementsByTagName('tr');
+    let encontrados = 0;
     
     for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
-        // ✅ Saltar filas de detalle (con colspan)
-        if (row.querySelector('td[colspan]')) {
-            continue;
-        }
+        if (row.querySelector('td[colspan]')) continue;
         
-        // ✅ Buscar el estado en toda la fila
         const celdas = row.getElementsByTagName('td');
         let estadoCelda = '';
         for (let j = 0; j < celdas.length; j++) {
-            // Buscar el texto que coincida con algún estado
-            const texto = celdas[j]?.textContent?.toUpperCase() || '';
-            if (texto.includes('PENDIENTE') || texto.includes('EN_PROCESO') || 
-                texto.includes('EN_CAMINO') || texto.includes('COMPLETADO') || 
-                texto.includes('CANCELADO')) {
-                estadoCelda = texto.trim();
+            const texto = celdas[j]?.textContent?.toLowerCase()?.trim() || '';
+            if (texto.includes('pendiente') || texto.includes('en_proceso') || 
+                texto.includes('en_camino') || texto.includes('completado') || 
+                texto.includes('cancelado')) {
+                estadoCelda = texto;
                 break;
             }
         }
         
         if (estado === 'todos') {
             row.style.display = '';
+            encontrados++;
         } else {
-            row.style.display = estadoCelda.includes(estado.toUpperCase()) ? '' : 'none';
+            const estadoFiltro = estado.toLowerCase();
+            if (estadoCelda.includes(estadoFiltro)) {
+                row.style.display = '';
+                encontrados++;
+            } else {
+                row.style.display = 'none';
+            }
         }
     }
+    
+    console.log(`✅ Mostrados: ${encontrados} pedidos`);
 }
 
 // ========== FILTRAR POR BÚSQUEDA ==========
@@ -82,13 +112,28 @@ function aplicarFiltros() {
             continue;
         }
         
-        const cliente = row.getElementsByTagName('td')[1]?.textContent?.toUpperCase() || '';
-        const telefono = row.getElementsByTagName('td')[2]?.textContent?.toUpperCase() || '';
-        const direccion = row.getElementsByTagName('td')[3]?.textContent?.toUpperCase() || '';
-        const estado = row.getElementsByTagName('td')[7]?.textContent?.toUpperCase() || '';
+        const celdas = row.getElementsByTagName('td');
+        const cliente = celdas[1]?.textContent?.toUpperCase() || '';
+        const telefono = celdas[2]?.textContent?.toUpperCase() || '';
+        const direccion = celdas[3]?.textContent?.toUpperCase() || '';
+        
+        // Obtener estado de la celda 7
+        let estado = celdas[7]?.textContent?.toLowerCase()?.trim() || '';
+        // Extraer solo el estado (sin el badge)
+        for (const key of Object.keys(ESTADOS_CONFIG)) {
+            if (estado.includes(key)) {
+                estado = key;
+                break;
+            }
+        }
 
-        const coincideBusqueda = filter === '' || cliente.includes(filter) || telefono.includes(filter) || direccion.includes(filter);
-        const coincideEstado = estadoFiltroActual === 'todos' || estado.includes(estadoFiltroActual.toUpperCase());
+        const coincideBusqueda = filter === '' || 
+            cliente.includes(filter) || 
+            telefono.includes(filter) || 
+            direccion.includes(filter);
+        
+        const coincideEstado = estadoFiltroActual === 'todos' || 
+            estado.includes(estadoFiltroActual);
 
         if (coincideBusqueda && coincideEstado) {
             row.style.display = '';
@@ -122,104 +167,173 @@ function aplicarFiltros() {
     }
 }
 
-// ========== OBTENER COLOR DEL ESTADO ==========
-function getColorEstado(estado) {
-    const colores = {
-        'PENDIENTE': '#ffc107',
-        'EN_PROCESO': '#0dcaf0',
-        'EN_CAMINO': '#6c757d',
-        'COMPLETADO': '#28a745',
-        'CANCELADO': '#dc3545',
-        'CONFIRMADO': '#28a745'
-    };
-    return colores[estado] || '#6c757d';
-}
-
 // ========== ABRIR MODAL DE ESTADO ==========
 function abrirModalEstado(boton) {
     console.log("🖊️ Abriendo modal de estado");
     
     pedidoIdActual = boton.getAttribute('data-id');
-    const estadoActual = boton.getAttribute('data-estado');
+    const estadoActual = boton.getAttribute('data-estado')?.toLowerCase() || '';
     
-    console.log("ID:", pedidoIdActual, "Estado actual:", estadoActual);
-    
-    const estados = [
-        { valor: 'PENDIENTE', texto: 'Pendiente', color: '#ffc107' },
-        { valor: 'EN_PROCESO', texto: 'En proceso', color: '#0dcaf0' },
-        { valor: 'EN_CAMINO', texto: 'En camino', color: '#6c757d' },
-        { valor: 'COMPLETADO', texto: 'Completado', color: '#28a745' },
-        { valor: 'CANCELADO', texto: 'Cancelado', color: '#dc3545' }
-    ];
+    console.log("📦 ID:", pedidoIdActual, "Estado actual:", estadoActual);
     
     const container = document.getElementById('botonesEstados');
     if (!container) {
-        alert('Error: No se encontró el contenedor de estados');
+        console.error("❌ Contenedor 'botonesEstados' no encontrado");
+        alert('Error: No se encontró el contenedor de estados.\nAsegúrate de tener: <div id="botonesEstados"></div>');
         return;
     }
     container.innerHTML = '';
+    
+    const estados = [
+        { valor: 'pendiente', texto: 'Pendiente', color: '#FFA500' },
+        { valor: 'en_proceso', texto: 'En proceso', color: '#FFD700' },
+        { valor: 'en_camino', texto: 'En camino', color: '#1E90FF' },
+        { valor: 'completado', texto: 'Completado', color: '#28A745' },
+        { valor: 'cancelado', texto: 'Cancelado', color: '#DC3545' }
+    ];
     
     estados.forEach(estado => {
         const esActivo = estado.valor === estadoActual;
         const btn = document.createElement('button');
         btn.className = `btn-estado-modal ${esActivo ? 'activo' : ''}`;
         btn.setAttribute('data-valor', estado.valor);
+        btn.style.cssText = `
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid ${esActivo ? '#28a745' : '#e9ecef'};
+            border-radius: 8px;
+            background: ${esActivo ? '#f0fff4' : 'white'};
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+            font-size: 14px;
+        `;
         btn.innerHTML = `
             <span>
-                <span class="estado-color" style="background-color: ${estado.color};"></span>
-                <span class="estado-nombre">${estado.texto}</span>
+                <span style="display:inline-block; width:16px; height:16px; border-radius:50%; background-color:${estado.color}; margin-right:12px;"></span>
+                <span>${estado.texto}</span>
             </span>
-            <span class="estado-check">${esActivo ? '✓' : ''}</span>
+            <span style="color:#28a745; font-weight:bold; font-size:18px;">${esActivo ? '✓' : ''}</span>
         `;
+        btn.onmouseover = function() {
+            this.style.borderColor = '#28a745';
+            this.style.background = '#f8f9fa';
+        };
+        btn.onmouseout = function() {
+            this.style.borderColor = esActivo ? '#28a745' : '#e9ecef';
+            this.style.background = esActivo ? '#f0fff4' : 'white';
+        };
         btn.onclick = function() { seleccionarEstado(this); };
         container.appendChild(btn);
     });
     
-    const modal = new bootstrap.Modal(document.getElementById('modalCambiarEstado'));
-    modal.show();
+    const modalElement = document.getElementById('modalCambiarEstado');
+    if (!modalElement) {
+        console.error("❌ Modal 'modalCambiarEstado' no encontrado");
+        alert('Error: No se encontró el modal.\nAsegúrate de tener el modal con id="modalCambiarEstado"');
+        return;
+    }
+    
+    modalElement.style.display = 'flex';
+    console.log("✅ Modal abierto");
+}
+
+// ========== CERRAR MODAL ==========
+function cerrarModalEstado() {
+    const modal = document.getElementById('modalCambiarEstado');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
 
 // ========== SELECCIONAR ESTADO ==========
 function seleccionarEstado(boton) {
     const nuevoEstado = boton.getAttribute('data-valor');
-    const textoEstado = boton.querySelector('.estado-nombre').textContent;
+    const nuevoEstadoMinuscula = nuevoEstado.toLowerCase();
     
-    const modal = bootstrap.Modal.getInstance(document.getElementById('modalCambiarEstado'));
-    if (modal) modal.hide();
+    console.log("📦 Estado seleccionado:", nuevoEstadoMinuscula);
+    console.log("📦 ID del pedido:", pedidoIdActual);
     
+    // Cerrar modal
+    cerrarModalEstado();
+    
+    // Preparar datos
     const formData = new URLSearchParams();
     formData.append('id', pedidoIdActual);
-    formData.append('estado', nuevoEstado);
+    formData.append('estado', nuevoEstadoMinuscula);
     
-    fetch('/admin/pedido-cambiar-estado', {
+    console.log("📤 Enviando:", formData.toString());
+    
+    // 🔥 URL del backend (AJUSTAR SEGÚN TU CASO)
+    const url = '/admin/pedido-cambiar-estado';
+    console.log("📤 URL:", url);
+    
+    // Mostrar loading
+    Swal.fire({
+        title: '⏳ Actualizando...',
+        text: 'Por favor espera',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: { 
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log("📥 Status HTTP:", response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
     .then(data => {
+        console.log("📥 Respuesta:", data);
+        Swal.close();
         if (data.success) {
-            location.reload(); // Solo recarga, sin mensaje
+            Swal.fire({
+                title: '✅ Éxito',
+                text: 'Estado actualizado correctamente',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            }).then(() => {
+                location.reload();
+            });
         } else {
             Swal.fire({
                 title: '❌ Error',
-                text: data.message,
+                text: data.message || 'Error al cambiar el estado',
                 icon: 'error',
                 confirmButtonColor: '#dc3545'
             });
         }
     })
-    .catch(() => {
+    .catch((error) => {
+        console.error("❌ Error:", error);
+        Swal.close();
         Swal.fire({
-            title: '❌ Error',
-            text: 'Error al cambiar el estado',
+            title: '❌ Error de conexión',
+            text: `No se pudo conectar con el servidor.\nURL: ${url}\nError: ${error.message}`,
             icon: 'error',
             confirmButtonColor: '#dc3545'
         });
     });
 }
-// ========== INICIALIZAR BOTONES AL CARGAR ==========
+
+// ========== INICIALIZAR ==========
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("🚀 Inicializando pedidos.js");
+    
     // Configurar botones de editar estado
     document.querySelectorAll('.btn-editar-estado').forEach(btn => {
         btn.addEventListener('click', function(e) {
@@ -227,5 +341,33 @@ document.addEventListener('DOMContentLoaded', function() {
             abrirModalEstado(this);
         });
     });
+    
+    // Configurar buscador
+    const buscador = document.getElementById('buscadorPedidos');
+    if (buscador) {
+        buscador.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                aplicarFiltros();
+            }
+        });
+    }
+    
+    // Cerrar modal al hacer clic fuera
+    const modal = document.getElementById('modalCambiarEstado');
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarModalEstado();
+            }
+        });
+    }
+    
+    console.log("✅ Inicialización completada");
 });
 
+// ========== CERRAR MODAL CON ESC ==========
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        cerrarModalEstado();
+    }
+});

@@ -723,7 +723,56 @@ body {
 
 
 
+/* Estados de pedidos */
+.estado-pendiente {
+    background-color: #FFA500;  /* Naranja */
+    color: #ffffff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 12px;
+    display: inline-block;
+}
 
+.estado-en_proceso {
+    background-color: #FFD700;  /* Amarillo */
+    color: #333333;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 12px;
+    display: inline-block;
+}
+
+.estado-en_camino {
+    background-color: #1E90FF;  /* Azul */
+    color: #ffffff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 12px;
+    display: inline-block;
+}
+
+.estado-completado {
+    background-color: #28A745;  /* Verde */
+    color: #ffffff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 12px;
+    display: inline-block;
+}
+
+.estado-cancelado {
+    background-color: #DC3545;  /* Rojo */
+    color: #ffffff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 12px;
+    display: inline-block;
+}
 
 
 

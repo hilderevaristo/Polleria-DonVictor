@@ -138,19 +138,19 @@
                             <button class="btn btn-filtro active" onclick="filtrarPorEstado('todos', this)">
                                 Todos
                             </button>
-                            <button class="btn btn-filtro" onclick="filtrarPorEstado('PENDIENTE', this)">
+                            <button class="btn btn-filtro" onclick="filtrarPorEstado('pendiente', this)">
                                 Pendiente
                             </button>
-                            <button class="btn btn-filtro" onclick="filtrarPorEstado('EN_PROCESO', this)">
+                            <button class="btn btn-filtro" onclick="filtrarPorEstado('en_proceso', this)">
                                 En proceso
                             </button>
-                            <button class="btn btn-filtro" onclick="filtrarPorEstado('EN_CAMINO', this)">
+                            <button class="btn btn-filtro" onclick="filtrarPorEstado('en_camino', this)">
                                 En camino
                             </button>
-                            <button class="btn btn-filtro" onclick="filtrarPorEstado('COMPLETADO', this)">
+                            <button class="btn btn-filtro" onclick="filtrarPorEstado('completado', this)">
                                 Completado
                             </button>
-                            <button class="btn btn-filtro" onclick="filtrarPorEstado('CANCELADO', this)">
+                            <button class="btn btn-filtro" onclick="filtrarPorEstado('cancelado', this)">
                                 Cancelado
                             </button>
                         </div>
@@ -204,15 +204,15 @@
                                     th:text="${pedido.fechaPedido != null ? #temporals.format(pedido.fechaPedido, 'dd/MM/yyyy') : 'Sin fecha'}">
                                     28/06/2026</td>
                                 <td>
-                                    <span class="badge" th:class="${pedido.estado == 'COMPLETADO' ? 'bg-success' : 
-             pedido.estado == 'PENDIENTE' ? 'bg-warning text-dark' : 
-             pedido.estado == 'EN_PROCESO' ? 'bg-info text-white' : 
-             pedido.estado == 'EN_CAMINO' ? 'bg-secondary text-white' : 
-             pedido.estado == 'CANCELADO' ? 'bg-danger' : 'bg-secondary'}" th:text="${pedido.estado == 'COMPLETADO' ? 'Completado' : 
-           pedido.estado == 'PENDIENTE' ? 'Pendiente' : 
-           pedido.estado == 'EN_PROCESO' ? 'En proceso' : 
-           pedido.estado == 'EN_CAMINO' ? 'En camino' : 
-           pedido.estado == 'CANCELADO' ? 'Cancelado' : pedido.estado}">Pendiente</span>
+                                    <span class="badge" th:class="${pedido.estado == 'completado' ? 'bg-success' : 
+             pedido.estado == 'pendiente' ? 'bg-warning text-dark' : 
+             pedido.estado == 'en_proceso' ? 'bg-info text-white' : 
+             pedido.estado == 'en_camino' ? 'bg-secondary text-white' : 
+             pedido.estado == 'cancelado' ? 'bg-danger' : 'bg-secondary'}" th:text="${pedido.estado == 'completado' ? 'Completado' : 
+           pedido.estado == 'pendiente' ? 'Pendiente' : 
+           pedido.estado == 'en_proceso' ? 'En proceso' : 
+           pedido.estado == 'en_camino' ? 'En camino' : 
+           pedido.estado == 'cancelado' ? 'Cancelado' : pedido.estado}">Pendiente</span>
                                 </td>
                                 <td>
                                     <i class="fas fa-chevron-down text-muted" th:id="'icono-' + ${pedido.id}"></i>
@@ -308,21 +308,26 @@
 
 
         <!-- MODAL PARA CAMBIAR ESTADO -->
-        <div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-sm modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header" style="background-color: #1a1a2e; color: white;">
-                        <h6 class="modal-title">
-                            <i class="fas fa-exchange-alt me-2"></i> Cambiar estado
-                        </h6>
-                        <!-- ❌ ELIMINADO: <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button> -->
-                    </div>
-                    <div class="modal-body">
-                        <p class="text-muted small mb-3">Selecciona el nuevo estado del pedido</p>
-                        <div class="d-flex flex-column gap-2" id="botonesEstados">
-                            <!-- Los botones se generan dinámicamente con JavaScript -->
-                        </div>
-                    </div>
+        <!-- ========== MODAL PARA CAMBIAR ESTADO ========== -->
+        <div id="modalCambiarEstado"
+            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
+            <div
+                style="background: white; border-radius: 12px; padding: 30px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                    <h5 style="margin: 0;">
+                         Cambiar Estado del Pedido
+                    </h5>
+                    <button onclick="cerrarModalEstado()"
+                        style="background: none; border: none; font-size: 24px; cursor: pointer; color: #999;">&times;</button>
+                </div>
+                <p style="color: #6c757d; margin-bottom: 20px;">Selecciona el nuevo estado para este pedido:</p>
+                <div id="botonesEstados">
+                    <!-- Los botones se generan dinámicamente con JavaScript -->
+                </div>
+                <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px; text-align: right;">
+                    <button onclick="cerrarModalEstado()"
+                        style="padding: 8px 24px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer;">Cancelar</button>
                 </div>
             </div>
         </div>

@@ -547,7 +547,7 @@ public Map<String, Object> cambiarEstadoPedido(@RequestParam Long id, @RequestPa
         }
         
         // ✅ ESTADOS PERMITIDOS (actualizado con tus estados)
-        String[] estadosPermitidos = {"PENDIENTE", "EN_PROCESO", "EN_CAMINO", "COMPLETADO", "CANCELADO"};
+        String[] estadosPermitidos = {"pendiente", "en_proceso", "en_camino", "completado", "cancelado"};
         
         boolean estadoValido = false;
         for (String e : estadosPermitidos) {
