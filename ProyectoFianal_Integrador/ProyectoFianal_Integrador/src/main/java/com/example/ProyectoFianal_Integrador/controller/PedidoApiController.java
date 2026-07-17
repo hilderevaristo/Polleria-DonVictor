@@ -12,11 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+//IMPORTACIONES AGREGADAS PARA MONITOREO
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/pedidos")
 public class PedidoApiController {
+
+    private static final Logger logger = LoggerFactory.getLogger(PedidoApiController.class);
 
     @Autowired
     private PedidoRepository pedidoRepository;
@@ -29,6 +35,7 @@ public class PedidoApiController {
 
     @PostMapping("/guardar")
     public ResponseEntity<?> guardarPedido(@RequestBody PedidoRequest request) {
+        logger.info("🔌 API Recibida: Petición POST externa para registrar un pedido para el cliente: {}", request.getNombreCliente());
         try {
             // 1. Crear e instanciar el Pedido Maestro
             Pedido pedido = new Pedido();
@@ -71,10 +78,12 @@ public class PedidoApiController {
                 detallePedidoRepository.save(detalle);
             }
 
+            logger.info("✅ API Success: Pedido API registrado con éxito. ID Asignado: {}", pedidoGuardado.getId());
             return ResponseEntity.ok().build(); 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            // Log de error crítico para auditoría
+            logger.error("❌ API Error: Error interno al intentar guardar pedido vía API: {}", e.getMessage());
             return ResponseEntity.status(500).body("Error interno al procesar la compra");
         }
     }

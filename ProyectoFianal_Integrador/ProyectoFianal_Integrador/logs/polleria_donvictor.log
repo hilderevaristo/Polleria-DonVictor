@@ -1,0 +1,78 @@
+2026-07-16T17:10:39.110-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] .e.P.ProyectoFianalIntegradorApplication : Starting ProyectoFianalIntegradorApplication using Java 17.0.12 with PID 4148 (C:\Users\home\Documents\GitHub\polleria\Polleria-DonVictor\ProyectoFianal_Integrador\ProyectoFianal_Integrador\target\classes started by home in C:\Users\home\Documents\GitHub\polleria\Polleria-DonVictor\ProyectoFianal_Integrador\ProyectoFianal_Integrador)
+2026-07-16T17:10:39.112-05:00 DEBUG 4148 --- [ProyectoFianal_Integrador] [main] .e.P.ProyectoFianalIntegradorApplication : Running with Spring Boot v3.2.0, Spring v6.1.1
+2026-07-16T17:10:39.113-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] .e.P.ProyectoFianalIntegradorApplication : No active profile set, falling back to 1 default profile: "default"
+2026-07-16T17:10:40.980-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-16T17:10:41.114-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 107 ms. Found 6 JPA repository interfaces.
+2026-07-16T17:10:42.508-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-07-16T17:10:42.533-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-07-16T17:10:42.535-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.16]
+2026-07-16T17:10:42.683-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-07-16T17:10:42.684-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3482 ms
+2026-07-16T17:10:43.549-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-07-16T17:10:43.709-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.3.1.Final
+2026-07-16T17:10:43.828-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-07-16T17:10:44.365-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-16T17:10:44.413-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-07-16T17:10:45.035-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@c30f26d
+2026-07-16T17:10:45.040-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-07-16T17:10:46.650-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-16T17:10:46.793-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-16T17:10:47.585-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-07-16T17:10:48.553-05:00  WARN 4148 --- [ProyectoFianal_Integrador] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-07-16T17:10:48.664-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page template: index
+2026-07-16T17:10:49.908-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 3 endpoint(s) beneath base path '/actuator'
+2026-07-16T17:10:50.107-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
+2026-07-16T17:10:50.134-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [main] .e.P.ProyectoFianalIntegradorApplication : Started ProyectoFianalIntegradorApplication in 11.753 seconds (process running for 12.589)
+2026-07-16T17:10:55.940-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-16T17:10:55.942-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-07-16T17:10:55.944-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-07-16T17:10:56.126-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-1] c.e.P.controller.DonVictorController     : ? Solicitud GET recibida para la página de inicio (Index).
+2026-07-16T17:11:05.856-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-1] c.e.P.controller.DonVictorController     : ? Intento de inicio de sesión recibido para el correo: camila@gmail.com
+2026-07-16T17:11:05.922-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-1] c.e.P.controller.DonVictorController     : ? Login exitoso. Usuario: Camila | Rol asignado: null
+2026-07-16T17:11:07.528-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-6] c.e.P.controller.DonVictorController     : ? Solicitud GET recibida para la página de inicio (Index).
+2026-07-16T17:11:32.232-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-7] c.e.P.controller.DonVictorController     : ? Procesando un nuevo pedido web para el cliente: [Camila]. Tipo de entrega: [Delivery]
+2026-07-16T17:11:32.519-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-7] c.e.P.controller.DonVictorController     : ? Pedido guardado y procesado correctamente en la BD. Total calculado: S/ 97.0
+2026-07-16T17:11:43.616-05:00  INFO 4148 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-9] c.e.P.controller.DonVictorController     : ? Solicitud GET recibida para la página de inicio (Index).
+2026-07-16T18:07:51.019-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] .e.P.ProyectoFianalIntegradorApplication : Starting ProyectoFianalIntegradorApplication using Java 17.0.12 with PID 144 (C:\Users\home\Documents\GitHub\polleria\Polleria-DonVictor\ProyectoFianal_Integrador\ProyectoFianal_Integrador\target\classes started by home in C:\Users\home\Documents\GitHub\polleria\Polleria-DonVictor\ProyectoFianal_Integrador\ProyectoFianal_Integrador)
+2026-07-16T18:07:51.022-05:00 DEBUG 144 --- [ProyectoFianal_Integrador] [main] .e.P.ProyectoFianalIntegradorApplication : Running with Spring Boot v3.2.0, Spring v6.1.1
+2026-07-16T18:07:51.024-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] .e.P.ProyectoFianalIntegradorApplication : No active profile set, falling back to 1 default profile: "default"
+2026-07-16T18:07:52.673-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-16T18:07:52.842-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 143 ms. Found 6 JPA repository interfaces.
+2026-07-16T18:07:54.467-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-07-16T18:07:54.496-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-07-16T18:07:54.497-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.16]
+2026-07-16T18:07:54.788-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-07-16T18:07:54.789-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3676 ms
+2026-07-16T18:07:55.648-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-07-16T18:07:55.825-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.3.1.Final
+2026-07-16T18:07:55.913-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-07-16T18:07:56.424-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-16T18:07:56.480-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-07-16T18:07:57.230-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@632b5c79
+2026-07-16T18:07:57.236-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-07-16T18:07:58.969-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-16T18:07:59.097-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-16T18:08:00.024-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-07-16T18:08:00.944-05:00  WARN 144 --- [ProyectoFianal_Integrador] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-07-16T18:08:01.033-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page template: index
+2026-07-16T18:08:02.507-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 3 endpoint(s) beneath base path '/actuator'
+2026-07-16T18:08:02.683-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
+2026-07-16T18:08:02.702-05:00  INFO 144 --- [ProyectoFianal_Integrador] [main] .e.P.ProyectoFianalIntegradorApplication : Started ProyectoFianalIntegradorApplication in 12.3 seconds (process running for 12.805)
+2026-07-16T18:08:19.740-05:00  INFO 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-16T18:08:19.741-05:00  INFO 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-07-16T18:08:19.743-05:00  INFO 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-07-16T18:10:06.389-05:00  INFO 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-4] c.e.P.controller.DonVictorController     : ? Solicitud GET recibida para la página de inicio (Index).
+2026-07-16T18:10:12.831-05:00  INFO 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-4] c.e.P.controller.DonVictorController     : ? Intento de inicio de sesión recibido para el correo: prueba@prueba.com
+2026-07-16T18:10:12.904-05:00  WARN 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-4] c.e.P.controller.DonVictorController     : ?? Fallo de Login: Contraseña incorrecta para el usuario: prueba@prueba.com
+2026-07-16T18:10:18.984-05:00  INFO 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-10] c.e.P.controller.DonVictorController     : ? Intento de inicio de sesión recibido para el correo: prueba@prueba.com
+2026-07-16T18:10:18.992-05:00  WARN 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-10] c.e.P.controller.DonVictorController     : ?? Fallo de Login: Contraseña incorrecta para el usuario: prueba@prueba.com
+2026-07-16T18:10:25.309-05:00  INFO 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-9] c.e.P.controller.DonVictorController     : ? Intento de inicio de sesión recibido para el correo: camila@gmail.com
+2026-07-16T18:10:25.316-05:00  INFO 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-9] c.e.P.controller.DonVictorController     : ? Login exitoso. Usuario: Camila | Rol asignado: null
+2026-07-16T18:10:26.870-05:00  INFO 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-1] c.e.P.controller.DonVictorController     : ? Solicitud GET recibida para la página de inicio (Index).
+2026-07-16T18:15:47.556-05:00  INFO 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-4] c.e.P.controller.DonVictorController     : ? Procesando un nuevo pedido web para el cliente: [Camila]. Tipo de entrega: [Recojo]
+2026-07-16T18:15:47.779-05:00  INFO 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-4] c.e.P.controller.DonVictorController     : ? Pedido guardado y procesado correctamente en la BD. Total calculado: S/ 172.0
+2026-07-16T18:15:56.138-05:00  INFO 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-10] c.e.P.controller.PerfilController        : ? Cargando perfil del usuario: camila@gmail.com
+2026-07-16T18:16:12.147-05:00  WARN 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-6] c.e.P.controller.PerfilController        : ?? Fallo de Seguridad: Intento de cambio de contraseña fallido para camila@gmail.com. Contraseña actual incorrecta.
+2026-07-16T18:16:12.185-05:00  INFO 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-7] c.e.P.controller.PerfilController        : ? Cargando perfil del usuario: camila@gmail.com
+2026-07-16T18:16:30.252-05:00  INFO 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-2] c.e.P.controller.PerfilController        : ? Cambio de contraseña solicitado y procesado con éxito para: camila@gmail.com
+2026-07-16T18:16:30.297-05:00  INFO 144 --- [ProyectoFianal_Integrador] [http-nio-8080-exec-3] c.e.P.controller.PerfilController        : ? Cargando perfil del usuario: camila@gmail.com

@@ -65,6 +65,18 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Spring Boot Actuator para Telemetría de Salud -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Micrometer Registry para integración con Prometheus + Grafana (Rendimiento) -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
         <!-- SPRING SECURITY - SOLO PARA ENCRIPTAR -->
         <!---
         <dependency>

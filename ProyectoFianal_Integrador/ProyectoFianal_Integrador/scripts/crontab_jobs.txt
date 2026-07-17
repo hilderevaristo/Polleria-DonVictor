@@ -1,0 +1,9 @@
+# =================================================================
+# PLANIFICACIÓN DE TAREAS AUTOMÁTICAS (CRON JOBS)
+# =================================================================
+
+# 1. Ejecutar el backup de la base de datos MySQL todos los días a las 2:00 AM
+0 2 * * * /bin/bash ./scripts/backup_db.sh
+
+# 2. Ejecutar la limpieza de logs y temporales todos los días a las 3:30 AM
+30 3 * * * /bin/bash ./scripts/clean_temp.sh

@@ -14,9 +14,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.nio.file.Paths;
 
+// IMPORTACIONES AGREGADAS PARA MONITOREO
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Controller
 @RequestMapping("/perfil")
 public class PerfilController {
+
+    // 📝 DECLARACIÓN DEL LOGGER
+    private static final Logger logger = LoggerFactory.getLogger(PerfilController.class);
 
     private final UsuarioRepository usuarioRepository;
     private final DireccionRepository direccionRepository;
@@ -31,37 +38,42 @@ public class PerfilController {
     @GetMapping
     public String verPerfil(HttpSession session, Model model) {
         Usuario usuarioSession = (Usuario) session.getAttribute("usuario");
-        
+
         // Redirigir al login si no hay sesión
         if (usuarioSession == null) {
+            logger.warn("⚠️ Intento de acceso no autorizado a la sección /perfil.");
             return "redirect:/login";
         }
 
+        logger.info("👤 Cargando perfil del usuario: {}", usuarioSession.getEmail());
+
         // Obtener los datos más recientes del usuario desde la BD
         Usuario usuario = usuarioRepository.findById(usuarioSession.getId()).orElse(null);
-        if (usuario == null) return "redirect:/login";
+        if (usuario == null)
+            return "redirect:/login";
 
         // Cargar sus direcciones
         List<Direccion> direcciones = direccionRepository.findByUsuarioId(usuario.getId());
 
         model.addAttribute("usuario", usuario);
         model.addAttribute("direcciones", direcciones);
-        
+
         return "perfil"; // Apunta al archivo perfil.html que crearemos luego
     }
 
     // 2. Actualizar Datos Básicos
     @PostMapping("/actualizar-datos")
-    public String actualizarDatos(@RequestParam String nombre, @RequestParam String telefono, 
-                                  HttpSession session, RedirectAttributes redirectAttributes) {
+    public String actualizarDatos(@RequestParam String nombre, @RequestParam String telefono,
+            HttpSession session, RedirectAttributes redirectAttributes) {
         Usuario usuarioSession = (Usuario) session.getAttribute("usuario");
         if (usuarioSession != null) {
             Usuario usuario = usuarioRepository.findById(usuarioSession.getId()).orElse(null);
-            if(usuario != null) {
+            if (usuario != null) {
+                logger.info("🔄 Actualizando datos básicos del usuario: [{}]. Nuevo teléfono: [{}]", usuario.getEmail(), telefono);
                 usuario.setNombre(nombre);
                 usuario.setTelefono(telefono);
                 usuarioRepository.save(usuario);
-                
+
                 session.setAttribute("usuario", usuario); // Actualizamos la sesión
                 redirectAttributes.addFlashAttribute("mensajeExito", "Tus datos han sido actualizados.");
             }
@@ -71,17 +83,19 @@ public class PerfilController {
 
     // 3. Cambiar Contraseña
     @PostMapping("/cambiar-password")
-    public String cambiarPassword(@RequestParam String passwordActual, @RequestParam String nuevaPassword, 
-                                  HttpSession session, RedirectAttributes redirectAttributes) {
+    public String cambiarPassword(@RequestParam String passwordActual, @RequestParam String nuevaPassword,
+            HttpSession session, RedirectAttributes redirectAttributes) {
         Usuario usuarioSession = (Usuario) session.getAttribute("usuario");
         if (usuarioSession != null) {
             Usuario usuario = usuarioRepository.findById(usuarioSession.getId()).orElse(null);
-            if(usuario != null) {
-                if(usuario.getPassword().equals(passwordActual)) {
+            if (usuario != null) {
+                if (usuario.getPassword().equals(passwordActual)) {
+                    logger.info("🔐 Cambio de contraseña solicitado y procesado con éxito para: {}", usuario.getEmail());
                     usuario.setPassword(nuevaPassword);
                     usuarioRepository.save(usuario);
                     redirectAttributes.addFlashAttribute("mensajeExito", "Contraseña cambiada correctamente.");
                 } else {
+                    logger.warn("⚠️ Fallo de Seguridad: Intento de cambio de contraseña fallido para {}. Contraseña actual incorrecta.", usuario.getEmail());
                     redirectAttributes.addFlashAttribute("mensajeError", "La contraseña actual es incorrecta.");
                 }
             }
@@ -90,35 +104,35 @@ public class PerfilController {
     }
 
     @PostMapping("/nueva-direccion")
-    public String nuevaDireccion(@RequestParam String alias, @RequestParam String direccionExacta, 
-                                 @RequestParam(required = false) String referencia, 
-                                 HttpSession session, RedirectAttributes redirectAttributes) {
+    public String nuevaDireccion(@RequestParam String alias, @RequestParam String direccionExacta,
+            @RequestParam(required = false) String referencia,
+            HttpSession session, RedirectAttributes redirectAttributes) {
         Usuario usuarioSession = (Usuario) session.getAttribute("usuario");
         if (usuarioSession != null) {
             Usuario usuario = usuarioRepository.findById(usuarioSession.getId()).orElse(null);
-            if(usuario != null) {
+            if (usuario != null) {
                 Direccion direccion = new Direccion();
                 direccion.setAlias(alias);
                 direccion.setDireccionExacta(direccionExacta);
                 direccion.setReferencia(referencia);
                 direccion.setUsuario(usuario);
-                
+
                 // Lógica de predeterminada (la primera es principal)
                 List<Direccion> existentes = direccionRepository.findByUsuarioId(usuario.getId());
                 direccion.setEsPredeterminada(existentes.isEmpty());
-                
+
                 direccionRepository.save(direccion);
 
                 // ✅ AQUÍ ESTÁ EL TRUCO: Refrescamos el usuario en la sesión
                 Usuario usuarioActualizado = usuarioRepository.findById(usuario.getId()).orElse(usuario);
                 session.setAttribute("usuario", usuarioActualizado);
-                
+
                 redirectAttributes.addFlashAttribute("mensajeExito", "Nueva dirección agregada a tu libreta.");
             }
         }
         return "redirect:/perfil";
     }
-    
+
     // 5. Eliminar Dirección
     @PostMapping("/eliminar-direccion/{id}")
     public String eliminarDireccion(@PathVariable Long id, HttpSession session, RedirectAttributes redirectAttributes) {
@@ -126,7 +140,7 @@ public class PerfilController {
         if (usuarioSession != null) {
             direccionRepository.findById(id).ifPresent(direccion -> {
                 // Verificar que la dirección pertenezca al usuario que la intenta borrar
-                if(direccion.getUsuario().getId().equals(usuarioSession.getId())) {
+                if (direccion.getUsuario().getId().equals(usuarioSession.getId())) {
                     direccionRepository.delete(direccion);
                     redirectAttributes.addFlashAttribute("mensajeExito", "Dirección eliminada correctamente.");
                 }
@@ -137,7 +151,8 @@ public class PerfilController {
 
     // ✅ 6. NUEVO: Marcar dirección como predeterminada
     @PostMapping("/predeterminada/{id}")
-    public String marcarPredeterminada(@PathVariable Long id, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String marcarPredeterminada(@PathVariable Long id, HttpSession session,
+            RedirectAttributes redirectAttributes) {
         Usuario usuarioSession = (Usuario) session.getAttribute("usuario");
         if (usuarioSession != null) {
             List<Direccion> direcciones = direccionRepository.findByUsuarioId(usuarioSession.getId());
