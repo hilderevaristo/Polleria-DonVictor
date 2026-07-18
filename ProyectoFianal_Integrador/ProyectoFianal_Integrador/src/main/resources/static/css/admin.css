@@ -1298,7 +1298,37 @@ body {
 
 
 
+/* ========== MODAL NUEVO PRODUCTO - TEXTO NEGRO ========== */
+#modalNuevoProducto .modal-content,
+#modalNuevoProducto .modal-header,
+#modalNuevoProducto .modal-body,
+#modalNuevoProducto .modal-footer {
+    background: #ffffff !important;
+    color: #212529 !important;
+}
 
+#modalNuevoProducto .modal-header h5 {
+    color: #212529 !important;
+}
+
+#modalNuevoProducto .modal-body label {
+    color: #212529 !important;
+}
+
+#modalNuevoProducto .form-control,
+#modalNuevoProducto .form-select {
+    background: #ffffff !important;
+    border: 1px solid #ced4da !important;
+    color: #212529 !important;
+}
+
+#modalNuevoProducto .form-control::placeholder {
+    color: #6c757d !important;
+}
+
+#modalNuevoProducto .modal-body small {
+    color: #6c757d !important;
+}
 
 
 
