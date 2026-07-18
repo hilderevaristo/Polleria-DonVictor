@@ -26,13 +26,16 @@
 
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-brand">
-            <i class="fas fa-drumstick-bite"></i>
-            <span>DonVictor</span>
-            <small>Panel Admin</small>
+        <div class="sidebar-brand" style="display: flex; align-items: center; gap: 12px;">
+            <img th:src="@{/img/Logo_admin.jpg}" alt="Logo" width="50" height="50"
+                style="border-radius: 45%; object-fit: cover; flex-shrink: 0;">
+            <div>
+                <span style="display: block; font-weight: bold; font-size: 16px;">DonVictor</span>
+                <small style="display: block; font-size: 11px; opacity: 0.7;">Panel Admin</small>
+            </div>
         </div>
         <ul class="sidebar-menu">
-            <li><a th:href="@{/admin/dashboard}"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
+            <li><a th:href="@{/admin/dashboard}"><i class="fas fa-chart-pie"></i> Inicio</a></li>
             <li><a th:href="@{/admin/productos}"><i class="fas fa-box"></i> Productos</a></li>
             <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a></li>
             <li class="active"><a th:href="@{/admin/pedidos}"><i class="fas fa-shopping-cart"></i> Ordenes</a></li>
