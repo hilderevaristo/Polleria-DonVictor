@@ -27,6 +27,9 @@ import com.example.ProyectoFianal_Integrador.repository.PedidoRepository;
 
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -413,39 +416,51 @@ public String nuevoProducto(HttpSession session, Model model) {
 }
 
 // ========== GUARDAR PRODUCTO (DESDE MODAL) ==========
-@PostMapping("/admin/productos/guardar")
+@PostMapping("/productos/guardar")
 @ResponseBody
-public Map<String, Object> guardarProducto(@RequestParam String nombre,
-                                           @RequestParam(required = false) String descripcion,
-                                           @RequestParam Double precio,
-                                           @RequestParam String categoria,
-                                           @RequestParam(required = false) String imagenUrl) {
+public Map<String, Object> guardarProducto(
+        @RequestParam String nombre,
+        @RequestParam(required = false) String descripcion,
+        @RequestParam Double precio,
+        @RequestParam String categoria,
+        @RequestParam(required = false) String imagenUrl) {  // ← SOLO ESTO
+
     Map<String, Object> response = new HashMap<>();
-    
+
     try {
         System.out.println("=== GUARDAR PRODUCTO ===");
         System.out.println("Nombre: " + nombre);
         System.out.println("Precio: " + precio);
         System.out.println("Categoria: " + categoria);
-        
+        System.out.println("imagenUrl: " + (imagenUrl != null ? imagenUrl : "null"));
+
         Producto producto = new Producto();
         producto.setNombre(nombre);
         producto.setDescripcion(descripcion != null ? descripcion : "");
         producto.setPrecio(precio);
         producto.setCategoria(categoria);
-        producto.setImagenUrl(imagenUrl);
-        
+
+        // ✅ GUARDAR URL DE CLOUDINARY
+        if (imagenUrl != null && !imagenUrl.trim().isEmpty()) {
+            producto.setImagenUrl(imagenUrl.trim());
+            System.out.println("✅ URL guardada: " + imagenUrl);
+        } else {
+            producto.setImagenUrl(null);
+            System.out.println("ℹ️ Sin imagen");
+        }
+
         productoRepository.save(producto);
-        
+        System.out.println("✅ Producto guardado en BD");
+
         response.put("success", true);
         response.put("message", "Producto creado correctamente");
-        
+
     } catch (Exception e) {
         e.printStackTrace();
         response.put("success", false);
         response.put("message", e.getMessage());
     }
-    
+
     return response;
 }
 

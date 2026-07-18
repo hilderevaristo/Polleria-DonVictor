@@ -1,51 +1,71 @@
 <section th:fragment="menu" id="productos" class="container my-5 py-5 menu-container">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold text-danger">Nuestro Menú</h2>
-            <div class="divider bg-danger mx-auto my-3" style="width: 60px; height: 3px;"></div>
-            <p class="text-muted">Los mejores combos perfectos para cualquier ocasión.</p>
-        </div>
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-danger">Nuestro Menú</h2>
+        <div class="divider bg-danger mx-auto my-3" style="width: 60px; height: 3px;"></div>
+        <p class="text-muted">Los mejores combos perfectos para cualquier ocasión.</p>
+    </div>
 
-        <div class="filtros-categoria">
-            <button class="btn-filtro active" data-filter="Todos">Todos</button>
-            <button class="btn-filtro" data-filter="Promociones">Promociones</button>
-            <button class="btn-filtro" data-filter="Pollos">Pollos</button>
-            <button class="btn-filtro" data-filter="Piqueos">Piqueos</button>
-            <button class="btn-filtro" data-filter="Hamburguesas">Hamburguesas</button>
-            <button class="btn-filtro" data-filter="Wraps">Wraps</button>
-            <button class="btn-filtro" data-filter="Acompañamientos">Acompañamientos</button>
-            <button class="btn-filtro" data-filter="Postres">Postres</button>
-            <button class="btn-filtro" data-filter="Bebidas">Bebidas</button>
-        </div>
+    <div class="filtros-categoria">
+        <button class="btn-filtro active" data-filter="Todos">Todos</button>
+        <button class="btn-filtro" data-filter="Promociones">Promociones</button>
+        <button class="btn-filtro" data-filter="Pollos">Pollos</button>
+        <button class="btn-filtro" data-filter="Piqueos">Piqueos</button>
+        <button class="btn-filtro" data-filter="Hamburguesas">Hamburguesas</button>
+        <button class="btn-filtro" data-filter="Wraps">Wraps</button>
+        <button class="btn-filtro" data-filter="Acompañamientos">Acompañamientos</button>
+        <button class="btn-filtro" data-filter="Postres">Postres</button>
+        <button class="btn-filtro" data-filter="Bebidas">Bebidas</button>
+    </div>
 
-        <div class="menu-grid">
-            <div class="menu-card" th:each="p : ${productos}" th:data-categoria="${p.categoria}">
-                <div class="card-img-wrapper">
-                    <img th:src="@{'/' + ${p.imagenUrl}}" alt="Imagen del producto" class="card-img">
+    <div class="menu-grid">
+        <div class="menu-card" th:each="p : ${productos}" th:data-categoria="${p.categoria}">
+            <div class="card-img-wrapper">
+                <!-- ✅ CLOUDINARY (empieza con http) -->
+                <img th:if="${p.imagenUrl != null and p.imagenUrl.startsWith('http')}" 
+                     th:src="${p.imagenUrl}" 
+                     alt="Imagen del producto" 
+                     class="card-img"
+                     onerror="this.src='https://ui-avatars.com/api/?name=' + encodeURIComponent(this.alt) + '&background=dc3545&color=fff&size=300'">
+                
+                <!-- ✅ LOCAL (no empieza con http) -->
+                <img th:if="${p.imagenUrl != null and !p.imagenUrl.startsWith('http')}" 
+                     th:src="'/' + ${p.imagenUrl}" 
+                     alt="Imagen del producto" 
+                     class="card-img"
+                     onerror="this.src='https://ui-avatars.com/api/?name=' + encodeURIComponent(this.alt) + '&background=dc3545&color=fff&size=300'">
+                
+                <!-- ✅ SIN IMAGEN -->
+                <img th:unless="${p.imagenUrl != null}" 
+                     th:src="'https://ui-avatars.com/api/?name=' + ${p.nombre} + '&background=dc3545&color=fff&size=300'" 
+                     alt="Imagen del producto" 
+                     class="card-img">
+            </div>
+
+            <div class="card-info">
+                <span class="card-category" th:text="${#strings.toUpperCase(p.categoria)}">CATEGORÍA</span>
+
+                <div class="card-header">
+                    <h3 class="card-title" th:text="${p.nombre}">Nombre del Producto</h3>
+                    <span class="card-price" th:text="'S/ ' + ${#numbers.formatDecimal(p.precio, 1, 2)}">S/ 0.00</span>
                 </div>
 
-                <div class="card-info">
-                    <span class="card-category" th:text="${#strings.toUpperCase(p.categoria)}">CATEGORÍA</span>
+                <p class="card-desc" th:text="${p.descripcion}">Descripción del producto...</p>
 
-                    <div class="card-header">
-                        <h3 class="card-title" th:text="${p.nombre}">Nombre del Producto</h3>
-                        <span class="card-price" th:text="'S/ ' + ${#numbers.formatDecimal(p.precio, 1, 2)}">S/
-                            0.00</span>
-                    </div>
-
-                    <p class="card-desc" th:text="${p.descripcion}">Descripción del producto...</p>
-
-
-                    <button class="btn-agregar" th:if="${session.usuario != null}" th:data-id="${p.id}"
-                        th:data-nombre="${p.nombre}" th:data-precio="${p.precio}" th:data-img="${'/' + p.imagenUrl}"
+                <!-- ✅ BOTÓN AGREGAR CON LA URL CORRECTA -->
+                <button class="btn-agregar" th:if="${session.usuario != null}" 
+                        th:data-id="${p.id}" 
+                        th:data-nombre="${p.nombre}" 
+                        th:data-precio="${p.precio}" 
+                        th:data-img="${p.imagenUrl != null ? (p.imagenUrl.startsWith('http') ? p.imagenUrl : '/' + p.imagenUrl) : 'https://ui-avatars.com/api/?name=' + p.nombre + '&background=dc3545&color=fff&size=300'}"
                         onclick="agregarAlCarrito(this.getAttribute('data-id'), this.getAttribute('data-nombre'), this.getAttribute('data-precio'), this.getAttribute('data-img'))">
-                        🛒 Agregar al carrito
-                    </button>
+                    🛒 Agregar al carrito
+                </button>
 
-                    <a th:href="@{/login}" class="btn-agregar text-decoration-none d-inline-block text-center"
-                        th:if="${session.usuario == null}">
-                        Inicia sesión para pedir
-                    </a>
-                </div>
+                <a th:href="@{/login}" class="btn-agregar text-decoration-none d-inline-block text-center"
+                    th:if="${session.usuario == null}">
+                    Inicia sesión para pedir
+                </a>
             </div>
         </div>
-    </section>
+    </div>
+</section>
