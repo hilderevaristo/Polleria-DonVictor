@@ -1331,10 +1331,91 @@ body {
 }
 
 
+/* ========== MODAL EDITAR PRODUCTO ========== */
+#modalEditarProducto .modal-content,
+#modalEditarProducto .modal-header,
+#modalEditarProducto .modal-body,
+#modalEditarProducto .modal-footer {
+    background: #ffffff !important;
+    color: #212529 !important;
+}
+
+#modalEditarProducto .modal-header h5 {
+    color: #212529 !important;
+}
+
+#modalEditarProducto .modal-body label {
+    color: #212529 !important;
+}
+
+#modalEditarProducto .form-control {
+    background: #ffffff !important;
+    border: 1px solid #ced4da !important;
+    color: #212529 !important;
+}
+
+#modalEditarProducto .form-control:focus {
+    border-color: #c9a84c !important;
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15) !important;
+}
+
+#modalEditarProducto .modal-body small {
+    color: #6c757d !important;
+}
+
+#modalEditarProducto .btn-danger {
+    background: #c9a84c !important;
+    border-color: #c9a84c !important;
+    color: #1a1a2e !important;
+}
+
+#modalEditarProducto .btn-danger:hover {
+    background: #b8942a !important;
+    border-color: #b8942a !important;
+    color: #1a1a2e !important;
+}
 
 
+/* ========== MODAL CAMBIAR ESTADO ========== */
+#modalCambiarEstado > div {
+    background: #ffffff !important;
+}
 
+#modalCambiarEstado > div h5 {
+    color: #212529 !important;
+}
 
+#modalCambiarEstado .btn-estado-modal {
+    background: #ffffff !important;
+    color: #212529 !important;
+    border: 1px solid #e9ecef !important;
+}
+
+#modalCambiarEstado .btn-estado-modal:hover {
+    border-color: #c9a84c !important;
+}
+
+#modalCambiarEstado .btn-estado-modal.activo {
+    border-color: #c9a84c !important;
+    background: #f8f5f0 !important;
+}
+
+#modalCambiarEstado .btn-estado-modal .estado-nombre {
+    color: #212529 !important;
+}
+
+#modalCambiarEstado .btn-estado-modal .estado-check {
+    color: #c9a84c !important;
+}
+
+#modalCambiarEstado .modal-footer button {
+    background: #6c757d !important;
+    color: #ffffff !important;
+}
+
+#modalCambiarEstado > div p {
+    color: #6c757d !important;
+}
 
 
 
