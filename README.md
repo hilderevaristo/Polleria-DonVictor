@@ -1,173 +1,128 @@
-# Pollería Don Victor
+﻿# Pollería Don Victor
 
-Proyecto final integrador — aplicación web para la gestión básica de la Pollería Don Victor.
+Aplicación web de ventas para la Pollería Don Victor, desarrollada con Spring Boot, Thymeleaf y JavaScript.
 
 ## Descripción
 
-Aplicación web desarrollada con Spring Boot y Thymeleaf que provee registro y autenticación de usuarios, gestión de contactos y una interfaz estática para mostrar secciones de productos. Es un proyecto educativo y de demostración pensado para desplegar en entornos locales y de servidor.
+Esta aplicación permite mostrar un catálogo de productos, gestionar usuarios, manejar un carrito de compras y procesar pedidos en una pollería.
 
 ## Tecnologías utilizadas
 
-- Java 17+
-- Spring Boot (Maven)
+- Java 17
+- Spring Boot 3.2
 - Thymeleaf
-- Maven (con `mvnw` / `mvnw.cmd`)
-- MySQL (como ejemplo de base de datos relacional)
-- HTML, CSS y JavaScript para frontend estático
+- Spring Data JPA
+- MySQL
+- Bootstrap 5
+- HTML, CSS, JavaScript
+- Font Awesome
 
-## login correo y contraseña de usuarios
-- correo: juan@gmail.com  pass: 123456
-## credenciales de administrador
--correo: admin@donvictor.com  pass: admin123
-## Funcionalidades principales
+## Funcionalidades implementadas
 
-- Registro y login de usuarios.
-- Gestión de contactos (crear/listar/editar/eliminar).
-- Páginas públicas con plantillas Thymeleaf: `index`, `login`, `registro`.
-- Recursos estáticos organizados en `css/`, `js/`, `img/` y subcarpetas por secciones.
+### Público
+- Página principal con catálogo de productos filtrados por sección.
+- Formulario de contacto para guardar solicitudes en la base de datos.
+- Carrito de compras en el frontend con:
+  - agregar productos,
+  - editar cantidades,
+  - eliminar productos,
+  - vaciar carrito,
+  - cálculo de subtotal, delivery y total.
+- Envío de pedidos al servidor para guardarlos en MySQL.
 
-## Requisitos para ejecutarlo
+### Usuarios registrados
+- Registro de usuario con nombre, email, teléfono y contraseña.
+- Login con email y contraseña.
+- Perfil de usuario (`/perfil`) con:
+  - actualización de nombre y teléfono,
+  - cambio de contraseña,
+  - gestión de direcciones (agregar, eliminar, marcar como principal).
+- Session management para mantener el usuario activo en views y carrito.
 
-- JDK 17 o superior instalado y configurado en `PATH`.
-- MySQL (o ajusta `application.properties` para otra BD).
-- Git (opcional).
-- En Windows usar `mvnw.cmd`; en macOS/Linux usar `./mvnw`.
+### Panel administrativo
+- Dashboard con estadísticas de productos, usuarios, órdenes e ingresos.
+- Gestión de productos:
+  - listar productos,
+  - obtener producto por ID,
+  - crear producto,
+  - editar producto,
+  - eliminar producto.
+- Gestión de usuarios:
+  - listar usuarios,
+  - eliminar usuarios (excepto al admin activo).
+- Gestión de pedidos:
+  - listar pedidos,
+  - cambiar estado de pedido,
+  - eliminar pedido.
 
-## Instalación paso a paso
+## Estructura del proyecto
 
-1. Clona el repositorio:
+Ruta del módulo principal: `ProyectoFianal_Integrador/ProyectoFianal_Integrador`
 
-```bash
-git clone https://github.com/<tu-usuario>/Polleria-DonVictor.git
-cd Polleria-DonVictor/ProyectoFianal_Integrador/ProyectoFianal_Integrador
+- `src/main/java/com/example/ProyectoFianal_Integrador/controller/`
+  - `DonVictorController.java` — rutas públicas, login, contacto, administración y pedidos.
+  - `PedidoApiController.java` — API REST para guardar pedidos.
+  - `PerfilController.java` — perfil de usuario y direcciones.
+- `src/main/java/com/example/ProyectoFianal_Integrador/entity/` — entidades JPA: `Usuario`, `Producto`, `Pedido`, `DetallePedido`, `Contacto`, `Direccion`, `ItemCarrito`.
+- `src/main/java/com/example/ProyectoFianal_Integrador/repository/` — repositorios Spring Data JPA.
+- `src/main/resources/templates/` — vistas Thymeleaf.
+- `src/main/resources/static/` — CSS, JS, imágenes y recursos estáticos.
+- `src/main/resources/script_catalogo_donvictor.sql` — script para carga inicial de productos.
+
+## Configuración de la base de datos
+
+El archivo `src/main/resources/application.properties` contiene la configuración actual de MySQL:
+
+```properties
+spring.application.name=ProyectoFianal_Integrador
+spring.datasource.url=jdbc:mysql://localhost:3306/bd_integrador
+spring.datasource.username=root
+spring.datasource.password=74418228
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+server.port=8080
 ```
 
-2. (Opcional) Configura un entorno virtual de Java o asegúrate de tener la versión requerida.
+Ajusta `spring.datasource.username` y `spring.datasource.password` a los datos de tu entorno.
 
-3. Configura la base de datos MySQL (ver sección siguiente).
+## Ejecución
 
-4. Ejecuta la aplicación localmente:
+Desde el directorio del módulo:
 
 Windows:
 
 ```powershell
+cd ProyectoFianal_Integrador\ProyectoFianal_Integrador
 mvnw.cmd spring-boot:run
 ```
 
-macOS / Linux:
+macOS/Linux:
 
 ```bash
+cd ProyectoFianal_Integrador/ProyectoFianal_Integrador
 ./mvnw spring-boot:run
 ```
 
-5. Generar JAR y ejecutar:
+Construir y ejecutar JAR:
 
 ```bash
 ./mvnw clean package
-java -jar target/*.jar
+java -jar target/ProyectoFianal_Integrador-0.0.1-SNAPSHOT.jar
 ```
 
-6. Ejecutar pruebas unitarias:
+Abre `http://localhost:8080/` en tu navegador.
 
-```bash
-./mvnw test
-```
+## Notas importantes
 
-## Configuración de la base de datos MySQL
+- Las contraseñas se guardan en texto plano. Es recomendable usar hashing para mayor seguridad.
+- El panel administrativo sólo funciona con usuarios que tengan `rol = ADMIN`.
+- No existe un administrador preconfigurado en el código, por lo que debes crear un usuario admin directamente en la base de datos si deseas usar el panel.
 
-1. Crear la base de datos y el usuario (ajusta `DB_USER` y `DB_PASS`):
+## Cómo contribuir
 
-```sql
-CREATE DATABASE polleriadonvictor CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'pdv_user'@'localhost' IDENTIFIED BY 'tu_password_segura';
-GRANT ALL PRIVILEGES ON polleriadonvictor.* TO 'pdv_user'@'localhost';
-FLUSH PRIVILEGES;
-```
-
-2. Añade la configuración MySQL en `src/main/resources/application.properties` (reemplaza valores):
-
-```properties
-# Datasource
-spring.datasource.url=jdbc:mysql://localhost:3306/polleriadonvictor?useSSL=false&serverTimezone=UTC
-spring.datasource.username=pdv_user
-spring.datasource.password=tu_password_segura
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-
-# JPA / Hibernate
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
-
-# Puerto (opcional)
-server.port=8080
-```
-
-Notas:
-- `spring.jpa.hibernate.ddl-auto=update` crea/actualiza tablas automáticamente en desarrollo; para producción considere `validate` y migraciones con Flyway/Liquibase.
-- Añade el conector MySQL al `pom.xml` si no está presente:
-
-```xml
-<dependency>
-  <groupId>mysql</groupId>
-  <artifactId>mysql-connector-java</artifactId>
-  <scope>runtime</scope>
-</dependency>
-```
-
-## Cómo ejecutar el proyecto
-
-- Ejecutar con Maven Wrapper (desarrollo): `mvnw[.cmd] spring-boot:run` desde `ProyectoFianal_Integrador/ProyectoFianal_Integrador`.
-- Construir y ejecutar JAR: `./mvnw clean package` → `java -jar target/*.jar`.
-- Acceder en el navegador: `http://localhost:8080/` (o el puerto configurado).
-
-## Estructura de carpetas
-
-Resumen de la estructura relevante (ruta relativa al módulo):
-
-```
-ProyectoFianal_Integrador/
-├─ mvnw, mvnw.cmd, pom.xml
-├─ src/
-│  ├─ main/
-│  │  ├─ java/com/example/ProyectoFianal_Integrador/
-│  │  │  ├─ ProyectoFianalIntegradorApplication.java
-│  │  │  ├─ controller/DonVictorController.java
-│  │  │  ├─ entity/Usuario.java
-+│  │  │  └─ entity/Contacto.java
-│  │  ├─ resources/
-│  │  │  ├─ application.properties
-│  │  │  ├─ static/
-│  │  │  │  ├─ css/
-│  │  │  │  ├─ js/
-│  │  │  │  └─ img/
-│  │  │  └─ templates/
-│  │  │     ├─ index.html
-│  │  │     ├─ login.html
-│  │  │     └─ registro.html
-│  └─ test/
-```
-
-Revisa los paquetes:
-- `controller/` → rutas y manejo HTTP.
-- `entity/` → modelos de dominio.
-- `repository/` → interfaces Spring Data JPA.
-
-## Autor
-
-- Autor: [Tu Nombre] — reemplaza con tu nombre o el del equipo.
-
-
-
-## Contribuciones
-
-1. Fork del repositorio.
-2. Crear una rama: `git checkout -b feature/mi-cambio`.
-3. Commit y push.
-4. Abrir pull request describiendo los cambios.
-
-## Contacto
-
-Para dudas o soporte, abre un issue en el repositorio o contacta al autor.
+1. Haz fork del repositorio.
+2. Crea una rama: `git checkout -b feature/mi-cambio`.
+3. Haz commit y push.
+4. Abre un pull request.
 
 ---
-
