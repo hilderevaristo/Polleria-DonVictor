@@ -25,11 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.ProyectoFianal_Integrador.repository.PedidoRepository;
 
+// IMPORTACIONES AGREGADAS PARA MONITOREO DE LOGS
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,6 +41,9 @@ import java.util.Optional;
 
 @Controller
 public class DonVictorController {
+
+    // DECLARACIÓN DEL LOGGER (Nativo de Spring Boot)
+    private static final Logger logger = LoggerFactory.getLogger(DonVictorController.class);
 
     private final DetallePedidoRepository detallePedidoRepository;
     private final UsuarioRepository usuarioRepository;
@@ -62,7 +66,8 @@ public class DonVictorController {
     public String index(HttpSession session, Model model) {
 
         try {
-            // ✅ CORRECCIÓN: Refrescar el usuario en sesión con sus direcciones
+
+            logger.info("🌐 Solicitud GET recibida para la página de inicio (Index).");
             Usuario usuarioSession = (Usuario) session.getAttribute("usuario");
             if (usuarioSession != null) {
                 Usuario usuarioCompleto = usuarioRepository.findById(usuarioSession.getId()).orElse(null);
@@ -76,7 +81,7 @@ public class DonVictorController {
             model.addAttribute("productos", productoRepository.findAll());
             System.out.println("Productos: " + productoRepository.findAll().size());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("❌ Error al renderizar la página de inicio: {}", e.getMessage());
         }
 
         return "index";
@@ -118,12 +123,14 @@ public class DonVictorController {
     }
 
     @PostMapping("/procesarLogin")
-@ResponseBody
-public Map<String, Object> procesarLogin(@RequestParam String email,
+    @ResponseBody
+    public Map<String, Object> procesarLogin(@RequestParam String email,
                                          @RequestParam String password,
                                          HttpSession session) {
 
     Map<String, Object> response = new HashMap<>();
+
+    logger.info("🔑 Intento de inicio de sesión recibido para el correo: {}", email);
 
     System.out.println("=== INTENTO DE LOGIN ===");
     System.out.println("Email: " + email);
@@ -133,7 +140,7 @@ public Map<String, Object> procesarLogin(@RequestParam String email,
 
     // ✅ CASO 1: Usuario NO existe
     if (usuario == null) {
-        System.out.println("❌ Usuario NO existe");
+        logger.warn("⚠️ Fallo de Login: El correo electrónico [{}] no está registrado.", email);
         response.put("success", false);
         response.put("errorMsg", "usuario_no_existe");
         return response;
@@ -141,15 +148,14 @@ public Map<String, Object> procesarLogin(@RequestParam String email,
 
     // ✅ CASO 2: Contraseña incorrecta
     if (!usuario.getPassword().equals(password)) {
-        System.out.println("❌ Contraseña incorrecta");
+        logger.warn("⚠️ Fallo de Login: Contraseña incorrecta para el usuario: {}", email);
         response.put("success", false);
         response.put("errorMsg", "contrasena_incorrecta");
         return response;
     }
 
     // ✅ CASO 3: Login exitoso
-    System.out.println("✅ Usuario: " + usuario.getNombre());
-    System.out.println("Rol: " + usuario.getRol());
+    logger.info("✅ Login exitoso. Usuario: {} | Rol asignado: {}", usuario.getNombre(), usuario.getRol());
     
     // ✅ CORRECCIÓN: Forzar la carga de la lista LAZY antes de guardar en sesión
     usuario.getDirecciones().size(); 
@@ -190,11 +196,15 @@ public Map<String, Object> procesarLogin(@RequestParam String email,
 
     @GetMapping("/admin/dashboard")
     public String adminDashboard(HttpSession session, Model model) {
+        logger.info("📢 Solicitud de acceso al Panel Administrativo (Dashboard).");
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (usuario == null || !"ADMIN".equals(usuario.getRol())) {
+            logger.warn("⚠️ Acceso Denegado: Usuario no autenticado o no posee el rol ADMIN.");
             return "redirect:/login";
         }
+
+        logger.info("🔑 Acceso autorizado para el administrador: {}", usuario.getNombre());
 
         long totalProductos = productoRepository.count();
         long totalUsuarios = usuarioRepository.count();
@@ -416,51 +426,39 @@ public String nuevoProducto(HttpSession session, Model model) {
 }
 
 // ========== GUARDAR PRODUCTO (DESDE MODAL) ==========
-@PostMapping("/productos/guardar")
+@PostMapping("/admin/productos/guardar")
 @ResponseBody
-public Map<String, Object> guardarProducto(
-        @RequestParam String nombre,
-        @RequestParam(required = false) String descripcion,
-        @RequestParam Double precio,
-        @RequestParam String categoria,
-        @RequestParam(required = false) String imagenUrl) {  // ← SOLO ESTO
-
+public Map<String, Object> guardarProducto(@RequestParam String nombre,
+                                           @RequestParam(required = false) String descripcion,
+                                           @RequestParam Double precio,
+                                           @RequestParam String categoria,
+                                           @RequestParam(required = false) String imagenUrl) {
     Map<String, Object> response = new HashMap<>();
-
+    
     try {
         System.out.println("=== GUARDAR PRODUCTO ===");
         System.out.println("Nombre: " + nombre);
         System.out.println("Precio: " + precio);
         System.out.println("Categoria: " + categoria);
-        System.out.println("imagenUrl: " + (imagenUrl != null ? imagenUrl : "null"));
-
+        
         Producto producto = new Producto();
         producto.setNombre(nombre);
         producto.setDescripcion(descripcion != null ? descripcion : "");
         producto.setPrecio(precio);
         producto.setCategoria(categoria);
-
-        // ✅ GUARDAR URL DE CLOUDINARY
-        if (imagenUrl != null && !imagenUrl.trim().isEmpty()) {
-            producto.setImagenUrl(imagenUrl.trim());
-            System.out.println("✅ URL guardada: " + imagenUrl);
-        } else {
-            producto.setImagenUrl(null);
-            System.out.println("ℹ️ Sin imagen");
-        }
-
+        producto.setImagenUrl(imagenUrl);
+        
         productoRepository.save(producto);
-        System.out.println("✅ Producto guardado en BD");
-
+        
         response.put("success", true);
         response.put("message", "Producto creado correctamente");
-
+        
     } catch (Exception e) {
         e.printStackTrace();
         response.put("success", false);
         response.put("message", e.getMessage());
     }
-
+    
     return response;
 }
 
@@ -632,29 +630,24 @@ public Map<String, Object> eliminarPedido(@RequestParam Long id) {
     @ResponseBody
     public Map<String, Object> procesarPedido(@RequestBody Map<String, Object> pedidoData,
             HttpSession session) {
-
         Map<String, Object> response = new HashMap<>();
-
         try {
             String nombreCliente = (String) pedidoData.get("nombreCliente");
-            String telefonoCliente = (String) pedidoData.get("telefonoCliente");
-            String direccionCliente = (String) pedidoData.get("direccionCliente");
-            String metodoPago = (String) pedidoData.get("metodoPago");
             String tipoEntrega = (String) pedidoData.get("tipoEntrega");
+            
+            logger.info("🛒 Procesando un nuevo pedido web para el cliente: [{}]. Tipo de entrega: [{}]", nombreCliente, tipoEntrega);
 
             Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-            // Crear pedido
             Pedido pedido = new Pedido();
             pedido.setUsuario(usuario);
             pedido.setNombreCliente(nombreCliente);
-            pedido.setTelefonoCliente(telefonoCliente);
-            pedido.setDireccionEntrega(direccionCliente);
-            pedido.setMetodoPago(metodoPago);
+            pedido.setTelefonoCliente((String) pedidoData.get("telefonoCliente"));
+            pedido.setDireccionEntrega((String) pedidoData.get("direccionCliente"));
+            pedido.setMetodoPago((String) pedidoData.get("metodoPago"));
             pedido.setEstado("PENDIENTE");
             pedido.setFechaPedido(LocalDateTime.now());
 
-            // Calcular totales
             List<Map<String, Object>> items = (List<Map<String, Object>>) pedidoData.get("items");
             double subtotal = 0;
             for (Map<String, Object> item : items) {
@@ -672,7 +665,6 @@ public Map<String, Object> eliminarPedido(@RequestParam Long id) {
 
             Pedido pedidoGuardado = pedidoRepository.save(pedido);
 
-            // Guardar detalles
             for (Map<String, Object> item : items) {
                 Long productoId = ((Number) item.get("productoId")).longValue();
                 int cantidad = (int) item.get("cantidad");
@@ -691,12 +683,13 @@ public Map<String, Object> eliminarPedido(@RequestParam Long id) {
             }
 
             session.removeAttribute("carrito");
+            logger.info("✅ Pedido guardado y procesado correctamente en la BD. Total calculado: S/ {}", total);
 
             response.put("success", true);
             response.put("message", "Pedido confirmado con éxito");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("❌ Error crítico durante la creación del pedido: {}", e.getMessage());
             response.put("success", false);
             response.put("message", e.getMessage());
         }
