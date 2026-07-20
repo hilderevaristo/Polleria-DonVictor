@@ -416,7 +416,7 @@ public String nuevoProducto(HttpSession session, Model model) {
 }
 
 // ========== GUARDAR PRODUCTO (DESDE MODAL) ==========
-@PostMapping("/productos/guardar")
+@PostMapping("/admin/productos/guardar")
 @ResponseBody
 public Map<String, Object> guardarProducto(
         @RequestParam String nombre,
