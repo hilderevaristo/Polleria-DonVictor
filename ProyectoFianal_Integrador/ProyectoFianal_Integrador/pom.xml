@@ -71,6 +71,12 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.5</version>
+        </dependency>
+
         <!-- Micrometer Registry para integración con Prometheus + Grafana (Rendimiento) -->
         <dependency>
             <groupId>io.micrometer</groupId>

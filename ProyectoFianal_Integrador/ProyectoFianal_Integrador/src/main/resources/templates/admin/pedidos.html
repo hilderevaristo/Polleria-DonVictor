@@ -163,10 +163,19 @@
         </div>
         <!-- Tabla de pedidos con detalle expandible (acordeón) -->
         <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Lista de Ordenes</h5>
-                <span class="badge bg-primary" th:text="${totalPedidos}">0</span>
+            <div class="card-header d-flex justify-content-between align-items-center py-3">
+                <div class="d-flex align-items-center gap-2">
+                    <h5 class="mb-0">Lista de Ordenes</h5>
+                    <span class="badge bg-primary" th:text="${totalPedidos}">0</span>
+                </div>
+
+                <a th:href="@{/admin/exportar/ordenes}" class="btn btn-success btn-sm d-flex align-items-center gap-2" 
+                   style="border-radius: 8px; font-weight: 500; padding: 7px 14px; box-shadow: 0 2px 5px rgba(25,135,84,0.3);">
+                    <i class="fas fa-file-excel" style="font-size: 1.1rem;"></i>
+                    <span>Exportar a Excel</span>
+                </a>
             </div>
+            
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0" id="tablaPedidos">
